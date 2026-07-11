@@ -1,0 +1,103 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --header-h: 88px;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: var(--header-h);
+  }
+
+  body {
+    @apply bg-cream text-ink/85 font-sans antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-serif text-ink;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background-color: rgba(74, 122, 164, 0.22);
+  }
+
+  /* Respect reduced-motion for all the entrance animation */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* Consistent horizontal rhythm — the ONE gutter used site-wide so nothing
+     hangs or looks uneven between sections. Content caps at a comfortable width
+     while section backgrounds stay full-bleed (no desktop dead space). */
+  .container-fw {
+    @apply mx-auto w-full max-w-content px-5 sm:px-8 lg:px-10;
+  }
+  .container-wide {
+    @apply mx-auto w-full max-w-wide px-5 sm:px-8 lg:px-10;
+  }
+
+  .section {
+    @apply py-16 sm:py-20 lg:py-28;
+  }
+
+  .eyebrow {
+    @apply inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-steel;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold
+           transition-all duration-300 ease-smooth focus:outline-none focus-visible:ring-2
+           focus-visible:ring-steel focus-visible:ring-offset-2 focus-visible:ring-offset-cream;
+  }
+  .btn-primary {
+    @apply btn bg-steel text-white shadow-card hover:bg-steel-dark hover:shadow-lift hover:-translate-y-0.5;
+  }
+  .btn-gold {
+    @apply btn bg-sand text-white shadow-card hover:bg-sand/90 hover:shadow-lift hover:-translate-y-0.5;
+  }
+  .btn-ghost {
+    @apply btn border border-ink/15 bg-transparent text-ink hover:border-steel hover:text-steel;
+  }
+  .btn-white {
+    @apply btn bg-white text-ink shadow-card hover:-translate-y-0.5 hover:shadow-lift;
+  }
+  .btn-outline-light {
+    @apply btn border border-white/40 bg-white/5 text-white hover:bg-white/15 hover:border-white/70;
+  }
+
+  .card {
+    @apply rounded-xl2 bg-white shadow-card ring-1 ring-ink/[0.06];
+  }
+
+  .link-underline {
+    @apply relative inline-block after:absolute after:-bottom-0.5 after:left-0 after:h-px after:w-0
+           after:bg-current after:transition-all after:duration-300 hover:after:w-full;
+  }
+
+  .prose-fw {
+    @apply text-ink/75 leading-relaxed;
+  }
+  .prose-fw p {
+    @apply mb-5;
+  }
+  .prose-fw a {
+    @apply text-steel underline decoration-steel/30 underline-offset-2 hover:decoration-steel;
+  }
+}
