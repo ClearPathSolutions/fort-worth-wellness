@@ -64,6 +64,7 @@ export const nav: NavItem[] = [
   { label: 'Who We Help', href: '/who-we-help' },
   { label: 'Tour', href: '/tour' },
   { label: 'Admissions', href: '/admissions' },
+  { label: 'Blog', href: '/blog' },
   { label: 'Contact', href: '/contact-us' },
 ];
 

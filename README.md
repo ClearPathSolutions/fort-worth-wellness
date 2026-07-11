@@ -44,6 +44,7 @@ to the new `/treatment/*` paths (see `next.config.mjs`) so existing links and SE
 | Phone, email, address, hours | `src/lib/site.ts` |
 | Navigation & dropdown menu | `src/lib/site.ts` (`nav`) |
 | Services, team, insurers, gallery | `src/lib/site.ts` |
+| Blog posts (42 articles) | `src/lib/posts.json` |
 | Page copy | `src/app/**/page.tsx` |
 | Colors, fonts, shadows | `tailwind.config.ts` |
 | Global styles & buttons | `src/app/globals.css` |
@@ -70,8 +71,13 @@ payload for you.
   `src/lib/site.ts` — if you prefer the other.
 - Legacy "Dallas Detox Center" template text and the stray `fortworthwellnesscenter.com` email were
   cleaned up. Sister-facility references were removed in favor of a single, unified brand voice.
-- Testimonial widgets from the old site were not carried over (no source content). Add real reviews
-  when you have them.
+- **Blog:** all 42 articles from the old site were imported (`src/lib/posts.json`) with featured
+  images. They were the network's shared Dallas blog, so the brand name and location references were
+  auto-normalized to Fort Worth (real "Dallas–Fort Worth" metro mentions were preserved). A few
+  articles still contain Dallas-area external resource links and one Dallas map graphic — worth a
+  skim before launch. Post URL slugs keep their original wording.
+- **Reviews:** the old site's testimonials came from a TrustIndex widget that is **empty** (no
+  reviews configured), so there was nothing to import. Add real reviews when you have them.
 - The **Privacy Policy** is a general template — have counsel review it before launch.
 
 ## Tech

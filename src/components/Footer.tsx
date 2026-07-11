@@ -8,6 +8,7 @@ const explore = [
   { label: 'Who We Help', href: '/who-we-help' },
   { label: 'Tour the Facility', href: '/tour' },
   { label: 'Admissions', href: '/admissions' },
+  { label: 'Blog', href: '/blog' },
   { label: 'Contact Us', href: '/contact-us' },
 ];
 
