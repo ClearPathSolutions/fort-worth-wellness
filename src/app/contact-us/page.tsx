@@ -5,7 +5,7 @@ import SectionHeading from '@/components/SectionHeading';
 import LeadForm from '@/components/LeadForm';
 import InsuranceBand from '@/components/InsuranceBand';
 import Reveal from '@/components/ui/Reveal';
-import { Clock, Mail, Phone, Pin } from '@/components/icons';
+import { ArrowRight, Clock, Mail, Phone, Pin } from '@/components/icons';
 
 export const metadata: Metadata = {
   title: 'Contact Us — Expert-Led Mental Health Care in Fort Worth',
@@ -36,8 +36,6 @@ const cards = [
     href: site.address.mapUrl,
   },
 ];
-
-const mapSrc = `https://www.google.com/maps?q=${encodeURIComponent(site.address.full)}&output=embed`;
 
 export default function ContactPage() {
   return (
@@ -88,7 +86,7 @@ export default function ContactPage() {
               </div>
             </Reveal>
             <Reveal delay={100}>
-              <div className="flex h-full flex-col overflow-hidden rounded-xl2 bg-white shadow-card ring-1 ring-ink/[0.06]">
+              <div className="flex h-full min-h-[420px] flex-col overflow-hidden rounded-xl2 bg-white shadow-card ring-1 ring-ink/[0.06]">
                 <div className="border-b border-ink/10 p-6">
                   <p className="eyebrow">
                     <span className="h-px w-6 bg-steel" /> Get in touch
@@ -105,13 +103,45 @@ export default function ContactPage() {
                     </p>
                   </div>
                 </div>
-                <iframe
-                  title={`Map to ${site.name}`}
-                  src={mapSrc}
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                  className="h-full min-h-[320px] w-full flex-1 border-0"
-                />
+
+                {/* Location panel — decorative "map" backdrop + live directions.
+                    A styled panel is used instead of a Google embed because Google
+                    blocks framing (X-Frame-Options) and the rural address isn't in
+                    open map data. The button opens live turn-by-turn routing. */}
+                <div className="relative flex flex-1 flex-col items-center justify-center overflow-hidden bg-ink-900 p-8 text-center">
+                  <div
+                    aria-hidden
+                    className="absolute inset-0 opacity-[0.18]"
+                    style={{
+                      backgroundImage:
+                        'radial-gradient(circle at 50% 45%, rgba(74,122,164,0.9) 0, transparent 42%), linear-gradient(rgba(255,255,255,0.10) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.10) 1px, transparent 1px)',
+                      backgroundSize: '100% 100%, 34px 34px, 34px 34px',
+                    }}
+                  />
+                  <span
+                    aria-hidden
+                    className="absolute left-1/2 top-[45%] -translate-x-1/2 -translate-y-1/2"
+                  >
+                    <span className="block h-24 w-24 animate-ping rounded-full bg-steel/20" />
+                  </span>
+                  <span className="relative flex h-16 w-16 items-center justify-center rounded-full bg-steel text-white shadow-lift ring-8 ring-steel/20">
+                    <Pin width={30} height={30} />
+                  </span>
+                  <p className="relative mt-6 font-serif text-2xl text-white">
+                    {site.address.city}, {site.address.state}
+                  </p>
+                  <p className="relative mt-1 text-sm text-white/60">
+                    A private wooded estate, minutes west of Fort Worth
+                  </p>
+                  <a
+                    href={site.address.mapUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-white relative mt-6"
+                  >
+                    Get directions <ArrowRight width={16} height={16} />
+                  </a>
+                </div>
               </div>
             </Reveal>
           </div>
