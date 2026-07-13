@@ -1,10 +1,11 @@
 import type { Metadata, Viewport } from 'next';
 import { Fraunces, Inter } from 'next/font/google';
+import Script from 'next/script';
 import './globals.css';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import MobileCallBar from '@/components/MobileCallBar';
-import { site } from '@/lib/site';
+import { clarion, site } from '@/lib/site';
 
 const serif = Fraunces({
   subsets: ['latin'],
@@ -93,6 +94,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
+        />
+
+        {/* ClarionLabs live-chat widget — reads config from its own data-* attrs */}
+        <Script
+          src={clarion.src}
+          data-site-key={clarion.siteKey}
+          data-api={clarion.api}
+          strategy="afterInteractive"
         />
       </body>
     </html>

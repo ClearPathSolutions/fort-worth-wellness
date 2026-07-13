@@ -29,6 +29,16 @@ export const site = {
   hours: 'Admissions available 24/7',
 } as const;
 
+// ClarionLabs live-chat widget. The site key is PUBLIC by design (origin-pinned
+// + rate-limited, like an Intercom app id) — safe to ship in the page.
+// Set NEXT_PUBLIC_CLARION_SITE_KEY in the environment (e.g. Vercel) to override
+// the placeholder without a code change; then redeploy.
+export const clarion = {
+  siteKey: process.env.NEXT_PUBLIC_CLARION_SITE_KEY || 'cpx_REPLACE_WITH_FORT_WORTH_SITE_KEY',
+  api: 'https://api.clarionlabs.ai',
+  src: 'https://www.clarionlabs.ai/widget.v1.js',
+};
+
 export type NavChild = { label: string; href: string; blurb?: string };
 export type NavItem = { label: string; href: string; children?: NavChild[] };
 
