@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import { randomUUID } from 'node:crypto';
 import { clarion } from '@/lib/site';
 
 export const runtime = 'nodejs';
@@ -8,34 +7,38 @@ export const runtime = 'nodejs';
  * Lead intake endpoint.
  *
  * Website form submissions ("Request a callback" / "Verify Insurance") are
- * delivered into ClarionLabs as a webchat conversation — the same inbox the
- * live-chat leads land in. We replicate Clarion's public webchat flow:
- *   1) POST /webchat/public/session  -> { conversation_id, visitor_token }
- *   2) POST /webchat/public/messages -> posts the lead as a text message
+ * delivered to ClarionLabs' public forms API (`/forms/public/submit`), which
+ * records them as form submissions tied to this site's `site_key` and feeds
+ * BEN (Clarion's insurance Verification-of-Benefits engine — the reason Date of
+ * Birth is required). This is distinct from the chat widget, which uses the
+ * separate webchat API.
  *
- * Clarion pins requests to an exact origin allowlist, so we forward the
- * deployment's own origin (which must be allowlisted in Clarion → Website
- * Integrations). If Clarion is unreachable, the full lead is logged as a
- * fallback and the visitor still sees success.
+ * Notes:
+ * - Clarion pins to an exact-origin allowlist, so we forward the deployment's
+ *   own origin (must be allowlisted in Clarion → Website Integrations).
+ * - Clarion's edge blocks non-browser User-Agents, so we send a browser-like UA.
+ * - If Clarion is unreachable, the full lead is logged as a fallback and the
+ *   visitor still sees success.
  */
-function shortId(prefix: string) {
-  return `${prefix}-${Date.now().toString(36)}-${randomUUID().slice(0, 8)}`;
-}
+const BROWSER_UA =
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36';
 
-async function deliverToClarion(lead: Record<string, string>, ctx: { origin: string; userAgent: string; pageUrl: string }) {
+async function submitToClarion(
+  formKey: string,
+  data: Record<string, string>,
+  ctx: { origin: string; userAgent: string; pageUrl: string },
+) {
   const ac = new AbortController();
   const timeout = setTimeout(() => ac.abort(), 9000);
   try {
-    // 1) Create a visitor session
-    const sessionRes = await fetch(`${clarion.api}/webchat/public/session`, {
+    const res = await fetch(`${clarion.api}/forms/public/submit`, {
       method: 'POST',
       signal: ac.signal,
-      // A browser-like User-Agent is required — Clarion's edge blocks the
-      // default Node/undici UA (connection reset).
       headers: { 'Content-Type': 'application/json', Origin: ctx.origin, 'User-Agent': ctx.userAgent },
       body: JSON.stringify({
         site_key: clarion.siteKey,
-        visitor_session_id: shortId('v'),
+        form_key: formKey,
+        data,
         page_url: ctx.pageUrl,
         referrer: null,
         user_agent: ctx.userAgent,
@@ -43,45 +46,17 @@ async function deliverToClarion(lead: Record<string, string>, ctx: { origin: str
         gclid: null,
       }),
     });
-    if (!sessionRes.ok) {
-      const body = await sessionRes.text().catch(() => '');
-      return { ok: false, stage: 'session', status: sessionRes.status, body: body.slice(0, 300) };
+    const body = await res.text().catch(() => '');
+    if (!res.ok) return { ok: false, status: res.status, body: body.slice(0, 300) };
+    let id: string | undefined;
+    try {
+      id = JSON.parse(body).id;
+    } catch {
+      /* ignore */
     }
-    const session = (await sessionRes.json()) as { conversation_id?: string; visitor_token?: string };
-    if (!session.visitor_token) return { ok: false, stage: 'session', status: sessionRes.status, body: 'no visitor_token' };
-
-    // 2) Post the lead details as a message on that conversation
-    const text = [
-      '🔔 New website form submission',
-      `Name: ${lead.name}`,
-      `Phone: ${lead.phone}`,
-      lead.dob ? `Date of birth: ${lead.dob}` : null,
-      lead.email ? `Email: ${lead.email}` : null,
-      lead.who ? `Seeking treatment for: ${lead.who}` : null,
-      lead.message ? `Message: ${lead.message}` : null,
-      `Source: Fort Worth Wellness website (${ctx.pageUrl})`,
-    ]
-      .filter(Boolean)
-      .join('\n');
-
-    const msgRes = await fetch(`${clarion.api}/webchat/public/messages`, {
-      method: 'POST',
-      signal: ac.signal,
-      headers: {
-        'Content-Type': 'application/json',
-        Origin: ctx.origin,
-        'User-Agent': ctx.userAgent,
-        Authorization: `Bearer ${session.visitor_token}`,
-      },
-      body: JSON.stringify({ client_msg_id: shortId('c'), text }),
-    });
-    if (!msgRes.ok) {
-      const body = await msgRes.text().catch(() => '');
-      return { ok: false, stage: 'message', status: msgRes.status, body: body.slice(0, 300) };
-    }
-    return { ok: true, conversationId: session.conversation_id };
+    return { ok: true, id };
   } catch (err) {
-    return { ok: false, stage: 'network', error: String(err) };
+    return { ok: false, error: String(err) };
   } finally {
     clearTimeout(timeout);
   }
@@ -106,13 +81,27 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, error: 'Name and phone are required.' }, { status: 400 });
   }
 
-  const lead = {
+  const dob = String(body.dob ?? '').trim();
+  const email = String(body.email ?? '').trim();
+  const who = String(body.who ?? '').trim();
+  const message = String(body.message ?? '').trim();
+  const formKey = String(body.formKey ?? 'website-form').trim() || 'website-form';
+
+  // Split full name for BEN (Verification of Benefits) which expects first/last.
+  const parts = name.split(/\s+/);
+  const firstName = parts[0] || name;
+  const lastName = parts.slice(1).join(' ');
+
+  // Field keys BEN / the CRM recognize, plus friendly copies.
+  const data: Record<string, string> = {
     name,
+    first_name: firstName,
+    last_name: lastName || firstName,
     phone,
-    dob: String(body.dob ?? '').trim(),
-    email: String(body.email ?? '').trim(),
-    who: String(body.who ?? '').trim(),
-    message: String(body.message ?? '').trim(),
+    email,
+    date_of_birth: dob,
+    seeking_for: who,
+    message,
   };
 
   // Origin that Clarion must have allowlisted (the deployment's own origin).
@@ -122,22 +111,22 @@ export async function POST(req: Request) {
     req.headers.get('origin') ||
     (host ? `https://${host}` : 'https://fort-worth-wellness.vercel.app');
 
-  // Clarion's edge blocks non-browser UAs, so fall back to a browser-like string.
-  const browserUA =
-    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36';
-  const result = await deliverToClarion(lead, {
+  const result = await submitToClarion(formKey, data, {
     origin,
-    userAgent: req.headers.get('user-agent') || browserUA,
+    userAgent: req.headers.get('user-agent') || BROWSER_UA,
     pageUrl: req.headers.get('referer') || origin,
   });
 
   if (!result.ok) {
-    // Fallback: never lose a lead — log the full submission for recovery.
     // eslint-disable-next-line no-console
-    console.error('[lead] Clarion delivery FAILED — lead logged for recovery:', { lead, result });
+    console.error('[lead] Clarion form submit FAILED — lead logged for recovery:', {
+      formKey,
+      data,
+      result,
+    });
   } else {
     // eslint-disable-next-line no-console
-    console.log('[lead] delivered to Clarion:', result.conversationId);
+    console.log(`[lead] submitted to Clarion (form_key=${formKey}):`, result.id);
   }
 
   // Always succeed for the visitor — a third-party hiccup shouldn't block them.

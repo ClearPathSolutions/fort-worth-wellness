@@ -12,6 +12,8 @@ type Props = {
   variant?: 'card' | 'bare';
   /** insurance verification requires a mandatory date of birth */
   requireDob?: boolean;
+  /** identifies which form this is in Clarion (e.g. 'insurance-verification') */
+  formKey?: string;
 };
 
 const field =
@@ -22,6 +24,7 @@ export default function LeadForm({
   subtitle = 'Fill out the form and our admissions team will reach out quickly — day or night.',
   variant = 'card',
   requireDob = false,
+  formKey = 'website-form',
 }: Props) {
   const [status, setStatus] = useState<'idle' | 'sending' | 'ok' | 'error'>('idle');
   const [message, setMessage] = useState('');
@@ -169,6 +172,9 @@ export default function LeadForm({
             placeholder="Tell us a little about what you're looking for…"
           />
         </div>
+
+        {/* Identifies the form in Clarion */}
+        <input type="hidden" name="formKey" value={formKey} />
 
         {/* Honeypot for bots */}
         <input type="text" name="company" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden />
