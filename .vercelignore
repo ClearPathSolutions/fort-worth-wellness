@@ -1,0 +1,7 @@
+# Deploy only the app — keep the build upload small.
+scrape/
+node_modules
+.next
+.git
+*.log
+.DS_Store
