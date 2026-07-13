@@ -34,7 +34,7 @@ export const site = {
 // Set NEXT_PUBLIC_CLARION_SITE_KEY in the environment (e.g. Vercel) to override
 // the placeholder without a code change; then redeploy.
 export const clarion = {
-  siteKey: process.env.NEXT_PUBLIC_CLARION_SITE_KEY || 'cpx_REPLACE_WITH_FORT_WORTH_SITE_KEY',
+  siteKey: process.env.NEXT_PUBLIC_CLARION_SITE_KEY || 'cpx_VBotbTAdkkyKLFY5vyEpG3MHMp88defB',
   api: 'https://api.clarionlabs.ai',
   src: 'https://www.clarionlabs.ai/widget.v1.js',
 };
