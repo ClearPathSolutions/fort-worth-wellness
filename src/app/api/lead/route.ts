@@ -55,6 +55,7 @@ async function deliverToClarion(lead: Record<string, string>, ctx: { origin: str
       '🔔 New website form submission',
       `Name: ${lead.name}`,
       `Phone: ${lead.phone}`,
+      lead.dob ? `Date of birth: ${lead.dob}` : null,
       lead.email ? `Email: ${lead.email}` : null,
       lead.who ? `Seeking treatment for: ${lead.who}` : null,
       lead.message ? `Message: ${lead.message}` : null,
@@ -108,6 +109,7 @@ export async function POST(req: Request) {
   const lead = {
     name,
     phone,
+    dob: String(body.dob ?? '').trim(),
     email: String(body.email ?? '').trim(),
     who: String(body.who ?? '').trim(),
     message: String(body.message ?? '').trim(),

@@ -10,6 +10,8 @@ type Props = {
   subtitle?: string;
   /** 'card' = boxed white; 'bare' = no card chrome (for use inside a styled panel) */
   variant?: 'card' | 'bare';
+  /** insurance verification requires a mandatory date of birth */
+  requireDob?: boolean;
 };
 
 const field =
@@ -19,6 +21,7 @@ export default function LeadForm({
   title = 'Request a confidential callback',
   subtitle = 'Fill out the form and our admissions team will reach out quickly — day or night.',
   variant = 'card',
+  requireDob = false,
 }: Props) {
   const [status, setStatus] = useState<'idle' | 'sending' | 'ok' | 'error'>('idle');
   const [message, setMessage] = useState('');
@@ -92,20 +95,55 @@ export default function LeadForm({
           </div>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div>
-            <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-ink/80">
-              Email
-            </label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              autoComplete="email"
-              className={field}
-              placeholder="you@email.com"
-            />
+        {requireDob && (
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label htmlFor="dob" className="mb-1.5 block text-sm font-medium text-ink/80">
+                Date of birth <span className="text-steel">*</span>
+              </label>
+              <input
+                id="dob"
+                name="dob"
+                type="date"
+                required
+                autoComplete="bday"
+                max="2015-12-31"
+                className={field}
+                aria-label="Date of birth (required)"
+              />
+            </div>
+            <div>
+              <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-ink/80">
+                Email
+              </label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                className={field}
+                placeholder="you@email.com"
+              />
+            </div>
           </div>
+        )}
+
+        <div className={`grid gap-4 ${requireDob ? '' : 'sm:grid-cols-2'}`}>
+          {!requireDob && (
+            <div>
+              <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-ink/80">
+                Email
+              </label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                className={field}
+                placeholder="you@email.com"
+              />
+            </div>
+          )}
           <div>
             <label htmlFor="who" className="mb-1.5 block text-sm font-medium text-ink/80">
               Who is this for?

@@ -92,6 +92,7 @@ export default function AdmissionsPage() {
             <LeadForm
               title="Verify your benefits"
               subtitle="Confidential and free — no obligation. We'll get right back to you."
+              requireDob
             />
           </Reveal>
         </div>
