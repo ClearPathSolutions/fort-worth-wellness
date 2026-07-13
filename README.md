@@ -52,17 +52,17 @@ to the new `/treatment/*` paths (see `next.config.mjs`) so existing links and SE
 
 ## Lead / contact form
 
-Form submissions POST to `src/app/api/lead/route.ts`. Out of the box it **validates and logs** each
-inquiry (visible in your Vercel function logs). To actually deliver leads by email, uncomment the
-Resend block in that file and set these environment variables in Vercel:
+Form submissions POST to `src/app/api/lead/route.ts`, which delivers each inquiry into
+**ClarionLabs** as a webchat conversation — the same inbox the live-chat leads land in. It creates a
+public webchat session and posts the lead's details as a message. If Clarion is ever unreachable, the
+full submission is logged to the Vercel function logs so no lead is lost.
 
-```
-RESEND_API_KEY=...
-LEAD_NOTIFY_EMAIL=admissions@fortworthwellness.org
-```
-
-Any provider works (Resend, SendGrid, a CRM webhook) — the handler already parses and validates the
-payload for you.
+Notes:
+- Clarion pins to an **exact-origin allowlist**. The handler forwards the deployment's own origin, so
+  when you add a custom domain you must also allowlist it in Clarion → Website Integrations
+  (otherwise delivery 403s even though the page loads).
+- Clarion's edge blocks non-browser User-Agents, so the handler sends a browser-like UA.
+- `CLARION_ORIGIN` env var can override the forwarded origin if needed.
 
 ## Notes on content
 
