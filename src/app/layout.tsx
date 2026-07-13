@@ -101,6 +101,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           src={clarion.src}
           data-site-key={clarion.siteKey}
           data-api={clarion.api}
+          data-color={clarion.color}
           strategy="afterInteractive"
         />
       </body>
