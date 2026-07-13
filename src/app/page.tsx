@@ -75,11 +75,9 @@ export default function HomePage() {
           sizes="100vw"
           className="object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-ink-900 via-ink-900/70 to-ink-900/40" />
-        <div className="absolute inset-0 bg-gradient-to-r from-ink-900/80 via-ink-900/30 to-transparent" />
 
         <div className="container-fw relative">
-          <div className="max-w-2xl pb-16 pt-20 sm:pb-24 sm:pt-28 lg:pb-32 lg:pt-32">
+          <div className="max-w-2xl pb-16 pt-20 [text-shadow:0_1px_3px_rgba(9,15,21,0.92),0_3px_22px_rgba(9,15,21,0.75)] sm:pb-24 sm:pt-28 lg:pb-32 lg:pt-32">
             <Reveal>
               <p className="eyebrow !text-sand-light">
                 <span className="h-px w-6 bg-sand-light" />

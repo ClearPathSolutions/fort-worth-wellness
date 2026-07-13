@@ -33,7 +33,6 @@ export type NavChild = { label: string; href: string; blurb?: string };
 export type NavItem = { label: string; href: string; children?: NavChild[] };
 
 export const nav: NavItem[] = [
-  { label: 'Home', href: '/' },
   { label: 'Who We Are', href: '/about-us' },
   {
     label: 'Treatment',
