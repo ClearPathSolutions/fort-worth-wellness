@@ -12,10 +12,13 @@ export default function ClarionBlog() {
   return (
     <>
       <div data-clarion-blog />
+      {/* data-api points at our same-origin proxy (/api/clarion) because Clarion's
+          blog feed omits CORS headers and would be browser-blocked if fetched
+          directly. The proxy forwards to api.clarionlabs.ai server-side. */}
       <Script
         src={clarion.blogSrc}
         data-site-key={clarion.siteKey}
-        data-api={clarion.api}
+        data-api="/api/clarion"
         strategy="afterInteractive"
       />
     </>
