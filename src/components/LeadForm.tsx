@@ -4,6 +4,14 @@ import { useState, type FormEvent } from 'react';
 import { site } from '@/lib/site';
 import { ArrowRight, Check, Phone } from '@/components/icons';
 
+declare global {
+  interface Window {
+    ClarionForms?: {
+      submit: (payload: { form_key: string; data: Record<string, unknown> }) => Promise<Response>;
+    };
+  }
+}
+
 type Props = {
   /** headline shown above the form */
   title?: string;
@@ -31,16 +39,56 @@ export default function LeadForm({
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setStatus('sending');
     const form = e.currentTarget;
-    const data = Object.fromEntries(new FormData(form).entries());
+    const raw = Object.fromEntries(new FormData(form).entries()) as Record<string, string>;
+
+    // Honeypot — silently "succeed" for bots without sending anything.
+    if ((raw.company || '').trim() !== '') {
+      setStatus('ok');
+      form.reset();
+      return;
+    }
+
+    setStatus('sending');
+
+    // Field names Clarion / BEN (Verification of Benefits) recognize.
+    const name = (raw.name || '').trim();
+    const parts = name.split(/\s+/);
+    const data: Record<string, string> = {
+      name,
+      first_name: parts[0] || '',
+      last_name: parts.slice(1).join(' '),
+      phone: (raw.phone || '').trim(),
+      email: (raw.email || '').trim(),
+      date_of_birth: (raw.dob || '').trim(),
+      seeking_for: (raw.who || '').trim(),
+      message: (raw.message || '').trim(),
+    };
+
     try {
-      const res = await fetch('/api/lead', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-      if (!res.ok) throw new Error('failed');
+      // Primary: ClarionLabs official form capture (window.ClarionForms.submit).
+      let delivered = false;
+      const cf = typeof window !== 'undefined' ? window.ClarionForms : undefined;
+      if (cf && typeof cf.submit === 'function') {
+        try {
+          const res = await cf.submit({ form_key: formKey, data });
+          delivered = !res || res.ok !== false;
+        } catch {
+          delivered = false;
+        }
+      }
+
+      // Fallback: server route (also posts to Clarion's forms API) if the
+      // client script didn't load or the capture didn't confirm.
+      if (!delivered) {
+        const res = await fetch('/api/lead', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...raw, formKey }),
+        });
+        if (!res.ok) throw new Error('failed');
+      }
+
       setStatus('ok');
       form.reset();
     } catch {

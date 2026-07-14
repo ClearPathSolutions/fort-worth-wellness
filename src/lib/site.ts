@@ -36,7 +36,9 @@ export const site = {
 export const clarion = {
   siteKey: process.env.NEXT_PUBLIC_CLARION_SITE_KEY || 'cpx_VBotbTAdkkyKLFY5vyEpG3MHMp88defB',
   api: 'https://api.clarionlabs.ai',
-  src: 'https://www.clarionlabs.ai/widget.v1.js',
+  widgetSrc: 'https://www.clarionlabs.ai/widget.v1.js',
+  formsSrc: 'https://www.clarionlabs.ai/forms-capture.v1.js',
+  blogSrc: 'https://www.clarionlabs.ai/blog-embed.v1.js',
   color: '#4a7aa4', // brand steel blue — matches buttons + Longhorn logo
 };
 

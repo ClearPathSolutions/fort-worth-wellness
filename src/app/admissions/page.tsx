@@ -93,7 +93,7 @@ export default function AdmissionsPage() {
               title="Verify your benefits"
               subtitle="Confidential and free — no obligation. We'll get right back to you."
               requireDob
-              formKey="insurance-verification"
+              formKey="insurance_verification"
             />
           </Reveal>
         </div>

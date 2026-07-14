@@ -135,4 +135,74 @@
   .article-body blockquote {
     @apply my-8 border-l-4 border-sand bg-cream-deep/60 py-3 pl-6 pr-4 font-serif text-lg italic text-ink/80;
   }
+
+  /* ---- ClarionLabs blog embed (injected markup, styled to match) ---- */
+  .clarion-blog-list {
+    @apply grid gap-6 sm:grid-cols-2 lg:grid-cols-3;
+  }
+  .clarion-blog-card {
+    @apply flex flex-col overflow-hidden rounded-xl2 bg-white shadow-card ring-1 ring-ink/[0.06] transition-all duration-300 hover:-translate-y-1 hover:shadow-lift;
+  }
+  .clarion-blog-cover {
+    @apply aspect-[16/10] w-full object-cover;
+  }
+  .clarion-blog-card .clarion-blog-title {
+    @apply px-6 pt-6 text-left font-serif text-lg leading-snug text-ink hover:text-steel;
+  }
+  .clarion-blog-meta {
+    @apply flex flex-wrap items-center gap-x-3 gap-y-1 px-6 pt-2 text-xs text-ink/50;
+  }
+  .clarion-blog-excerpt {
+    @apply flex-1 px-6 pt-3 text-sm leading-relaxed text-ink/65;
+  }
+  .clarion-blog-readmore {
+    @apply mx-6 mb-6 mt-4 inline-flex w-fit items-center gap-1.5 text-sm font-semibold text-steel hover:gap-2;
+  }
+  .clarion-blog-empty,
+  .clarion-blog-loading,
+  .clarion-blog-error {
+    @apply py-16 text-center text-ink/55;
+  }
+  /* Post detail view */
+  .clarion-blog-back {
+    @apply mb-8 inline-flex items-center gap-1.5 text-sm font-semibold text-steel hover:gap-2;
+  }
+  .clarion-blog-post {
+    @apply mx-auto max-w-prose;
+  }
+  .clarion-blog-post-title {
+    @apply font-serif text-3xl leading-tight text-ink sm:text-4xl;
+  }
+  .clarion-blog-post .clarion-blog-cover {
+    @apply mt-6 aspect-[16/9] rounded-xl2 shadow-card;
+  }
+  .clarion-blog-body {
+    @apply mt-8 text-[1.0625rem] leading-[1.75] text-ink/80;
+  }
+  .clarion-blog-body > * + * {
+    @apply mt-5;
+  }
+  .clarion-blog-body h2 {
+    @apply mt-10 font-serif text-2xl leading-snug text-ink;
+  }
+  .clarion-blog-body h3 {
+    @apply mt-8 font-serif text-xl leading-snug text-ink;
+  }
+  .clarion-blog-body ul {
+    @apply list-disc space-y-2 pl-6 marker:text-steel;
+  }
+  .clarion-blog-body ol {
+    @apply list-decimal space-y-2 pl-6 marker:text-steel;
+  }
+  .clarion-blog-body a {
+    @apply font-medium text-steel underline decoration-steel/30 underline-offset-2 hover:decoration-steel;
+  }
+  .clarion-blog-body img {
+    @apply my-6 rounded-xl2;
+  }
+  .clarion-blog-title,
+  .clarion-blog-readmore,
+  .clarion-blog-back {
+    @apply cursor-pointer border-0 bg-transparent;
+  }
 }

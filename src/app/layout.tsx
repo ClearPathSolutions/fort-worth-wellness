@@ -98,10 +98,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
         {/* ClarionLabs live-chat widget — reads config from its own data-* attrs */}
         <Script
-          src={clarion.src}
+          src={clarion.widgetSrc}
           data-site-key={clarion.siteKey}
           data-api={clarion.api}
           data-color={clarion.color}
+          strategy="afterInteractive"
+        />
+
+        {/* ClarionLabs form capture — exposes window.ClarionForms.submit() used by LeadForm */}
+        <Script
+          src={clarion.formsSrc}
+          data-site-key={clarion.siteKey}
+          data-api={clarion.api}
           strategy="afterInteractive"
         />
       </body>
