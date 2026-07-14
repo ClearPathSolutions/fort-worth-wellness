@@ -205,4 +205,15 @@
   .clarion-blog-back {
     @apply cursor-pointer border-0 bg-transparent;
   }
+
+  /* Show the Clarion blog section only when it actually has posts (a list with
+     cards, or an opened post). Hidden while loading, empty, or errored — so the
+     original library below is what shows until Clarion has published posts. */
+  .clarion-embed-section {
+    display: none;
+  }
+  .clarion-embed-section:has(.clarion-blog-list:not(:has(.clarion-blog-empty))),
+  .clarion-embed-section:has(.clarion-blog-post) {
+    display: block;
+  }
 }
