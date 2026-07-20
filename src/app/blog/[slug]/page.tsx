@@ -1,19 +1,33 @@
 import type { Metadata } from 'next';
-import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { getAllPosts, getPost, getRelatedPosts, formatDate } from '@/lib/posts';
+import { getAllPosts, getPost, formatDate, getUnifiedPosts } from '@/lib/posts';
+import { getClarionPost } from '@/lib/clarion';
 import { site } from '@/lib/site';
+import PostImage from '@/components/PostImage';
 import CTABand from '@/components/CTABand';
 import Reveal from '@/components/ui/Reveal';
 import { ArrowRight, Clock, Phone } from '@/components/icons';
 
+// New Clarion posts appear without a redeploy; unknown slugs render on demand.
+export const revalidate = 300;
+export const dynamicParams = true;
+
+// Pre-render the legacy library at build; Clarion posts are rendered on demand
+// (their slugs live in Clarion, not the repo) and then cached via ISR.
 export function generateStaticParams() {
   return getAllPosts().map((p) => ({ slug: p.slug }));
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
-  const post = getPost(params.slug);
+// Resolve a slug to either a legacy post or a live Clarion post.
+async function resolvePost(slug: string) {
+  const legacy = getPost(slug);
+  if (legacy) return legacy;
+  return getClarionPost(slug);
+}
+
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  const post = await resolvePost(params.slug);
   if (!post) return { title: 'Article Not Found' };
   return {
     title: post.title,
@@ -28,17 +42,19 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
   };
 }
 
-export default function PostPage({ params }: { params: { slug: string } }) {
-  const post = getPost(params.slug);
+export default async function PostPage({ params }: { params: { slug: string } }) {
+  const post = await resolvePost(params.slug);
   if (!post) notFound();
-  const related = getRelatedPosts(post.slug, 3);
+
+  // Related: three other newest posts from the unified list.
+  const related = (await getUnifiedPosts()).filter((p) => p.slug !== post.slug).slice(0, 3);
 
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
     headline: post.title,
     datePublished: post.date,
-    image: `${site.url}${post.image}`,
+    image: post.image.startsWith('/') ? `${site.url}${post.image}` : post.image,
     author: { '@type': 'Organization', name: site.name },
     publisher: { '@type': 'Organization', name: site.name },
     description: post.excerpt,
@@ -48,7 +64,7 @@ export default function PostPage({ params }: { params: { slug: string } }) {
     <>
       {/* Hero */}
       <section className="relative isolate overflow-hidden bg-ink-900">
-        <Image src={post.image} alt="" fill priority sizes="100vw" className="object-cover opacity-30" />
+        <PostImage src={post.image} alt="" priority sizes="100vw" />
         <div className="absolute inset-0 bg-gradient-to-t from-ink-900 via-ink-900/85 to-ink-900/70" />
         <div className="container-fw relative">
           <div className="mx-auto max-w-3xl pb-14 pt-16 sm:pt-20">
@@ -62,10 +78,14 @@ export default function PostPage({ params }: { params: { slug: string } }) {
               <span>By the {site.shortName} Clinical Team</span>
               <span className="h-1 w-1 rounded-full bg-white/30" />
               <span>{formatDate(post.date)}</span>
-              <span className="h-1 w-1 rounded-full bg-white/30" />
-              <span className="flex items-center gap-1.5">
-                <Clock width={15} height={15} /> {post.readingMin} min read
-              </span>
+              {post.readingMin > 0 && (
+                <>
+                  <span className="h-1 w-1 rounded-full bg-white/30" />
+                  <span className="flex items-center gap-1.5">
+                    <Clock width={15} height={15} /> {post.readingMin} min read
+                  </span>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -127,7 +147,7 @@ export default function PostPage({ params }: { params: { slug: string } }) {
                     className="group flex h-full flex-col overflow-hidden rounded-xl2 bg-white shadow-card ring-1 ring-ink/[0.06] transition-all duration-300 hover:-translate-y-1 hover:shadow-lift"
                   >
                     <div className="relative aspect-[16/10] overflow-hidden">
-                      <Image src={p.image} alt={p.title} fill sizes="(max-width: 640px) 100vw, 33vw" className="object-cover transition-transform duration-700 ease-smooth group-hover:scale-105" />
+                      <PostImage src={p.image} alt={p.title} sizes="(max-width: 640px) 100vw, 33vw" />
                     </div>
                     <div className="flex flex-1 flex-col p-6">
                       <span className="text-xs text-ink/50">{formatDate(p.date)}</span>

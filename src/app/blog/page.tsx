@@ -1,8 +1,7 @@
 import type { Metadata } from 'next';
-import Image from 'next/image';
 import Link from 'next/link';
-import { getAllPosts, formatDate } from '@/lib/posts';
-import ClarionBlog from '@/components/ClarionBlog';
+import { getUnifiedPosts, formatDate } from '@/lib/posts';
+import PostImage from '@/components/PostImage';
 import SectionHeading from '@/components/SectionHeading';
 import CTABand from '@/components/CTABand';
 import Reveal from '@/components/ui/Reveal';
@@ -14,9 +13,15 @@ export const metadata: Metadata = {
     'Expert articles on mental health, addiction recovery, detox, and dual diagnosis from the clinical team at Fort Worth Wellness Center.',
 };
 
-export default function BlogPage() {
-  const posts = getAllPosts();
-  const [featured] = posts;
+// New Clarion posts should appear without a redeploy (matches the Clarion feed
+// revalidation window in lib/clarion.ts).
+export const revalidate = 300;
+
+export default async function BlogPage() {
+  // One unified, newest-first list: live Clarion posts merged with the legacy
+  // library. The newest of ALL posts is featured; the rest fill the grid.
+  const posts = await getUnifiedPosts();
+  const [featured, ...rest] = posts;
 
   return (
     <>
@@ -41,84 +46,74 @@ export default function BlogPage() {
         </div>
       </section>
 
-      {/* Latest article + full library.
-          Clarion is the source of truth for new posts: its embed renders above
-          the library, and CSS promotes the newest Clarion card into the hero
-          "Latest Article" spot (see .clarion-blog-hero-host in globals.css).
-          The legacy featured block below is a FALLBACK — shown only when Clarion
-          has no published posts (via :has() on the embed host). When Clarion has
-          posts, that legacy post just joins the grid, which always renders the
-          full original library. */}
-      <section className="section bg-cream">
-        <div className="container-wide">
-          {/* Clarion embed — its first card is styled as the page hero. */}
-          <div className="clarion-blog-hero-host mb-14">
-            <ClarionBlog />
-          </div>
-
-          {/* Legacy featured fallback (hidden when Clarion has posts) */}
-          {featured && (
-            <div className="clarion-legacy-featured mb-14">
-              <Reveal>
-                <Link
-                  href={`/blog/${featured.slug}`}
-                  className="group grid overflow-hidden rounded-xl2 bg-white shadow-card ring-1 ring-ink/[0.06] transition-all duration-300 hover:shadow-lift lg:grid-cols-2"
-                >
-                  <div className="relative aspect-[16/10] lg:aspect-auto">
-                    <Image
-                      src={featured.image}
-                      alt={featured.title}
-                      fill
-                      priority
-                      sizes="(max-width: 1024px) 100vw, 50vw"
-                      className="object-cover transition-transform duration-700 ease-smooth group-hover:scale-105"
-                    />
-                  </div>
-                  <div className="flex flex-col justify-center p-8 lg:p-12">
-                    <span className="text-xs font-semibold uppercase tracking-widest text-sand">
-                      Latest Article
-                    </span>
-                    <h2 className="mt-3 text-2xl leading-snug sm:text-3xl">{featured.title}</h2>
-                    <p className="mt-4 text-ink/65">{featured.excerpt}</p>
-                    <div className="mt-6 flex items-center gap-4 text-sm text-ink/50">
-                      <span>{formatDate(featured.date)}</span>
+      {/* Featured — newest post overall (Clarion or legacy) */}
+      {featured && (
+        <section className="section bg-cream pb-0">
+          <div className="container-wide">
+            <Reveal>
+              <Link
+                href={`/blog/${featured.slug}`}
+                className="group grid overflow-hidden rounded-xl2 bg-white shadow-card ring-1 ring-ink/[0.06] transition-all duration-300 hover:shadow-lift lg:grid-cols-2"
+              >
+                <div className="relative aspect-[16/10] lg:aspect-auto">
+                  <PostImage
+                    src={featured.image}
+                    alt={featured.title}
+                    priority
+                    sizes="(max-width: 1024px) 100vw, 50vw"
+                  />
+                </div>
+                <div className="flex flex-col justify-center p-8 lg:p-12">
+                  <span className="text-xs font-semibold uppercase tracking-widest text-sand">
+                    Latest Article
+                  </span>
+                  <h2 className="mt-3 text-2xl leading-snug sm:text-3xl">{featured.title}</h2>
+                  <p className="mt-4 text-ink/65">{featured.excerpt}</p>
+                  <div className="mt-6 flex items-center gap-4 text-sm text-ink/50">
+                    <span>{formatDate(featured.date)}</span>
+                    {featured.readingMin > 0 && (
                       <span className="flex items-center gap-1.5">
                         <Clock width={15} height={15} /> {featured.readingMin} min read
                       </span>
-                    </div>
-                    <span className="mt-6 inline-flex items-center gap-1.5 font-semibold text-steel">
-                      Read article
-                      <ArrowRight width={16} height={16} className="transition-transform duration-300 group-hover:translate-x-1" />
-                    </span>
+                    )}
                   </div>
-                </Link>
-              </Reveal>
-            </div>
-          )}
+                  <span className="mt-6 inline-flex items-center gap-1.5 font-semibold text-steel">
+                    Read article
+                    <ArrowRight width={16} height={16} className="transition-transform duration-300 group-hover:translate-x-1" />
+                  </span>
+                </div>
+              </Link>
+            </Reveal>
+          </div>
+        </section>
+      )}
 
+      {/* Library grid — every other post, newest first */}
+      <section className="section bg-cream">
+        <div className="container-wide">
           <SectionHeading align="left" eyebrow="All Articles" title="Browse the library" />
           <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {posts.map((p, i) => (
+            {rest.map((p, i) => (
               <Reveal key={p.slug} delay={(i % 3) * 80}>
                 <Link
                   href={`/blog/${p.slug}`}
                   className="group flex h-full flex-col overflow-hidden rounded-xl2 bg-white shadow-card ring-1 ring-ink/[0.06] transition-all duration-300 hover:-translate-y-1 hover:shadow-lift"
                 >
                   <div className="relative aspect-[16/10] overflow-hidden">
-                    <Image
+                    <PostImage
                       src={p.image}
                       alt={p.title}
-                      fill
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      className="object-cover transition-transform duration-700 ease-smooth group-hover:scale-105"
                     />
                   </div>
                   <div className="flex flex-1 flex-col p-6">
                     <div className="flex items-center gap-3 text-xs text-ink/50">
                       <span>{formatDate(p.date)}</span>
-                      <span className="flex items-center gap-1">
-                        <Clock width={13} height={13} /> {p.readingMin} min
-                      </span>
+                      {p.readingMin > 0 && (
+                        <span className="flex items-center gap-1">
+                          <Clock width={13} height={13} /> {p.readingMin} min
+                        </span>
+                      )}
                     </div>
                     <h3 className="mt-3 text-lg leading-snug">{p.title}</h3>
                     <p className="mt-2 flex-1 text-sm leading-relaxed text-ink/60 line-clamp-3">{p.excerpt}</p>

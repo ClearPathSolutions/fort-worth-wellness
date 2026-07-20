@@ -33,3 +33,17 @@ export function formatDate(iso: string): string {
   if (isNaN(d.getTime())) return '';
   return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 }
+
+// ---------------------------------------------------------------------------
+// Unified list: legacy JSON articles + live Clarion posts, merged into one
+// newest-first list. Clarion is the source of truth, so on a slug collision the
+// Clarion post wins. Imported lazily to avoid a circular import (clarion.ts
+// imports the Post type from here).
+// ---------------------------------------------------------------------------
+export async function getUnifiedPosts(): Promise<Post[]> {
+  const { getClarionPosts } = await import('./clarion');
+  const clarionPosts = await getClarionPosts();
+  const clarionSlugs = new Set(clarionPosts.map((p) => p.slug));
+  const legacy = sorted.filter((p) => !clarionSlugs.has(p.slug));
+  return [...clarionPosts, ...legacy].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+}
