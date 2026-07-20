@@ -2,6 +2,11 @@ import type { Config } from 'tailwindcss';
 
 const config: Config = {
   content: ['./src/**/*.{ts,tsx,mdx}'],
+  // The Clarion blog embed injects its markup at runtime, so these class names
+  // never appear in the scanned source above. Without safelisting them, Tailwind
+  // purges our `.clarion-blog-*` override rules in globals.css and the embed
+  // falls back to Clarion's default look (and our hero layout never applies).
+  safelist: [{ pattern: /^clarion-blog-/ }],
   theme: {
     extend: {
       colors: {

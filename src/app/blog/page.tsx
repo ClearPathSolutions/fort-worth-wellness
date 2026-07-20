@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 
 export default function BlogPage() {
   const posts = getAllPosts();
-  const [featured, ...rest] = posts;
+  const [featured] = posts;
 
   return (
     <>
@@ -41,64 +41,64 @@ export default function BlogPage() {
         </div>
       </section>
 
-      {/* Latest, Clarion-managed posts — auto-hidden until Clarion has published posts */}
-      <section className="section clarion-embed-section bg-cream-deep">
-        <div className="container-wide">
-          <SectionHeading align="left" eyebrow="Latest" title="Fresh from our team" />
-          <div className="mt-10">
-            <ClarionBlog />
-          </div>
-        </div>
-      </section>
-
-      {/* Featured (original library) */}
-      {featured && (
-        <section className="section bg-cream pb-0">
-          <div className="container-wide">
-            <Reveal>
-              <Link
-                href={`/blog/${featured.slug}`}
-                className="group grid overflow-hidden rounded-xl2 bg-white shadow-card ring-1 ring-ink/[0.06] transition-all duration-300 hover:shadow-lift lg:grid-cols-2"
-              >
-                <div className="relative aspect-[16/10] lg:aspect-auto">
-                  <Image
-                    src={featured.image}
-                    alt={featured.title}
-                    fill
-                    priority
-                    sizes="(max-width: 1024px) 100vw, 50vw"
-                    className="object-cover transition-transform duration-700 ease-smooth group-hover:scale-105"
-                  />
-                </div>
-                <div className="flex flex-col justify-center p-8 lg:p-12">
-                  <span className="text-xs font-semibold uppercase tracking-widest text-sand">
-                    Latest Article
-                  </span>
-                  <h2 className="mt-3 text-2xl leading-snug sm:text-3xl">{featured.title}</h2>
-                  <p className="mt-4 text-ink/65">{featured.excerpt}</p>
-                  <div className="mt-6 flex items-center gap-4 text-sm text-ink/50">
-                    <span>{formatDate(featured.date)}</span>
-                    <span className="flex items-center gap-1.5">
-                      <Clock width={15} height={15} /> {featured.readingMin} min read
-                    </span>
-                  </div>
-                  <span className="mt-6 inline-flex items-center gap-1.5 font-semibold text-steel">
-                    Read article
-                    <ArrowRight width={16} height={16} className="transition-transform duration-300 group-hover:translate-x-1" />
-                  </span>
-                </div>
-              </Link>
-            </Reveal>
-          </div>
-        </section>
-      )}
-
-      {/* Library grid (original 42 posts) */}
+      {/* Latest article + full library.
+          Clarion is the source of truth for new posts: its embed renders above
+          the library, and CSS promotes the newest Clarion card into the hero
+          "Latest Article" spot (see .clarion-blog-hero-host in globals.css).
+          The legacy featured block below is a FALLBACK — shown only when Clarion
+          has no published posts (via :has() on the embed host). When Clarion has
+          posts, that legacy post just joins the grid, which always renders the
+          full original library. */}
       <section className="section bg-cream">
         <div className="container-wide">
+          {/* Clarion embed — its first card is styled as the page hero. */}
+          <div className="clarion-blog-hero-host mb-14">
+            <ClarionBlog />
+          </div>
+
+          {/* Legacy featured fallback (hidden when Clarion has posts) */}
+          {featured && (
+            <div className="clarion-legacy-featured mb-14">
+              <Reveal>
+                <Link
+                  href={`/blog/${featured.slug}`}
+                  className="group grid overflow-hidden rounded-xl2 bg-white shadow-card ring-1 ring-ink/[0.06] transition-all duration-300 hover:shadow-lift lg:grid-cols-2"
+                >
+                  <div className="relative aspect-[16/10] lg:aspect-auto">
+                    <Image
+                      src={featured.image}
+                      alt={featured.title}
+                      fill
+                      priority
+                      sizes="(max-width: 1024px) 100vw, 50vw"
+                      className="object-cover transition-transform duration-700 ease-smooth group-hover:scale-105"
+                    />
+                  </div>
+                  <div className="flex flex-col justify-center p-8 lg:p-12">
+                    <span className="text-xs font-semibold uppercase tracking-widest text-sand">
+                      Latest Article
+                    </span>
+                    <h2 className="mt-3 text-2xl leading-snug sm:text-3xl">{featured.title}</h2>
+                    <p className="mt-4 text-ink/65">{featured.excerpt}</p>
+                    <div className="mt-6 flex items-center gap-4 text-sm text-ink/50">
+                      <span>{formatDate(featured.date)}</span>
+                      <span className="flex items-center gap-1.5">
+                        <Clock width={15} height={15} /> {featured.readingMin} min read
+                      </span>
+                    </div>
+                    <span className="mt-6 inline-flex items-center gap-1.5 font-semibold text-steel">
+                      Read article
+                      <ArrowRight width={16} height={16} className="transition-transform duration-300 group-hover:translate-x-1" />
+                    </span>
+                  </div>
+                </Link>
+              </Reveal>
+            </div>
+          )}
+
           <SectionHeading align="left" eyebrow="All Articles" title="Browse the library" />
           <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {rest.map((p, i) => (
+            {posts.map((p, i) => (
               <Reveal key={p.slug} delay={(i % 3) * 80}>
                 <Link
                   href={`/blog/${p.slug}`}

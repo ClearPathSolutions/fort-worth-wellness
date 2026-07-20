@@ -206,19 +206,95 @@
     @apply cursor-pointer border-0 bg-transparent;
   }
 
-  /* Show the Clarion blog section only when it actually has posts (a card grid,
-     or an opened post). Hidden while loading, empty, or errored — those states
-     render no card/post — so the original library below is what shows until
-     Clarion has published posts.
-     NOTE: keyed off .clarion-blog-card, not a nested :has() inside :not(). A
-     selector like :has(.list:not(:has(.empty))) is INVALID CSS (:has() may not
-     nest inside :not() inside :has()); the browser drops the whole rule, which
-     kept this section permanently hidden even when posts existed. */
-  .clarion-embed-section {
+  /* ---- Clarion embed placement inside the library section ----
+     The embed lives at the top of the library. When Clarion has published
+     posts, the newest one is promoted into the full-width "Latest Article"
+     hero and the rest fall into the grid; the legacy featured block is a
+     fallback that only shows when Clarion has none.
+     NOTE on selectors: :has() may NOT nest inside :not() inside :has() — that
+     is invalid CSS and the browser drops the whole rule. Everything below keys
+     off simple :has(.clarion-blog-card) / :has(.clarion-blog-post) instead. */
+
+  /* Collapse the host to nothing while loading/empty/errored (no card, no post)
+     so its margin doesn't leave a gap above the legacy featured fallback. */
+  .clarion-blog-hero-host {
     display: none;
   }
-  .clarion-embed-section:has(.clarion-blog-card),
-  .clarion-embed-section:has(.clarion-blog-post) {
+  .clarion-blog-hero-host:has(.clarion-blog-card),
+  .clarion-blog-hero-host:has(.clarion-blog-post) {
     display: block;
+  }
+
+  /* Legacy featured fallback: shown only when Clarion has no published posts.
+     The host renders no .clarion-blog-card until posts exist, so hide the
+     fallback as soon as a card appears. */
+  .container-wide:has(.clarion-blog-hero-host .clarion-blog-card) .clarion-legacy-featured {
+    display: none;
+  }
+
+  /* Promote the FIRST Clarion card into a full-width, 2-column hero that mirrors
+     the legacy featured card. Later cards keep the default grid-card styling.
+     The card's children are flat siblings (cover, title, meta, excerpt,
+     readmore), so on lg+ we lay the card out as an explicit 2-col grid: the
+     cover fills the left column across all rows (grid-row 1 / -1); the text
+     siblings auto-flow down the right column and are vertically centered by
+     pushing space above the title and below the read-more. Raw grid properties
+     (not @apply) keep specificity above the base .clarion-blog-card flex rule. */
+  .clarion-blog-list > .clarion-blog-card:first-child {
+    @apply sm:col-span-2 lg:col-span-3;
+  }
+  /* Plain @media (not Tailwind's @screen) — @screen is not expanded inside
+     @layer components in this build and the whole block gets dropped. lg = 1024px. */
+  @media (min-width: 1024px) {
+    /* The card's children are flat siblings (cover, title, meta, excerpt,
+       readmore). Lay them on an explicit grid: cover fills the left column
+       across every row; the four text siblings occupy fixed middle rows in the
+       right column, with 1fr spacer rows above and below so the text block is
+       vertically centered against the cover. */
+    .clarion-blog-list > .clarion-blog-card:first-child {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr auto auto auto auto 1fr;
+    }
+    .clarion-blog-list > .clarion-blog-card:first-child > .clarion-blog-cover {
+      grid-column: 1;
+      grid-row: 1 / -1;
+      height: 100%;
+      aspect-ratio: auto;
+    }
+    .clarion-blog-list > .clarion-blog-card:first-child > .clarion-blog-title {
+      grid-column: 2;
+      grid-row: 2;
+      align-self: end;
+      font-size: 1.5rem;
+      line-height: 2rem;
+    }
+    .clarion-blog-list > .clarion-blog-card:first-child > .clarion-blog-meta {
+      grid-column: 2;
+      grid-row: 3;
+    }
+    .clarion-blog-list > .clarion-blog-card:first-child > .clarion-blog-excerpt {
+      grid-column: 2;
+      grid-row: 4;
+      flex: none;
+      font-size: 1rem;
+      line-height: 1.5rem;
+    }
+    .clarion-blog-list > .clarion-blog-card:first-child > .clarion-blog-readmore {
+      grid-column: 2;
+      grid-row: 5;
+    }
+  }
+  @media (min-width: 1280px) {
+    .clarion-blog-list > .clarion-blog-card:first-child > .clarion-blog-title {
+      font-size: 1.875rem;
+      line-height: 2.25rem;
+    }
+  }
+
+  /* When a post detail is open, the embed replaces its whole list with a single
+     .clarion-blog-post — hide the legacy featured fallback then too. */
+  .container-wide:has(.clarion-blog-post) .clarion-legacy-featured {
+    display: none;
   }
 }
