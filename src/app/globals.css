@@ -206,13 +206,18 @@
     @apply cursor-pointer border-0 bg-transparent;
   }
 
-  /* Show the Clarion blog section only when it actually has posts (a list with
-     cards, or an opened post). Hidden while loading, empty, or errored — so the
-     original library below is what shows until Clarion has published posts. */
+  /* Show the Clarion blog section only when it actually has posts (a card grid,
+     or an opened post). Hidden while loading, empty, or errored — those states
+     render no card/post — so the original library below is what shows until
+     Clarion has published posts.
+     NOTE: keyed off .clarion-blog-card, not a nested :has() inside :not(). A
+     selector like :has(.list:not(:has(.empty))) is INVALID CSS (:has() may not
+     nest inside :not() inside :has()); the browser drops the whole rule, which
+     kept this section permanently hidden even when posts existed. */
   .clarion-embed-section {
     display: none;
   }
-  .clarion-embed-section:has(.clarion-blog-list:not(:has(.clarion-blog-empty))),
+  .clarion-embed-section:has(.clarion-blog-card),
   .clarion-embed-section:has(.clarion-blog-post) {
     display: block;
   }
