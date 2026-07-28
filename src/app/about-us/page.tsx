@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import { team } from '@/lib/site';
+import { extraStaff } from '@/lib/staff-feed';
 import PageHero from '@/components/PageHero';
 import SectionHeading from '@/components/SectionHeading';
 import FeatureGrid from '@/components/blocks/FeatureGrid';
@@ -39,7 +40,9 @@ function initials(name: string) {
     .join('');
 }
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  // Locally curated entries win; the portal only contributes people not listed here.
+  const roster = [...team, ...(await extraStaff('fort-worth-wellness', team))];
   return (
     <>
       <PageHero
@@ -121,7 +124,7 @@ export default function AboutPage() {
             intro="A dedicated, compassionate leadership team guiding every part of your care."
           />
           <div className="mx-auto mt-14 flex max-w-5xl flex-wrap justify-center gap-6">
-            {team.map((m, i) => (
+            {roster.map((m, i) => (
               <Reveal
                 key={m.name}
                 delay={i * 70}
