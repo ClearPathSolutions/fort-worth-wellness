@@ -3,9 +3,11 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getAllPosts, getPost, formatDate, getUnifiedPosts } from '@/lib/posts';
 import { getClarionPost } from '@/lib/clarion';
+import { breadcrumbSchema, pageMeta } from '@/lib/seo';
 import { site } from '@/lib/site';
 import PostImage from '@/components/PostImage';
 import CTABand from '@/components/CTABand';
+import JsonLd from '@/components/JsonLd';
 import Reveal from '@/components/ui/Reveal';
 import { ArrowRight, Clock, Phone } from '@/components/icons';
 
@@ -29,17 +31,14 @@ async function resolvePost(slug: string) {
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const post = await resolvePost(params.slug);
   if (!post) return { title: 'Article Not Found' };
-  return {
+  return pageMeta({
     title: post.title,
     description: post.excerpt,
-    openGraph: {
-      title: post.title,
-      description: post.excerpt,
-      type: 'article',
-      publishedTime: post.date,
-      images: post.image ? [{ url: post.image }] : undefined,
-    },
-  };
+    path: `/blog/${post.slug}/`,
+    image: post.image || undefined,
+    type: 'article',
+    publishedTime: post.date,
+  });
 }
 
 export default async function PostPage({ params }: { params: { slug: string } }) {
@@ -73,7 +72,9 @@ export default async function PostPage({ params }: { params: { slug: string } })
               <span className="text-white/30">/</span>
               <Link href="/blog" className="hover:text-white">Blog</Link>
             </nav>
-            <h1 className="text-3xl leading-[1.15] !text-white sm:text-4xl lg:text-[2.9rem]">{post.title}</h1>
+            {/* Capped to the article measure below it — the page frame is 1360 wide, and an
+                uncapped post title runs the full width and no longer lines up with the body. */}
+            <h1 className="max-w-3xl text-3xl leading-[1.15] !text-white sm:text-4xl lg:text-[2.9rem]">{post.title}</h1>
             <div className="mt-6 flex flex-wrap items-center gap-4 text-sm text-white/70">
               <span>By the {site.shortName} Clinical Team</span>
               <span className="h-1 w-1 rounded-full bg-white/30" />
@@ -95,6 +96,27 @@ export default async function PostPage({ params }: { params: { slug: string } })
       <section className="section bg-cream">
         <div className="container-wide grid gap-12 lg:grid-cols-[minmax(0,1fr)_320px]">
           <article className="mx-auto w-full max-w-prose lg:mx-0">
+            {/*
+              FW-30, partial. All 42 posts had zero in-body images. Each one already ships a
+              featured image, but it was only ever used as a 30%-opacity hero backdrop — so the
+              photo existed and was never actually seen. Promoting it to a real lead figure gives
+              every post one genuine image using assets already in the repo.
+
+              `alt=""` on purpose: the `h1` sits directly above and the image is illustrative, so
+              a description here would just repeat the headline to a screen reader.
+
+              Mid-article topical imagery is NOT solved by this and needs new assets — see the note
+              on FW-30 in issues.md for why that is worth holding until V0108 settles whether these
+              posts survive at all.
+            */}
+            {post.image && (
+              <figure className="relative mb-10 aspect-[16/10] overflow-hidden rounded-xl2 shadow-card">
+                {/* PostImage, not next/image: a Clarion post's cover is an arbitrary remote
+                    URL and next/image rejects unconfigured hosts at render time. It renders
+                    `fill`, hence the positioned, aspect-ratio parent. */}
+                <PostImage src={post.image} alt="" sizes="(max-width: 1024px) 100vw, 680px" />
+              </figure>
+            )}
             <div className="article-body" dangerouslySetInnerHTML={{ __html: post.html }} />
 
             {/* Medical disclaimer */}
@@ -107,7 +129,7 @@ export default async function PostPage({ params }: { params: { slug: string } })
               <a href={site.phone.href} className="btn-primary">
                 <Phone width={16} height={16} /> Call {site.phone.display}
               </a>
-              <Link href="/admissions" className="btn-ghost">
+              <Link href="/admissions/#verify" className="btn-ghost">
                 Verify insurance <ArrowRight width={16} height={16} />
               </Link>
             </div>
@@ -125,7 +147,7 @@ export default async function PostPage({ params }: { params: { slug: string } })
                 <a href={site.phone.href} className="btn-white mt-5 w-full">
                   <Phone width={16} height={16} /> {site.phone.display}
                 </a>
-                <Link href="/contact-us" className="btn-outline-light mt-3 w-full">
+                <Link href="/contact" className="btn-outline-light mt-3 w-full">
                   Send a message
                 </Link>
               </div>
@@ -164,9 +186,13 @@ export default async function PostPage({ params }: { params: { slug: string } })
         </section>
       )}
 
-      <CTABand image="/images/facility/dji0591.jpg" />
+      <CTABand image="/images/facility/lounge-tv-and-sofas.jpg" />
 
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <JsonLd data={jsonLd} />
+      {/* FW-27 — this page renders a Home / Blog trail but had no BreadcrumbList. */}
+      <JsonLd
+        data={breadcrumbSchema([{ label: 'Blog', href: '/blog' }, { label: post.title }])}
+      />
     </>
   );
 }

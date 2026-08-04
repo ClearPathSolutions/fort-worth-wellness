@@ -1,12 +1,17 @@
 import type { Metadata } from 'next';
+import JsonLd from '@/components/JsonLd';
+import { breadcrumbSchema, pageMeta } from '@/lib/seo';
 import Link from 'next/link';
 import { site } from '@/lib/site';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMeta({
   title: 'Privacy Policy',
   description: `How ${site.name} collects, uses, and protects your information.`,
-  robots: { index: true, follow: false },
-};
+  path: '/privacy-policy/',
+});
+
+// Bump this whenever the policy text below changes.
+const effectiveDate = 'August 3, 2026';
 
 const sections = [
   {
@@ -44,6 +49,10 @@ const sections = [
     h: 'Third-Party Services',
     p: [
       'Our website may use trusted third-party services (for example, mapping and basic analytics) that operate under their own privacy policies. Insurance carrier names and logos are shown for informational purposes only and do not imply endorsement.',
+      // FW-45 added analytics to the site, so this describes what it actually does. Kept to
+      // verifiable statements of fact — Vercel Analytics is cookieless by design and the only
+      // custom event sent is which form was submitted, never a field value.
+      'The analytics we use is privacy-preserving: it does not set tracking cookies, does not build a profile of you, and does not identify individual visitors. We measure which pages are visited and whether a contact form was completed — never the information you typed into it.',
     ],
   },
   {
@@ -55,7 +64,7 @@ const sections = [
   {
     h: 'Changes to This Policy',
     p: [
-      'We may update this Privacy Policy from time to time. Any changes will be posted on this page with an updated effective date.',
+      `We may update this Privacy Policy from time to time. Any changes will be posted on this page with an updated effective date. This version is effective ${effectiveDate}.`,
     ],
   },
 ];
@@ -65,6 +74,7 @@ export default function PrivacyPolicyPage() {
     <>
       <section className="bg-ink-900 pt-16">
         <div className="container-fw pb-14 pt-6">
+          <JsonLd data={breadcrumbSchema([{ label: 'Privacy Policy' }])} />
           <nav aria-label="Breadcrumb" className="mb-5 flex items-center gap-2 text-sm text-white/60">
             <Link href="/" className="hover:text-white">
               Home
@@ -77,6 +87,7 @@ export default function PrivacyPolicyPage() {
             Your trust matters to us. Here's how we handle the information you share with{' '}
             {site.name}.
           </p>
+          <p className="mt-4 text-sm text-white/55">Effective {effectiveDate}</p>
         </div>
       </section>
 
@@ -116,11 +127,6 @@ export default function PrivacyPolicyPage() {
                   </a>
                 </li>
               </ul>
-              <p className="mt-6 text-xs text-ink/45">
-                This policy is provided as a general template and should be reviewed by qualified
-                legal counsel to ensure it reflects your specific practices and regulatory
-                obligations.
-              </p>
             </div>
           </div>
         </div>

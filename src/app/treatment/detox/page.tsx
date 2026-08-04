@@ -1,4 +1,6 @@
 import type { Metadata } from 'next';
+import { pageMeta } from '@/lib/seo';
+import { faqGroup } from '@/lib/faqs';
 import { site } from '@/lib/site';
 import PageHero from '@/components/PageHero';
 import SectionHeading from '@/components/SectionHeading';
@@ -9,11 +11,12 @@ import CTABand from '@/components/CTABand';
 import Reveal from '@/components/ui/Reveal';
 import { Check, Shield } from '@/components/icons';
 
-export const metadata: Metadata = {
-  title: 'Medical Detox & Stabilization in Fort Worth, TX',
+export const metadata: Metadata = pageMeta({
+  title: 'Medical Detox & Stabilization',
   description:
     'Safe, medically supervised drug & alcohol detox with 24/7 clinical support and a smooth transition into residential mental health treatment.',
-};
+  path: '/treatment/detox/',
+});
 
 const glance = [
   '24/7 clinical supervision',
@@ -31,28 +34,6 @@ const substances = [
   'Prescription Medications',
 ];
 
-const faqs = [
-  {
-    q: 'How long does medical detox take?',
-    a: 'While every individual is different, most medical detox stays last between 5 and 10 days. Once our medical team determines you are physically stable, you transition into our residential program to begin your personalized mental health or dual diagnosis track.',
-  },
-  {
-    q: 'Why is medical detox necessary?',
-    a: 'For many, physical stabilization is the required first step toward psychological healing. Managing withdrawal safely ensures your brain chemistry is balanced, making you far more resilient and prepared for the intensive therapy that follows.',
-  },
-  {
-    q: 'Is my mental health addressed during detox?',
-    a: 'Yes. While the first days focus on physical safety and stabilization, our integrated clinical team begins coordinating your mental health care immediately. As you feel stronger, you gain access to counseling and emotional support to prepare you for deeper work.',
-  },
-  {
-    q: 'Do you accept insurance for detox?',
-    a: `We accept most major private insurance providers and offer a complimentary, confidential verification to help you understand your coverage before you arrive. Call us at ${site.phone.display} to learn more.`,
-  },
-  {
-    q: 'How do I get started?',
-    a: `Starting is simple. Call our confidential line at ${site.phone.display} or fill out our online form. We'll conduct a brief assessment and verify your insurance to get you or your loved one into care as quickly as possible.`,
-  },
-];
 
 export default function DetoxPage() {
   return (
@@ -61,7 +42,7 @@ export default function DetoxPage() {
         eyebrow="Safe, Clinical Stabilization"
         title="Medically supervised drug & alcohol detox"
         subtitle="Comfort-first withdrawal management and 24/7 clinical support in a private residential setting — the safe foundation for everything that follows."
-        image="/images/facility/dsc05028.jpg"
+        image="/images/facility/bedroom-semi-private-two-queens.jpg"
         crumbs={[{ label: 'Treatment', href: '/treatment' }, { label: 'Medical Detox' }]}
       />
 
@@ -94,7 +75,7 @@ export default function DetoxPage() {
         eyebrow="The First Step Toward Recovery"
         title="What is medical detoxification?"
         imageSide="left"
-        image="/images/facility/dsc05010.jpg"
+        image="/images/facility/nurses-station-staff-desks.jpg"
         imageAlt="A calm clinical care space at Fort Worth Wellness Center"
         body={
           <>
@@ -135,8 +116,8 @@ export default function DetoxPage() {
               </p>
               <ul className="mt-6 grid gap-3 sm:grid-cols-2">
                 {substances.map((s) => (
-                  <li key={s} className="flex items-center gap-2.5 text-ink/80">
-                    <Check width={16} height={16} className="shrink-0 text-steel" /> {s}
+                  <li key={s} className="flex items-start gap-2.5 text-ink/80">
+                    <Check width={16} height={16} className="mt-1 shrink-0 text-steel" /> {s}
                   </li>
                 ))}
               </ul>
@@ -150,13 +131,13 @@ export default function DetoxPage() {
         <div className="container-fw">
           <SectionHeading eyebrow="Questions & Answers" title="Frequently asked questions" />
           <div className="mt-12">
-            <FAQ items={faqs} />
+            <FAQ items={faqGroup('detox')} />
           </div>
         </div>
       </section>
 
       <InsuranceBand />
-      <CTABand image="/images/facility/dji0584.jpg" />
+      <CTABand image="/images/facility/bedroom-private-single-queen.jpg" />
     </>
   );
 }

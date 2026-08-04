@@ -1,17 +1,19 @@
 import type { Metadata } from 'next';
+import { pageMeta } from '@/lib/seo';
 import { site } from '@/lib/site';
 import PageHero from '@/components/PageHero';
-import SectionHeading from '@/components/SectionHeading';
 import LeadForm from '@/components/LeadForm';
 import InsuranceBand from '@/components/InsuranceBand';
+import CTABand from '@/components/CTABand';
 import Reveal from '@/components/ui/Reveal';
-import { ArrowRight, Clock, Mail, Phone, Pin } from '@/components/icons';
+import { ArrowRight, Clock, Mail, Phone, Pin, Star } from '@/components/icons';
 
-export const metadata: Metadata = {
-  title: 'Contact Us — Expert-Led Mental Health Care in Fort Worth',
+export const metadata: Metadata = pageMeta({
+  title: 'Contact Our Admissions Team',
   description:
     'Call or message the Fort Worth Wellness Center team for admissions guidance, insurance help, and 24/7 support starting mental health care.',
-};
+  path: '/contact/',
+});
 
 const cards = [
   {
@@ -31,7 +33,7 @@ const cards = [
   {
     icon: Pin,
     label: 'Find Us',
-    sub: `Minutes from Fort Worth, TX`,
+    sub: site.distanceFromFortWorth,
     value: site.address.full,
     href: site.address.mapUrl,
   },
@@ -44,7 +46,7 @@ export default function ContactPage() {
         eyebrow="Professional Support Is Only a Call Away"
         title="Contact Fort Worth Wellness Center"
         subtitle="Our admissions team is available 24/7 to provide immediate, confidential guidance and help you begin your journey at our Fort Worth center."
-        image="/images/facility/dsc09533.jpg"
+        image="/images/facility/pool-and-deck-wide-winter.jpg"
         crumbs={[{ label: 'Contact' }]}
         showActions={false}
       />
@@ -74,17 +76,19 @@ export default function ContactPage() {
 
           {/* Form + map */}
           <div className="mt-14 grid gap-8 lg:grid-cols-2">
+            {/* The form card used to sit inside a `bg-cream-deep p-2` box, which drew an 8px
+                frame in a third tone around it and made it visibly narrower than the panel
+                beside it — the pair read as mismatched rather than as two equal columns. The
+                two cards are within ~6px of each other in height on their own, so the wrapper
+                was buying nothing. */}
             <Reveal>
-              <div className="flex h-full items-center rounded-xl2 bg-cream-deep p-2">
-                <div className="w-full">
-                  <LeadForm
-                    variant="card"
-                    title="Send us a message"
-                    subtitle="Tell us how we can help and our team will reach out quickly — day or night."
-                    formKey="contact"
-                  />
-                </div>
-              </div>
+              <LeadForm
+                variant="card"
+                title="Send us a message"
+                subtitle="Tell us how we can help and our team will reach out quickly — day or night."
+                formKey="contact"
+                submitLabel="Send my message"
+              />
             </Reveal>
             <Reveal delay={100}>
               <div className="flex h-full min-h-[420px] flex-col overflow-hidden rounded-xl2 bg-white shadow-card ring-1 ring-ink/[0.06]">
@@ -132,16 +136,26 @@ export default function ContactPage() {
                     {site.address.city}, {site.address.state}
                   </p>
                   <p className="relative mt-1 text-sm text-white/60">
-                    A private wooded estate, minutes west of Fort Worth
+                    A private wooded property, {site.distanceFromFortWorth}
                   </p>
-                  <a
-                    href={site.address.mapUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn-white relative mt-6"
-                  >
-                    Get directions <ArrowRight width={16} height={16} />
-                  </a>
+                  <div className="relative mt-6 flex flex-col items-center gap-3 sm:flex-row">
+                    <a
+                      href={site.address.mapUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn-white"
+                    >
+                      Get directions <ArrowRight width={16} height={16} />
+                    </a>
+                    <a
+                      href={site.reviewUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn-outline-light"
+                    >
+                      <Star width={16} height={16} /> Leave a review
+                    </a>
+                  </div>
                 </div>
               </div>
             </Reveal>
@@ -150,6 +164,20 @@ export default function ContactPage() {
       </section>
 
       <InsuranceBand />
+      {/*
+        Contact was the only page that ended on the insurance band, which is `bg-ink` and sits
+        directly on the `bg-ink-900` footer — two near-identical navies meeting with no seam, so
+        the page trailed off instead of closing. Every other page ends on this band.
+        The copy is deliberately not the default "contact our admissions team" — that would be
+        telling someone on the contact page to make contact. It points at the one thing the form
+        above cannot do: reach a person immediately.
+      */}
+      <CTABand
+        eyebrow="No Wait, No Voicemail"
+        title="Want an answer right now?"
+        body="The form above reaches our admissions team quickly — but if you would rather not wait, the line below is answered by a person around the clock. No script, no pressure, and nothing you say is shared."
+        image="/images/facility/great-room-dining-and-lounge.jpg"
+      />
     </>
   );
 }

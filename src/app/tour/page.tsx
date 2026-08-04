@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
-import { gallery } from '@/lib/site';
+import { pageMeta } from '@/lib/seo';
+import { gallery, site } from '@/lib/site';
 import PageHero from '@/components/PageHero';
 import SectionHeading from '@/components/SectionHeading';
 import FeatureGrid from '@/components/blocks/FeatureGrid';
@@ -8,16 +9,17 @@ import InsuranceBand from '@/components/InsuranceBand';
 import CTABand from '@/components/CTABand';
 import { Compass, Heart, Users } from '@/components/icons';
 
-export const metadata: Metadata = {
-  title: 'Tour Our Private Fort Worth Mental Health Sanctuary',
+export const metadata: Metadata = pageMeta({
+  title: 'Tour Our Private Fort Worth Campus',
   description:
-    'Explore the Fort Worth Wellness campus — a calm, boutique residential estate with private suites, serene grounds, and high-end amenities designed for healing.',
-};
+    'Explore the Fort Worth Wellness campus — a calm, boutique residential setting with private suites, wooded grounds, and comfortable amenities designed for healing.',
+  path: '/tour/',
+});
 
 const standards = [
   { icon: Heart, title: 'Individualized Care', body: 'Every resident is treated as a unique individual, with hand-crafted plans that adapt to their specific psychiatric needs.' },
   { icon: Compass, title: 'Integrated Psychiatric Oversight', body: 'Our medical and clinical teams collaborate in real time, keeping behavioral therapies and medication protocols perfectly in sync.' },
-  { icon: Users, title: 'Intimate Resident Census', body: 'A small, intentional number of residents guarantees a high staff-to-client ratio — your progress is always a clinical priority.' },
+  { icon: Users, title: 'Intimate Resident Census', body: `Just ${site.beds} licensed beds — an intentionally small census that guarantees a high staff-to-client ratio, so your progress is always a clinical priority.` },
 ];
 
 export default function TourPage() {
@@ -26,8 +28,8 @@ export default function TourPage() {
       <PageHero
         eyebrow="Restorative Environment Meets Clinical Excellence"
         title="Tour our private sanctuary"
-        subtitle="Our Fort Worth estate offers a high-end, boutique atmosphere that stands in quiet contrast to traditional clinical settings — a place designed for privacy, comfort, and deep healing."
-        image="/images/facility/dji0577.jpg"
+        subtitle="Our property offers a calm, boutique atmosphere that stands in quiet contrast to traditional clinical settings — a place designed for privacy, comfort, and deep healing."
+        image="/images/facility/exterior-front-elevation-winter.jpg"
         crumbs={[{ label: 'Tour' }]}
       />
 
@@ -35,9 +37,9 @@ export default function TourPage() {
       <section className="section bg-cream">
         <div className="container-wide">
           <SectionHeading
-            eyebrow="A Modern, Luxury Sanctuary"
+            eyebrow="A Calm, Private Setting"
             title="Experience our restorative environment"
-            intro="Our boutique property features a low-capacity census and sophisticated residential suites — curated spaces that create a tranquil environment where you can focus entirely on your wellness. Tap any photo to explore."
+            intro="Our boutique property has a low-capacity census and comfortable residential suites — quiet spaces that create a calm environment where you can focus entirely on your wellness. Tap any photo to explore."
           />
           <div className="mt-12">
             <Gallery photos={gallery} />
@@ -55,7 +57,7 @@ export default function TourPage() {
       />
 
       <InsuranceBand />
-      <CTABand image="/images/facility/dji0584.jpg" />
+      <CTABand image="/images/facility/pool-and-deck-wide-winter.jpg" />
     </>
   );
 }

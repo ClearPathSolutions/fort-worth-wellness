@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { pageMeta } from '@/lib/seo';
 import Image from 'next/image';
 import Link from 'next/link';
 import { services } from '@/lib/site';
@@ -10,11 +11,12 @@ import CTABand from '@/components/CTABand';
 import Reveal from '@/components/ui/Reveal';
 import { ArrowRight, Brain, Compass, Heart, Leaf } from '@/components/icons';
 
-export const metadata: Metadata = {
-  title: 'Mental Health & Dual Diagnosis Programs in Fort Worth, TX',
+export const metadata: Metadata = pageMeta({
+  title: 'Mental Health & Detox Programs',
   description:
     'Explore residential mental health, dual diagnosis, detox, and aftercare programs at Fort Worth Wellness Center — therapy and 24/7 clinical support in a private setting.',
-};
+  path: '/treatment/',
+});
 
 const differentiators = [
   { icon: Heart, title: 'Your Peace is Our Priority', body: 'Everything we do is designed to lower stress and help you feel safe enough to focus entirely on your mental well-being.' },
@@ -30,7 +32,7 @@ export default function TreatmentPage() {
         eyebrow="Expert Care, Built Around You"
         title="Specialized mental health & dual diagnosis treatment"
         subtitle="A private, supportive space for those needing residential mental health care and integrated support for co-occurring addiction — focused on treating the whole person."
-        image="/images/facility/dsc09517.jpg"
+        image="/images/facility/group-room-folding-tables.jpg"
         crumbs={[{ label: 'Treatment' }]}
       />
 
@@ -98,7 +100,7 @@ export default function TreatmentPage() {
       />
 
       <InsuranceBand />
-      <CTABand image="/images/facility/dsc09533.jpg" />
+      <CTABand image="/images/facility/pool-and-deck-wide-winter.jpg" />
     </>
   );
 }

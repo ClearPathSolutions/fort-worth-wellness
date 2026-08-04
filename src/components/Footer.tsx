@@ -1,19 +1,21 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { services, site } from '@/lib/site';
-import { Mail, Phone, Pin } from '@/components/icons';
+import { Mail, Phone, Pin, Star } from '@/components/icons';
 
 const explore = [
-  { label: 'Who We Are', href: '/about-us' },
+  { label: 'Who We Are', href: '/about' },
   { label: 'Who We Help', href: '/who-we-help' },
   { label: 'Tour the Facility', href: '/tour' },
   { label: 'Admissions', href: '/admissions' },
   { label: 'Blog', href: '/blog' },
-  { label: 'Contact Us', href: '/contact-us' },
+  { label: 'FAQ', href: '/faq' },
+  { label: 'Contact Us', href: '/contact' },
 ];
 
 export default function Footer() {
-  const year = 2026;
+  // Evaluated at build time — refreshes on every deploy instead of going stale.
+  const year = new Date().getFullYear();
   return (
     <footer className="bg-ink-900 text-white/70">
       <div className="container-wide grid gap-12 py-16 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr] lg:py-20">
@@ -27,11 +29,21 @@ export default function Footer() {
             className="h-11 w-auto"
           />
           <p className="mt-5 text-sm leading-relaxed text-white/60">
-            {site.name} is a premier mental health center in {site.address.city}, Texas — offering
+            {site.name} is a residential mental health center in {site.address.city}, Texas — offering
             expert psychiatric care, dual diagnosis, and detox in a supportive residential setting
             built for lasting stability.
           </p>
-          <div className="mt-6 flex items-center gap-3">
+          {/*
+            FW-18. Now a link to Quality Check, per TJC's display guidance that the Gold Seal should
+            let a visitor verify the accreditation. An unverifiable seal is the weakest form of a
+            trust signal, and this one appears on all 57 pages.
+          */}
+          <a
+            href={site.jointCommission.qualityCheckUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-6 flex w-fit items-center gap-3 rounded-lg transition-opacity hover:opacity-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-sand-light"
+          >
             <Image
               src="/images/gold-seal.png"
               alt="The Joint Commission — National Quality Approval Gold Seal"
@@ -39,12 +51,17 @@ export default function Footer() {
               height={80}
               className="h-16 w-16 rounded-full bg-white/95 p-1"
             />
-            <p className="text-xs leading-snug text-white/50">
+            <span className="text-xs leading-snug text-white/50">
               Accredited by
               <br />
               The Joint Commission
-            </p>
-          </div>
+              <br />
+              <span className="text-white/35 underline">Verify on Quality Check</span>
+            </span>
+          </a>
+          <p className="mt-5 text-xs text-white/40">
+            Established {site.founded} · {site.beds} licensed beds
+          </p>
         </div>
 
         {/* Treatment */}
@@ -112,6 +129,17 @@ export default function Footer() {
                   <br />
                   {site.address.city}, {site.address.state} {site.address.zip}
                 </span>
+              </a>
+            </li>
+            <li>
+              <a
+                href={site.reviewUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-start gap-3 hover:text-white"
+              >
+                <Star width={18} height={18} className="mt-0.5 shrink-0 text-sand-light" />
+                <span>Leave us a Google review</span>
               </a>
             </li>
           </ul>

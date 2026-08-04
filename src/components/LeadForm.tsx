@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, type FormEvent } from 'react';
+import { track } from '@vercel/analytics';
 import { site } from '@/lib/site';
-import { ArrowRight, Check, Phone } from '@/components/icons';
+import { ArrowRight, Check, Phone, Star } from '@/components/icons';
 
 declare global {
   interface Window {
@@ -22,6 +23,8 @@ type Props = {
   requireDob?: boolean;
   /** identifies which form this is in Clarion (e.g. 'insurance-verification') */
   formKey?: string;
+  /** submit button label — the default suits a callback request, not every form (FW-34) */
+  submitLabel?: string;
 };
 
 const field =
@@ -33,6 +36,7 @@ export default function LeadForm({
   variant = 'card',
   requireDob = false,
   formKey = 'website-form',
+  submitLabel = 'Request my callback',
 }: Props) {
   const [status, setStatus] = useState<'idle' | 'sending' | 'ok' | 'error'>('idle');
   const [message, setMessage] = useState('');
@@ -72,7 +76,10 @@ export default function LeadForm({
       if (cf && typeof cf.submit === 'function') {
         try {
           const res = await cf.submit({ form_key: formKey, data });
-          delivered = !res || res.ok !== false;
+          // Must be a real, non-failing Response. The previous `!res || res.ok !== false`
+          // treated a nullish return as delivered, which would have skipped the server-route
+          // fallback if Clarion's script ever stopped returning one (FW-34).
+          delivered = !!res && res.ok !== false;
         } catch {
           delivered = false;
         }
@@ -81,20 +88,53 @@ export default function LeadForm({
       // Fallback: server route (also posts to Clarion's forms API) if the
       // client script didn't load or the capture didn't confirm.
       if (!delivered) {
-        const res = await fetch('/api/lead', {
+        // Trailing slash is required, not cosmetic: `trailingSlash: true` in next.config.mjs
+        // makes the slashless form 308 to this one, so omitting it costs an extra round trip on
+        // the most important interaction on the site.
+        const res = await fetch('/api/lead/', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ ...raw, formKey }),
         });
-        if (!res.ok) throw new Error('failed');
+        if (!res.ok) {
+          // FW-02: the route now reports real failures, and its message is more useful than a
+          // generic one — it distinguishes "Clarion rejected this, please call" from a 429.
+          // Never show the success screen on a failed submit: Clarion is the only destination,
+          // so a rejected lead is not captured anywhere and a thank-you would be a lie.
+          const detail = await res
+            .json()
+            .then((j: { error?: string }) => j?.error)
+            .catch(() => undefined);
+          throw new Error(detail || 'failed');
+        }
       }
+
+      /*
+        FW-45. Fires only on a submission Clarion actually accepted, so the number means
+        "a lead reached admissions" rather than "someone pressed a button".
+
+        `form` is the only property sent — never a field value. Two reasons: the payload is
+        intake data for someone seeking mental-health or substance-use treatment and does not
+        belong in an analytics vendor, and the whole point of choosing a cookieless platform was
+        to avoid holding anything that could identify them.
+
+        This is also what makes the verification conversion measurable at all: V0096 kept
+        verification inside `/admissions`, so page-level metrics cannot separate it from general
+        admissions traffic — but `form=insurance_verification` can.
+
+        Note: custom events need Vercel Web Analytics on a paid plan. On the free tier `track()`
+        is a harmless no-op, and pageview data still works.
+      */
+      track('lead_submitted', { form: formKey });
 
       setStatus('ok');
       form.reset();
-    } catch {
+    } catch (err) {
       setStatus('error');
+      const detail = err instanceof Error && err.message !== 'failed' ? err.message : null;
       setMessage(
-        `Something went wrong sending your request. Please call us directly at ${site.phone.display}.`,
+        detail ||
+          `Something went wrong sending your request. Please call us directly at ${site.phone.display}.`,
       );
     }
   }
@@ -113,6 +153,20 @@ export default function LeadForm({
         <a href={site.phone.href} className="btn-primary mt-6">
           <Phone width={16} height={16} /> Call {site.phone.display}
         </a>
+
+        {/* Review ask, scoped to people who have actually received care — it must
+            not read as asking a prospective patient to review us. */}
+        <p className="mt-6 border-t border-ink/10 pt-5 text-sm text-ink/50">
+          Already been part of our community?{' '}
+          <a
+            href={site.reviewUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 font-semibold text-steel hover:underline"
+          >
+            <Star width={13} height={13} /> Share your experience
+          </a>
+        </p>
       </div>
     );
   }
@@ -235,14 +289,33 @@ export default function LeadForm({
           </span>
         </label>
 
-        {status === 'error' && <p className="text-sm text-red-600">{message}</p>}
+        {/*
+          FW-02. This is the only thing standing between a failed submission and a lost lead, so
+          it gets `role="alert"` (a screen reader announces it instead of the visitor silently
+          waiting on a form that already finished) and a tappable phone number rather than a
+          number embedded in prose they would have to retype.
+        */}
+        {status === 'error' && (
+          <div
+            role="alert"
+            className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm leading-relaxed text-red-800"
+          >
+            <p>{message}</p>
+            <a
+              href={site.phone.href}
+              className="mt-2 inline-flex items-center gap-1.5 font-semibold text-red-900 underline"
+            >
+              <Phone width={14} height={14} /> Call {site.phone.display}
+            </a>
+          </div>
+        )}
 
         <button type="submit" disabled={status === 'sending'} className="btn-primary w-full disabled:opacity-70">
           {status === 'sending' ? (
             'Sending…'
           ) : (
             <>
-              Request my callback <ArrowRight width={16} height={16} />
+              {submitLabel} <ArrowRight width={16} height={16} />
             </>
           )}
         </button>

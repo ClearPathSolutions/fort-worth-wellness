@@ -20,7 +20,13 @@ type FeedPerson = {
   photoUrl: string | null;
 };
 
-export type ExtraMember = { name: string; role: string; image?: string | null };
+export type ExtraMember = {
+  name: string;
+  role: string;
+  /** Kept as its own field, not folded into `name`: the team card styles it separately. */
+  credential?: string;
+  image?: string | null;
+};
 
 /** Loose name key so "Dr. Jane Smith, LPC" and "Jane Smith" match. */
 function nameKey(raw: string): string {
@@ -49,8 +55,9 @@ export async function extraStaff(
     return (data.staff ?? [])
       .filter((p) => p.name && !already.has(nameKey(p.name)))
       .map((p) => ({
-        name: p.credentials ? `${p.name}, ${p.credentials}` : p.name,
+        name: p.name,
         role: p.title,
+        credential: p.credentials ?? undefined,
         image: p.photoUrl ?? null,
       }));
   } catch {

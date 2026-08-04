@@ -12,6 +12,10 @@ export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false); // mobile menu
   const [openGroup, setOpenGroup] = useState<string | null>(null); // mobile submenu
+  // Which desktop dropdown is open, by hover OR keyboard focus. The panel itself is still
+  // shown by CSS (`group-hover:` / `group-focus-within:`); this exists so `aria-expanded`
+  // reports the truth instead of being hardcoded.
+  const [desktopOpen, setDesktopOpen] = useState<string | null>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -75,18 +79,50 @@ export default function Header() {
               width={1804}
               height={461}
               priority
-              className="h-9 w-auto sm:h-10"
+              className="h-9 w-auto sm:h-10 lg:h-9 xl:h-10"
             />
           </Link>
 
-          {/* Desktop nav */}
-          <nav className="hidden items-center gap-1 xl:flex" aria-label="Primary">
+          {/*
+            Desktop nav — shown from `lg` (1024px), not `xl` (1280px).
+
+            At `xl` every laptop and tablet between 768px and 1279px got the phone treatment:
+            a logo on the far left, a call button and a burger on the far right, and ~700px of
+            empty header between them. That band covers a 13" MacBook at anything but full
+            width and an iPad in landscape, so it was not an edge case.
+
+            The row is tight at exactly 1024px, which is what the `lg:` type and padding steps
+            below are for: `text-sm` + `px-3` from 1024, back to `text-[15px]` + `px-4` at
+            1280. Measured at 1024 the whole row (logo + seven items + Call Now) leaves ~30px
+            of slack. If a nav item is ever added, raise this back to `xl` or drop an item —
+            do not let it wrap.
+          */}
+          <nav className="hidden items-center gap-0.5 lg:flex xl:gap-1" aria-label="Primary">
             {nav.map((item) =>
               item.children ? (
-                <div key={item.href} className="group relative">
+                /*
+                  FW-08. This was hover-only: `invisible` + `group-hover:visible`. Because
+                  `visibility: hidden` also removes descendants from the tab order, all four
+                  submenu links were unreachable by keyboard — tab went Treatment → Who We Help.
+                  Now `group-focus-within:` mirrors every `group-hover:` state, so tabbing into
+                  the group opens the panel exactly as hovering does, and the trigger advertises
+                  itself with `aria-haspopup` / `aria-expanded`.
+                */
+                <div
+                  key={item.href}
+                  className="group relative"
+                  onMouseEnter={() => setDesktopOpen(item.href)}
+                  onMouseLeave={() => setDesktopOpen(null)}
+                  // React's focus events bubble, so these fire for the submenu links too —
+                  // which is what keeps `aria-expanded` honest while tabbing through the panel.
+                  onFocus={() => setDesktopOpen(item.href)}
+                  onBlur={() => setDesktopOpen(null)}
+                >
                   <Link
                     href={item.href}
-                    className={`flex items-center gap-1 rounded-full px-4 py-2 text-[15px] font-medium transition-colors ${
+                    aria-haspopup="true"
+                    aria-expanded={desktopOpen === item.href}
+                    className={`flex items-center gap-1 whitespace-nowrap rounded-full px-2.5 py-2 text-sm font-medium transition-colors xl:px-4 xl:text-[15px] ${
                       isActive(item.href) ? 'text-steel' : 'text-ink/80 hover:text-steel'
                     }`}
                   >
@@ -94,17 +130,17 @@ export default function Header() {
                     <ChevronDown
                       width={15}
                       height={15}
-                      className="transition-transform duration-300 group-hover:rotate-180"
+                      className="transition-transform duration-300 group-hover:rotate-180 group-focus-within:rotate-180"
                     />
                   </Link>
                   {/* Dropdown */}
-                  <div className="invisible absolute left-1/2 top-full w-[320px] -translate-x-1/2 pt-3 opacity-0 transition-all duration-200 group-hover:visible group-hover:opacity-100">
+                  <div className="invisible absolute left-1/2 top-full w-[320px] -translate-x-1/2 pt-3 opacity-0 transition-all duration-200 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
                     <div className="card overflow-hidden p-2">
                       {item.children.map((c) => (
                         <Link
                           key={c.href}
                           href={c.href}
-                          className="block rounded-lg px-4 py-3 transition-colors hover:bg-steel-50"
+                          className="block rounded-lg px-4 py-3 transition-colors hover:bg-steel-50 focus-visible:bg-steel-50"
                         >
                           <span className="block text-sm font-semibold text-ink">{c.label}</span>
                           {c.blurb && (
@@ -121,7 +157,7 @@ export default function Header() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`rounded-full px-4 py-2 text-[15px] font-medium transition-colors ${
+                  className={`whitespace-nowrap rounded-full px-2.5 py-2 text-sm font-medium transition-colors xl:px-4 xl:text-[15px] ${
                     isActive(item.href) ? 'text-steel' : 'text-ink/80 hover:text-steel'
                   }`}
                 >
@@ -133,10 +169,10 @@ export default function Header() {
 
           {/* Right-side actions */}
           <div className="flex items-center gap-2">
-            <Link href="/admissions" className="btn-primary hidden h-11 xl:inline-flex">
+            <Link href="/admissions/#verify" className="btn-primary hidden h-11 whitespace-nowrap xl:inline-flex">
               Verify Insurance
             </Link>
-            <a href={site.phone.href} className="btn-gold hidden h-11 sm:inline-flex xl:hidden">
+            <a href={site.phone.href} className="btn-gold hidden h-11 whitespace-nowrap sm:inline-flex xl:hidden">
               <Phone width={16} height={16} /> Call Now
             </a>
 
@@ -153,7 +189,7 @@ export default function Header() {
             <button
               type="button"
               onClick={() => setOpen((v) => !v)}
-              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-ink/15 text-ink transition-colors hover:border-steel hover:text-steel xl:hidden"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-ink/15 text-ink transition-colors hover:border-steel hover:text-steel lg:hidden"
               aria-label={open ? 'Close menu' : 'Open menu'}
               aria-expanded={open}
               aria-controls="mobile-menu"
@@ -164,10 +200,32 @@ export default function Header() {
         </div>
       </header>
 
-      {/* Mobile menu overlay */}
+      {/*
+        Mobile menu overlay.
+
+        FW-07. This used to rely on `pointer-events-none` plus `translate-x-full` to "hide" the
+        panel, neither of which removes anything from the tab order — so tab stops 5 through 14+
+        landed on ~15 invisible links inside a container marked `aria-hidden="true"`. That is a
+        WCAG 2.4.3 and 4.1.2 failure at once, and it also meant screen-reader users could focus
+        content their reader was told to ignore.
+
+        The fix is `visibility: hidden` (`invisible`), which drops the whole subtree from the tab
+        order AND from the accessibility tree, keyed off the same `open` flag as `aria-hidden` so
+        the two cannot drift apart.
+
+        `inert` would be the more expressive tool and was tried first — but React 18 does not
+        recognise the attribute and silently drops it from the rendered HTML (it ships in React
+        19), so it bought nothing here. Worth adding on the React 19 upgrade; until then
+        `invisible` is what is actually doing the work, so do not remove it.
+
+        The `transition-[visibility]` + `delay-300` on close exists so the panel still slides out
+        over 300ms before visibility flips, instead of vanishing mid-animation.
+      */}
       <div
         id="mobile-menu"
-        className={`fixed inset-0 z-40 xl:hidden ${open ? '' : 'pointer-events-none'}`}
+        className={`fixed inset-0 z-40 transition-[visibility] duration-0 lg:hidden ${
+          open ? 'visible delay-0' : 'invisible pointer-events-none delay-300'
+        }`}
         aria-hidden={!open}
       >
         {/* Scrim */}
@@ -263,7 +321,7 @@ export default function Header() {
 
           {/* Sticky footer CTAs */}
           <div className="shrink-0 space-y-3 border-t border-ink/10 bg-white/60 px-5 py-4">
-            <Link href="/admissions" className="btn-primary w-full">
+            <Link href="/admissions/#verify" className="btn-primary w-full">
               Verify Insurance <ArrowRight width={16} height={16} />
             </Link>
             <a href={site.phone.href} className="btn-gold w-full">

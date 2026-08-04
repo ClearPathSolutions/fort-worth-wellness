@@ -1,5 +1,7 @@
+import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
+import { pageMeta } from '@/lib/seo';
 import { services, site } from '@/lib/site';
 import CTABand from '@/components/CTABand';
 import InsuranceBand from '@/components/InsuranceBand';
@@ -20,6 +22,14 @@ import {
   Sparkle,
   Users,
 } from '@/components/icons';
+
+// Absolute title so the homepage leads with the brand instead of ending with it.
+export const metadata: Metadata = pageMeta({
+  title: `${site.name} | Mental Health & Detox Care`,
+  description: site.description,
+  path: '/',
+  absoluteTitle: true,
+});
 
 const trustBadges = [
   { icon: Shield, label: 'Joint Commission Accredited' },
@@ -54,6 +64,18 @@ const holisticTherapies = ['Family Therapy', 'Equine Therapy', 'Art & Music Ther
 
 const whoWeHelp = ['Professionals', 'Veterans', 'First Responders', 'Women', 'Men', 'Young Adults', 'College Students'];
 
+// Wording matches what these are already called elsewhere on the site — the amenities list on
+// /treatment/mental-health-residential and the tour gallery captions — so the homepage summary
+// and the pages it links to describe the same campus in the same words.
+const campusFeatures = [
+  'Private & semi-private suites',
+  'Home-cooked meals',
+  'Outdoor pool & patio',
+  'Wooded grounds & fire pit',
+  'Communal dining room',
+  'On-site laundry service',
+];
+
 const leadBullets = [
   'No pressure or obligation when you call',
   'Your information stays strictly confidential',
@@ -68,12 +90,25 @@ export default function HomePage() {
       {/* ================= HERO ================= */}
       <section className="relative isolate overflow-hidden bg-ink-900">
         <Image
-          src="/images/facility/dji0577.jpg"
-          alt="Fort Worth Wellness Center's private wooded estate in Weatherford, Texas"
+          src="/images/facility/exterior-front-elevation-winter.jpg"
+          alt="Fort Worth Wellness Center's wooded grounds in Weatherford, Texas"
           fill
           priority
           sizes="100vw"
           className="object-cover"
+        />
+
+        {/*
+          FW-10. Commit 42ada5c deliberately dropped the full-image dark overlay, which is why
+          this leaves the photograph itself alone. Instead of dimming the whole hero, a gradient
+          scrim sits only behind the text column — strongest at the left edge where the copy is,
+          fading to nothing well before the right of the frame. The building and sky stay bright;
+          the gold eyebrow (the weakest element, gold-on-sky) and the white/80 subtitle gain a
+          consistent dark backing regardless of what is behind them in the photo.
+        */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 bg-gradient-to-r from-ink-900/85 via-ink-900/55 to-transparent lg:via-ink-900/40"
         />
 
         <div className="container-fw relative">
@@ -84,7 +119,7 @@ export default function HomePage() {
                 A Private Sanctuary for Wellness in Texas
               </p>
               <h1 className="mt-5 text-4xl leading-[1.06] !text-white sm:text-5xl lg:text-[3.6rem]">
-                Premier Mental Health &amp; Wellness Care in Fort Worth
+                Residential Mental Health &amp; Wellness Care in Fort Worth
               </h1>
               <p className="mt-6 max-w-xl text-lg leading-relaxed text-white/80">
                 Expert psychiatric care, private residential support, and integrated dual diagnosis
@@ -94,7 +129,7 @@ export default function HomePage() {
                 <a href={site.phone.href} className="btn-white">
                   <Phone width={17} height={17} /> Call {site.phone.display}
                 </a>
-                <Link href="/admissions" className="btn-gold">
+                <Link href="/admissions/#verify" className="btn-gold">
                   Verify Insurance <ArrowRight width={16} height={16} />
                 </Link>
               </div>
@@ -121,15 +156,20 @@ export default function HomePage() {
           <Reveal className="relative order-2 lg:order-1">
             <div className="relative aspect-[5/6] overflow-hidden rounded-xl2 shadow-soft sm:aspect-[4/3] lg:aspect-[5/6]">
               <Image
-                src="/images/facility/dsc05028.jpg"
-                alt="A calm, home-like private resident suite at Fort Worth Wellness Center"
+                src="/images/facility/bedroom-bright-two-beds-main-house.jpg"
+                alt="A bright, calm semi-private bedroom at Fort Worth Wellness Center"
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover"
               />
             </div>
-            {/* Floating accolade card */}
-            <div className="absolute -bottom-6 -right-2 hidden max-w-[220px] items-center gap-3 rounded-xl2 bg-white p-4 shadow-lift ring-1 ring-ink/[0.06] sm:flex lg:-right-6">
+            {/* Floating accolade card — links to Quality Check, same reasoning as the footer (FW-18). */}
+            <a
+              href={site.jointCommission.qualityCheckUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="absolute -bottom-6 -right-2 hidden max-w-[220px] items-center gap-3 rounded-xl2 bg-white p-4 shadow-lift ring-1 ring-ink/[0.06] transition-shadow hover:shadow-card focus:outline-none focus-visible:ring-2 focus-visible:ring-steel sm:flex lg:-right-6"
+            >
               <Image
                 src="/images/gold-seal.png"
                 alt="The Joint Commission Gold Seal of Approval"
@@ -137,10 +177,11 @@ export default function HomePage() {
                 height={56}
                 className="h-14 w-14"
               />
-              <p className="text-sm font-medium leading-snug text-ink">
+              <span className="text-sm font-medium leading-snug text-ink">
                 Accredited by The Joint Commission
-              </p>
-            </div>
+                <span className="mt-0.5 block text-xs font-normal text-ink/50 underline">Verify</span>
+              </span>
+            </a>
           </Reveal>
 
           <div className="order-1 lg:order-2">
@@ -158,9 +199,9 @@ export default function HomePage() {
               </p>
               <div className="mt-8 grid grid-cols-3 gap-4">
                 {[
-                  { n: 'Boutique', l: 'Low-capacity, high staff-to-client ratio' },
+                  { n: String(site.beds), l: 'Licensed beds — a deliberately small census' },
                   { n: '24/7', l: 'On-site clinical & psychiatric care' },
-                  { n: 'Acres', l: 'Private, wooded residential campus' },
+                  { n: String(site.founded), l: 'Purpose-built, newly opened campus' },
                 ].map((s) => (
                   <div key={s.l} className="rounded-xl2 bg-white p-4 text-center shadow-card ring-1 ring-ink/[0.05]">
                     <p className="font-serif text-xl text-steel">{s.n}</p>
@@ -168,7 +209,7 @@ export default function HomePage() {
                   </div>
                 ))}
               </div>
-              <Link href="/about-us" className="btn-ghost mt-8">
+              <Link href="/about" className="btn-ghost mt-8">
                 More about us <ArrowRight width={16} height={16} />
               </Link>
             </Reveal>
@@ -264,8 +305,8 @@ export default function HomePage() {
                     </p>
                     <ul className="space-y-2.5">
                       {mhConditions.map((c) => (
-                        <li key={c} className="flex items-center gap-2.5 text-white/80">
-                          <Check width={16} height={16} className="shrink-0 text-steel-light" /> {c}
+                        <li key={c} className="flex items-start gap-2.5 text-white/80">
+                          <Check width={16} height={16} className="mt-1 shrink-0 text-steel-light" /> {c}
                         </li>
                       ))}
                     </ul>
@@ -276,8 +317,8 @@ export default function HomePage() {
                     </p>
                     <ul className="space-y-2.5">
                       {substances.map((c) => (
-                        <li key={c} className="flex items-center gap-2.5 text-white/80">
-                          <Check width={16} height={16} className="shrink-0 text-steel-light" /> {c}
+                        <li key={c} className="flex items-start gap-2.5 text-white/80">
+                          <Check width={16} height={16} className="mt-1 shrink-0 text-steel-light" /> {c}
                         </li>
                       ))}
                     </ul>
@@ -295,8 +336,8 @@ export default function HomePage() {
                     </p>
                     <ul className="space-y-2.5">
                       {clinicalTherapies.map((c) => (
-                        <li key={c} className="flex items-center gap-2.5 text-white/80">
-                          <Check width={16} height={16} className="shrink-0 text-steel-light" /> {c}
+                        <li key={c} className="flex items-start gap-2.5 text-white/80">
+                          <Check width={16} height={16} className="mt-1 shrink-0 text-steel-light" /> {c}
                         </li>
                       ))}
                     </ul>
@@ -307,8 +348,8 @@ export default function HomePage() {
                     </p>
                     <ul className="space-y-2.5">
                       {holisticTherapies.map((c) => (
-                        <li key={c} className="flex items-center gap-2.5 text-white/80">
-                          <Check width={16} height={16} className="shrink-0 text-steel-light" /> {c}
+                        <li key={c} className="flex items-start gap-2.5 text-white/80">
+                          <Check width={16} height={16} className="mt-1 shrink-0 text-steel-light" /> {c}
                         </li>
                       ))}
                     </ul>
@@ -352,21 +393,35 @@ export default function HomePage() {
       {/* ================= FACILITY PREVIEW ================= */}
       <section className="section bg-cream-deep">
         <div className="container-wide">
+          {/*
+            FW-12 top-aligned this so the heading started level with the first photo, because
+            `lg:items-center` had parked a large empty region above it. That traded the gap from
+            the top of the text column to the bottom of it: the mosaic ran roughly twice the
+            height of a column holding an eyebrow, a heading, one paragraph and one button, so
+            most of the right-hand half of the section was empty.
+
+            Fixed from both ends rather than by moving the void around. The text column now
+            carries a short campus list (the same amenities named on the residential page and in
+            the tour captions), and the two lower tiles are `aspect-[3/2]` instead of
+            `aspect-[4/3]`, which takes ~50px off the mosaic. What remains is a small difference,
+            so `lg:items-center` is back and it splits evenly above and below instead of hanging
+            off one end.
+          */}
           <div className="grid gap-10 lg:grid-cols-[1fr_1fr] lg:items-center lg:gap-16">
             <div className="grid grid-cols-2 gap-3 sm:gap-4">
               <Reveal className="col-span-2">
                 <div className="relative aspect-[16/9] overflow-hidden rounded-xl2 shadow-card">
-                  <Image src="/images/facility/dsc09533.jpg" alt="Resort-style pool and patio" fill sizes="(max-width:1024px) 100vw, 50vw" className="object-cover" />
+                  <Image src="/images/facility/pool-and-deck-wide-winter.jpg" alt="Outdoor pool and patio" fill sizes="(max-width:1024px) 100vw, 50vw" className="object-cover" />
                 </div>
               </Reveal>
               <Reveal delay={80}>
-                <div className="relative aspect-square overflow-hidden rounded-xl2 shadow-card">
-                  <Image src="/images/facility/dsc04980.jpg" alt="Chef's kitchen and dining" fill sizes="(max-width:1024px) 50vw, 25vw" className="object-cover" />
+                <div className="relative aspect-[3/2] overflow-hidden rounded-xl2 shadow-card">
+                  <Image src="/images/facility/kitchen-commercial-dish-and-prep.jpg" alt="Chef's kitchen and dining" fill sizes="(max-width:1024px) 50vw, 25vw" className="object-cover" />
                 </div>
               </Reveal>
               <Reveal delay={140}>
-                <div className="relative aspect-square overflow-hidden rounded-xl2 shadow-card">
-                  <Image src="/images/facility/dsc05075.jpg" alt="The Cedar Creek Barn" fill sizes="(max-width:1024px) 50vw, 25vw" className="object-cover" />
+                <div className="relative aspect-[3/2] overflow-hidden rounded-xl2 shadow-card">
+                  <Image src="/images/facility/barn-exterior-and-gravel-court-summer.jpg" alt="The Cedar Creek Barn" fill sizes="(max-width:1024px) 50vw, 25vw" className="object-cover" />
                 </div>
               </Reveal>
             </div>
@@ -375,10 +430,18 @@ export default function HomePage() {
                 align="left"
                 eyebrow="A Modern, Private Setting"
                 title="Explore our facility"
-                intro="Our campus in North Texas offers a quiet, safe place to focus entirely on your mental health — from comfortable private suites to beautiful outdoor grounds, chef-prepared nutrition, and serene spaces designed to help you heal."
+                intro="Our campus in North Texas offers a quiet, safe place to focus entirely on your mental health — from comfortable private suites to wooded outdoor grounds, home-cooked meals, and quiet spaces designed to help you heal."
               />
               <Reveal className="mt-8" delay={80}>
-                <Link href="/tour" className="btn-primary">
+                <ul className="grid gap-x-6 gap-y-3 sm:grid-cols-2">
+                  {campusFeatures.map((f) => (
+                    <li key={f} className="flex items-start gap-2.5">
+                      <Check width={16} height={16} className="mt-1 shrink-0 text-steel" />
+                      <span className="text-ink/75">{f}</span>
+                    </li>
+                  ))}
+                </ul>
+                <Link href="/tour" className="btn-primary mt-8">
                   Take the tour <ArrowRight width={16} height={16} />
                 </Link>
               </Reveal>

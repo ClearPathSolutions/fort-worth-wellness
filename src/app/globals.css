@@ -4,7 +4,10 @@
 
 @layer base {
   :root {
-    --header-h: 88px;
+    /* Height of the sticky header only (h-[72px]). The utility bar above it scrolls away,
+       so it must not be counted here — including it over-offset every in-page anchor by
+       16px (FW-35). */
+    --header-h: 72px;
   }
 
   html {
@@ -43,12 +46,19 @@
 }
 
 @layer components {
-  /* Consistent horizontal rhythm — the ONE gutter used site-wide so nothing
-     hangs or looks uneven between sections. Content caps at a comfortable width
-     while section backgrounds stay full-bleed (no desktop dead space). */
-  .container-fw {
-    @apply mx-auto w-full max-w-content px-5 sm:px-8 lg:px-10;
-  }
+  /* ONE page frame — the same max-width AND the same gutter everywhere, so the header,
+     the hero, every section and the footer share an identical left/right edge at every
+     viewport. Section backgrounds stay full-bleed (no desktop dead space).
+
+     These were two different caps (1200 vs 1360). Because the frame centres itself, the
+     narrower one silently indented everything inside it: at >=1360px the hero headline,
+     the trust strip and the CTA band sat 80px further in than the logo directly above
+     them and the sections directly below — a visible left-edge zigzag down every page.
+
+     Both class names are kept (they are used across ~30 files) and are now identical.
+     Anything that needs a narrower measure — prose, FAQ, forms, headings — caps itself
+     with an inner `max-w-*`, which does not move the frame. */
+  .container-fw,
   .container-wide {
     @apply mx-auto w-full max-w-wide px-5 sm:px-8 lg:px-10;
   }
@@ -135,5 +145,29 @@
   .article-body blockquote {
     @apply my-8 border-l-4 border-sand bg-cream-deep/60 py-3 pl-6 pr-4 font-serif text-lg italic text-ink/80;
   }
+}
 
+/* ===========================================================================
+   ClarionLabs chat launcher — a style for markup we do NOT author.
+   ===========================================================================
+   Lives OUTSIDE `@layer components` on purpose (FW-44): Tailwind tree-shakes
+   anything inside a layer against the content scan, and this class is injected at
+   runtime by Clarion's script, so it appears nowhere in `src/` and would be purged.
+   Plain top-level CSS is emitted verbatim, which is what third-party hooks need.
+
+   The ~80 lines of `.clarion-blog-*` rules that used to sit here are gone with the
+   client-side embed they styled (main: "unify Clarion + legacy posts into one
+   server-rendered list"). That markup is ours now and carries Tailwind classes.
+
+   This rule is NOT part of that and is kept deliberately. The chat widget still
+   loads in `layout.tsx` and `MobileCallBar` still renders, so FW-06 still applies:
+   the widget pins itself to `bottom: 20px`, which lands it on top of the right-hand
+   "Verify" button on phones. It injects its stylesheet at runtime and therefore wins
+   on source order, so `!important` is the only reliable lever. Scoped below `md`,
+   which is exactly where MobileCallBar is visible.
+   ========================================================================= */
+@media (max-width: 767px) {
+  .clarion-chat {
+    bottom: calc(78px + env(safe-area-inset-bottom)) !important;
+  }
 }

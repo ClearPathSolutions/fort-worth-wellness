@@ -1,51 +1,113 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { GalleryPhoto } from '@/lib/site';
-import { X } from '@/components/icons';
+import { ArrowRight, X } from '@/components/icons';
 
 export default function Gallery({ photos }: { photos: GalleryPhoto[] }) {
   const [active, setActive] = useState<number | null>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
+  // Which tile opened the lightbox, so focus can be handed back to it on close (WCAG 2.4.3).
+  const openerRef = useRef<HTMLButtonElement | null>(null);
+
+  const close = useCallback(() => setActive(null), []);
+  const step = useCallback(
+    (dir: 1 | -1) =>
+      setActive((a) => (a === null ? a : (a + dir + photos.length) % photos.length)),
+    [photos.length],
+  );
 
   useEffect(() => {
     if (active === null) return;
+
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setActive(null);
-      if (e.key === 'ArrowRight') setActive((a) => (a === null ? a : (a + 1) % photos.length));
-      if (e.key === 'ArrowLeft')
-        setActive((a) => (a === null ? a : (a - 1 + photos.length) % photos.length));
+      if (e.key === 'Escape') {
+        close();
+        return;
+      }
+      if (e.key === 'ArrowRight') {
+        step(1);
+        return;
+      }
+      if (e.key === 'ArrowLeft') {
+        step(-1);
+        return;
+      }
+      // Focus trap. Without it, tabbing walks out of the lightbox and into the page
+      // underneath while the overlay still covers it (FW-09).
+      if (e.key === 'Tab') {
+        const focusables = dialogRef.current?.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), [href], [tabindex]:not([tabindex="-1"])',
+        );
+        if (!focusables || focusables.length === 0) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
     };
-    const prev = document.body.style.overflow;
+
+    const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     window.addEventListener('keydown', onKey);
+    // Move focus into the dialog rather than leaving it on the trigger behind the overlay.
+    closeRef.current?.focus();
+
     return () => {
-      document.body.style.overflow = prev;
+      document.body.style.overflow = prevOverflow;
       window.removeEventListener('keydown', onKey);
     };
-  }, [active, photos.length]);
+  }, [active, close, step]);
+
+  // Restore focus to the tile that opened the lightbox once it closes.
+  useEffect(() => {
+    if (active === null && openerRef.current) {
+      openerRef.current.focus();
+      openerRef.current = null;
+    }
+  }, [active]);
+
+  const current = active === null ? null : photos[active];
 
   return (
     <>
-      {/* Balanced 12-tile mosaic — every row stays full, nothing hangs */}
+      {/*
+        FW-11. The two `wide` tiles span two columns but every tile kept `aspect-[4/3]`, so a
+        wide tile rendered about twice as tall as its row-mates and left ~250px of dead space
+        beneath the short ones. `md:row-span-2` gives the wide tiles the two grid rows their
+        height actually fills, which is what the original "every row stays full" comment claimed
+        but did not do.
+      */}
       <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
         {photos.map((p, i) => {
-          // First & sixth tiles span 2 cols on desktop for rhythm
           const wide = i === 0 || i === 5;
           return (
             <button
               key={p.src}
               type="button"
-              onClick={() => setActive(i)}
-              className={`group relative aspect-[4/3] overflow-hidden rounded-xl2 shadow-card ring-1 ring-ink/[0.06] ${
-                wide ? 'md:col-span-2' : ''
+              onClick={(e) => {
+                openerRef.current = e.currentTarget;
+                setActive(i);
+              }}
+              aria-haspopup="dialog"
+              className={`group relative aspect-[4/3] overflow-hidden rounded-xl2 shadow-card ring-1 ring-ink/[0.06] focus:outline-none focus-visible:ring-2 focus-visible:ring-steel focus-visible:ring-offset-2 ${
+                wide ? 'md:col-span-2 md:row-span-2 md:aspect-auto' : ''
               }`}
             >
               <Image
                 src={p.src}
-                alt={p.caption}
+                // Empty alt on purpose: the visible caption below is the button's accessible
+                // name, and duplicating it here made screen readers announce it twice.
+                alt=""
                 fill
-                sizes="(max-width: 768px) 50vw, 25vw"
+                sizes="(max-width: 768px) 50vw, 50vw"
                 className="object-cover transition-transform duration-700 ease-smooth group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-transparent to-transparent opacity-70 transition-opacity group-hover:opacity-90" />
@@ -58,32 +120,66 @@ export default function Gallery({ photos }: { photos: GalleryPhoto[] }) {
       </div>
 
       {/* Lightbox */}
-      {active !== null && (
+      {current && active !== null && (
         <div
+          ref={dialogRef}
+          role="dialog"
+          aria-modal="true"
+          aria-label={`Facility photo ${active + 1} of ${photos.length}: ${current.caption}`}
           className="fixed inset-0 z-[60] flex items-center justify-center bg-ink-900/95 p-4"
-          onClick={() => setActive(null)}
+          onClick={close}
         >
           <button
+            ref={closeRef}
             type="button"
-            onClick={() => setActive(null)}
-            className="absolute right-4 top-4 inline-flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20"
-            aria-label="Close"
+            onClick={close}
+            className="absolute right-4 top-4 inline-flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+            aria-label="Close photo viewer"
           >
             <X width={22} height={22} />
           </button>
+
+          {/*
+            Previous / next were arrow-keys only, which on a touch device meant closing and
+            reopening the lightbox for every photo — on the page whose entire purpose is
+            browsing them (FW-09).
+          */}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              step(-1);
+            }}
+            className="absolute left-3 top-1/2 inline-flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-white sm:left-6"
+            aria-label="Previous photo"
+          >
+            <ArrowRight width={22} height={22} className="rotate-180" />
+          </button>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              step(1);
+            }}
+            className="absolute right-3 top-1/2 inline-flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-white sm:right-6"
+            aria-label="Next photo"
+          >
+            <ArrowRight width={22} height={22} />
+          </button>
+
           <figure
-            className="relative max-h-[85vh] w-full max-w-5xl"
+            className="relative max-h-[85vh] w-full max-w-5xl px-12 sm:px-16"
             onClick={(e) => e.stopPropagation()}
           >
             <Image
-              src={photos[active].src}
-              alt={photos[active].caption}
-              width={photos[active].w}
-              height={photos[active].h}
+              src={current.src}
+              alt={current.caption}
+              width={current.w}
+              height={current.h}
               className="mx-auto max-h-[80vh] w-auto rounded-lg object-contain"
             />
             <figcaption className="mt-4 text-center text-sm text-white/80">
-              {photos[active].caption} · {active + 1} / {photos.length}
+              {current.caption} · {active + 1} / {photos.length}
             </figcaption>
           </figure>
         </div>

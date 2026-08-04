@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
+import { pageMeta } from '@/lib/seo';
 import Image from 'next/image';
-import { team } from '@/lib/site';
+import PostImage from '@/components/PostImage';
+import { team, teamScopeNote } from '@/lib/site';
 import { extraStaff } from '@/lib/staff-feed';
 import PageHero from '@/components/PageHero';
 import SectionHeading from '@/components/SectionHeading';
@@ -10,11 +12,12 @@ import CTABand from '@/components/CTABand';
 import Reveal from '@/components/ui/Reveal';
 import { Compass, Heart, Home as HomeIcon, Leaf, Shield, Sparkle, Users } from '@/components/icons';
 
-export const metadata: Metadata = {
-  title: 'About Us — Our Mission & Approach to Care',
+export const metadata: Metadata = pageMeta({
+  title: 'Our Mission & Approach to Care',
   description:
     'Learn about Fort Worth Wellness Center — our mission, values, and commitment to compassionate, personalized mental health and dual diagnosis treatment in Texas.',
-};
+  path: '/about/',
+});
 
 const values = [
   { icon: Users, title: 'Real Relationships', body: 'We get to know the person, not just the diagnosis.' },
@@ -28,7 +31,7 @@ const whyChoose = [
   { icon: HomeIcon, title: 'Home Away From Home', body: 'Our facility sits on private acres — a quiet, home-like space to relax and focus on getting better.' },
   { icon: Sparkle, title: 'Modern Therapy Options', body: 'We blend traditional talk therapy with hands-on approaches like art and equine therapy.' },
   { icon: Users, title: 'Experienced, Kind Staff', body: 'Our team has decades of experience and provides a judgment-free environment from day one.' },
-  { icon: Heart, title: 'High-End Amenities', body: 'Semi-private rooms, modern living areas, and plenty of space to breathe.' },
+  { icon: Heart, title: 'Comfortable Amenities', body: 'Semi-private rooms, modern living areas, and plenty of space to breathe.' },
   { icon: Shield, title: 'Support for the Long Haul', body: "When your program ends, we don't say goodbye — ongoing aftercare keeps you steady at home." },
 ];
 
@@ -49,7 +52,7 @@ export default async function AboutPage() {
         eyebrow="We Are Your Partners in Healing"
         title="Get to know us"
         subtitle="We built Fort Worth Wellness to be a place where people can finally find peace — providing the expert medical and emotional support you need in a comfortable setting, so you can get back to the life you love."
-        image="/images/facility/dsc09523.jpg"
+        image="/images/facility/entry-foyer-arched-doors-branded.jpg"
         crumbs={[{ label: 'Who We Are' }]}
       />
 
@@ -59,7 +62,7 @@ export default async function AboutPage() {
           <Reveal>
             <div className="relative aspect-[4/5] overflow-hidden rounded-xl2 shadow-soft">
               <Image
-                src="/images/facility/dsc05013.jpg"
+                src="/images/facility/living-room-green-sofas-white-oak.jpg"
                 alt="A warm, home-like living space at Fort Worth Wellness Center"
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
@@ -123,44 +126,100 @@ export default async function AboutPage() {
             title="Meet our team"
             intro="A dedicated, compassionate leadership team guiding every part of your care."
           />
-          <div className="mx-auto mt-14 flex max-w-5xl flex-wrap justify-center gap-6">
+          {/*
+            Four across, and still `flex-wrap justify-center` rather than a grid.
+
+            Three columns left the fourth leader stranded on her own centred row under a
+            full row of three — the clearest "hanging off" moment on the page. Four columns
+            fills the curated row exactly and matches the four-up values grid above it, and
+            dropping `max-w-5xl` puts it on the same frame as every other section.
+
+            A plain `grid` would have been the obvious fix, and it is the wrong one here: the
+            roster is no longer a fixed four. `extraStaff` appends whatever the portal returns,
+            so the count is decided at request time. `justify-center` is what keeps a partial
+            trailing row centred under the one above it instead of hanging off the left edge —
+            the same reason /who-we-help uses this pattern for its seven tracks.
+            The width maths is exact: 4 x (25% - 18px) + 3 x 24px gap = 100%.
+          */}
+          <div className="mt-14 flex flex-wrap justify-center gap-6">
             {roster.map((m, i) => (
               <Reveal
                 key={m.name}
                 delay={i * 70}
-                className="w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]"
+                className="w-full sm:w-[calc(50%-12px)] lg:w-[calc(25%-18px)]"
               >
                 <div className="h-full overflow-hidden rounded-xl2 bg-white/[0.04] ring-1 ring-white/10">
                   <div className="relative aspect-[4/3] bg-steel-dark/40">
                     {m.image ? (
-                      <Image
+                      /* PostImage, not next/image: `roster` now includes portal-managed
+                         staff whose `photoUrl` is a remote URL on a host that is not in
+                         `remotePatterns`. next/image throws on those rather than degrading,
+                         so a single portal headshot would have taken the whole page down.
+                         `object-top` is passed through so faces are not cropped. */
+                      <PostImage
                         src={m.image}
                         alt={m.name}
-                        fill
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                         className="object-cover object-top"
                       />
                     ) : (
-                      <div className="flex h-full items-center justify-center">
-                        <span className="flex h-24 w-24 items-center justify-center rounded-full bg-steel/25 font-serif text-3xl text-white">
+                      /*
+                        Monogram tile for a leader whose headshot we do not have. The old
+                        fallback was a flat block with a plain circle on it, which beside three
+                        real photographs read as an image that had failed to load rather than as
+                        a choice. Same treatment as the location panel on /contact — a soft
+                        radial wash over a fine grid, with the initials ringed the way the map
+                        pin is — so the tile looks designed while it waits for a photo.
+                        This is a stand-in, not a fix: the real fix is a headshot for Deborah
+                        Wade, at which point add `image:` to her entry in `src/lib/site.ts` and
+                        this branch stops rendering.
+                      */
+                      <div className="relative flex h-full items-center justify-center overflow-hidden">
+                        <div
+                          aria-hidden
+                          className="absolute inset-0 opacity-[0.35]"
+                          style={{
+                            backgroundImage:
+                              'radial-gradient(circle at 50% 42%, rgba(74,122,164,0.85) 0, transparent 55%), linear-gradient(rgba(255,255,255,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.07) 1px, transparent 1px)',
+                            backgroundSize: '100% 100%, 26px 26px, 26px 26px',
+                          }}
+                        />
+                        <span className="relative flex h-20 w-20 items-center justify-center rounded-full bg-steel/60 font-serif text-2xl text-white shadow-lift ring-8 ring-steel/15">
                           {initials(m.name)}
                         </span>
                       </div>
                     )}
                   </div>
                   <div className="p-6">
-                    <h3 className="!text-white text-lg">{m.name}</h3>
+                    <h3 className="!text-white text-lg">
+                      {m.name}
+                      {m.credential && (
+                        <span className="font-sans text-sm font-normal text-white/55">
+                          , {m.credential}
+                        </span>
+                      )}
+                    </h3>
                     <p className="mt-1 text-sm text-sand-light">{m.role}</p>
                   </div>
                 </div>
               </Reveal>
             ))}
           </div>
+
+          {/*
+            FW-36. Every leader listed above holds a role shared across the Texas facilities — the
+            bios document states it plainly ("for Dallas Detox Center and Fort Worth Wellness
+            Center", "the Texas facilities"). Presenting them without that context implied a
+            Fort Worth-exclusive team, which is not what they are.
+          */}
+          <Reveal className="mt-10 text-center" delay={120}>
+            <p className="mx-auto max-w-xl text-sm text-white/55">{teamScopeNote}</p>
+          </Reveal>
         </div>
       </section>
 
       <InsuranceBand />
-      <CTABand image="/images/facility/dji0584.jpg" />
+      <CTABand image="/images/facility/exterior-front-entrance-winter.jpg" />
     </>
   );
 }
