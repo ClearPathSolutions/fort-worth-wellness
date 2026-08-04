@@ -205,6 +205,12 @@ export type TeamMember = {
   /** Post-nominal credentials, e.g. 'LPC'. Only ever from the bios document — never inferred. */
   credential?: string;
   image?: string;
+  /**
+   * Prose bio. Not authored here — it comes from the staff portal at request time, which is
+   * where non-engineers edit it. Present on the type so a curated entry and a portal entry
+   * are the same shape by the time the page renders.
+   */
+  bio?: string;
 };
 
 /**
