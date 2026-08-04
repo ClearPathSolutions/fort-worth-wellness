@@ -31,7 +31,7 @@ export default function AftercarePage() {
         eyebrow="Your Journey Continues Here"
         title="Aftercare & alumni support"
         subtitle="Transitioning from residential care back to daily life is a vital step. We provide a lifelong support network designed to help you carry the tools you've learned into the life you're building."
-        image="/images/facility/barn-exterior-and-gravel-court-summer.jpg"
+        image="/images/facility/exterior-side-elevation-and-terraces.jpg"
         crumbs={[{ label: 'Treatment', href: '/treatment' }, { label: 'Aftercare & Alumni' }]}
       />
 
@@ -49,8 +49,8 @@ export default function AftercarePage() {
         eyebrow="Strength in Shared Experience"
         title="The alumni network: lifelong community"
         imageSide="left"
-        image="/images/facility/pool-tanning-ledge-winter.jpg"
-        imageAlt="A welcoming common space at Fort Worth Wellness Center"
+        image="/images/facility/lounge-green-sofas-and-macrame.jpg"
+        imageAlt="The residents' lounge, with green sofas around a low table, at Fort Worth Wellness Center"
         body={
           <>
             <p>
@@ -118,7 +118,7 @@ export default function AftercarePage() {
       </section>
 
       <InsuranceBand />
-      <CTABand image="/images/facility/dining-room-communal-tables.jpg" />
+      <CTABand image="/images/facility/recreation-room-ping-pong.jpg" />
     </>
   );
 }

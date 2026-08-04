@@ -82,7 +82,7 @@ export default function MentalHealthResidentialPage() {
         eyebrow="Find Stability. Reclaim Wellness."
         title="Residential mental health treatment in Fort Worth"
         subtitle="Advanced psychiatric care in a private, restorative environment — where clinical excellence meets personal restoration, away from the triggers of daily life."
-        image="/images/facility/bedroom-bright-two-beds-main-house.jpg"
+        image="/images/facility/lounge-vaulted-ceiling-armchairs.jpg"
         crumbs={[{ label: 'Treatment', href: '/treatment' }, { label: 'Mental Health Residential' }]}
       />
 
@@ -177,7 +177,7 @@ export default function MentalHealthResidentialPage() {
         eyebrow="Conditions We Treat"
         title="Evidence-based support for complex challenges"
         imageSide="left"
-        image="/images/facility/lounge-tv-and-sofas.jpg"
+        image="/images/facility/lounge-green-sofas-and-macrame.jpg"
         imageAlt="A restful lounge at Fort Worth Wellness Center"
         body={
           <p>
@@ -200,7 +200,7 @@ export default function MentalHealthResidentialPage() {
       </section>
 
       <InsuranceBand />
-      <CTABand image="/images/facility/pool-and-deck-wide-winter.jpg" />
+      <CTABand image="/images/facility/exterior-front-elevation-through-oaks.jpg" />
     </>
   );
 }

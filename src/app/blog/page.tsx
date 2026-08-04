@@ -133,7 +133,7 @@ export default async function BlogPage() {
         </div>
       </section>
 
-      <CTABand image="/images/facility/dining-room-communal-tables.jpg" />
+      <CTABand image="/images/facility/kitchen-and-dining-wide.jpg" />
     </>
   );
 }

@@ -39,7 +39,7 @@ export default function WhoWeHelpPage() {
         eyebrow="Dedicated Pathways for Complex Needs"
         title="Specialized mental health programs"
         subtitle="Mental health challenges don't look the same for everyone. We provide highly specialized residential tracks designed around the unique pressures, traumas, and responsibilities of who you are."
-        image="/images/facility/great-room-dining-and-lounge.jpg"
+        image="/images/facility/exterior-front-elevation-through-oaks.jpg"
         crumbs={[{ label: 'Who We Help' }]}
       />
 
@@ -85,8 +85,8 @@ export default function WhoWeHelpPage() {
           <Reveal>
             <div className="relative aspect-[4/3] overflow-hidden rounded-xl2 shadow-soft">
               <Image
-                src="/images/facility/exterior-front-entrance-winter.jpg"
-                alt="Aerial view of the private wooded grounds at Fort Worth Wellness Center"
+                src="/images/facility/exterior-side-elevation-and-terraces.jpg"
+                alt="The side elevation of the main house and its terraced grounds at Fort Worth Wellness Center"
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover"
@@ -117,7 +117,7 @@ export default function WhoWeHelpPage() {
         eyebrow="Available 24/7"
         title="Your private path to peace begins here"
         body="Whether you're a professional, a veteran, a first responder, or a student, our team is here to help you find the right pathway. Reach out for a confidential consultation and verify your insurance coverage."
-        image="/images/facility/exterior-front-elevation-winter.jpg"
+        image="/images/facility/group-room-long-table.jpg"
       />
     </>
   );

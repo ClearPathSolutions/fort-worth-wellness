@@ -29,7 +29,7 @@ export default function TourPage() {
         eyebrow="Restorative Environment Meets Clinical Excellence"
         title="Tour our private sanctuary"
         subtitle="Our property offers a calm, boutique atmosphere that stands in quiet contrast to traditional clinical settings — a place designed for privacy, comfort, and deep healing."
-        image="/images/facility/exterior-front-elevation-winter.jpg"
+        image="/images/facility/grounds-lawn-toward-pool.jpg"
         crumbs={[{ label: 'Tour' }]}
       />
 
@@ -57,7 +57,7 @@ export default function TourPage() {
       />
 
       <InsuranceBand />
-      <CTABand image="/images/facility/pool-and-deck-wide-winter.jpg" />
+      <CTABand image="/images/facility/pool-and-tanning-ledge.jpg" />
     </>
   );
 }

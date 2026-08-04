@@ -168,7 +168,7 @@ export const services: Service[] = [
     short: 'Detoxification',
     blurb:
       'Safe, comfort-first withdrawal management with 24/7 clinical supervision in a private residential setting.',
-    image: '/images/facility/bedroom-semi-private-two-queens.jpg',
+    image: '/images/facility/bedroom-two-beds.jpg',
   },
   {
     slug: 'mental-health-residential',
@@ -177,7 +177,7 @@ export const services: Service[] = [
     short: 'Residential',
     blurb:
       'Intensive, live-in psychiatric care for depression, anxiety, trauma, and mood disorders in a restorative home-like sanctuary.',
-    image: '/images/facility/group-room-folding-tables.jpg',
+    image: '/images/facility/lounge-vaulted-ceiling-armchairs.jpg',
   },
   {
     slug: 'dual-diagnosis',
@@ -186,7 +186,7 @@ export const services: Service[] = [
     short: 'Dual Diagnosis',
     blurb:
       'Integrated care that treats mental health conditions and co-occurring substance use at the same time, addressing the root cause.',
-    image: '/images/facility/nurses-station-staff-desks.jpg',
+    image: '/images/facility/group-room-long-table.jpg',
   },
   {
     slug: 'aftercare',
@@ -195,7 +195,7 @@ export const services: Service[] = [
     short: 'Aftercare',
     blurb:
       'A structured step-down plan and a lifelong alumni community to help you carry your progress home and keep it.',
-    image: '/images/facility/barn-exterior-and-gravel-court-summer.jpg',
+    image: '/images/facility/grounds-fire-pit-and-rear-elevation.jpg',
   },
 ];
 
@@ -261,29 +261,23 @@ export type GalleryPhoto = { src: string; caption: string; w: number; h: number 
 // src, open the image and re-read the caption — the previous set had four captions describing
 // a different room than the photo showed.
 export const gallery: GalleryPhoto[] = [
-  { src: '/images/facility/exterior-front-elevation-winter.jpg', caption: 'Our wooded grounds', w: 2000, h: 1125 },
-  // Was dsc05028 (two queen beds) under a "private suites" caption; dsc05022 is the genuinely
-  // single-occupancy room with an ensuite.
-  { src: '/images/facility/bedroom-private-single-queen.jpg', caption: 'A private suite with ensuite bath', w: 2000, h: 1335 },
-  { src: '/images/facility/group-room-folding-tables.jpg', caption: 'Group therapy & activity room', w: 2000, h: 1333 },
-  { src: '/images/facility/pool-and-deck-wide-winter.jpg', caption: 'Outdoor pool & patio', w: 2000, h: 1333 },
-  { src: '/images/facility/kitchen-commercial-dish-and-prep.jpg', caption: 'Our on-site kitchen', w: 2000, h: 1333 },
-  { src: '/images/facility/barn-exterior-and-gravel-court-summer.jpg', caption: 'The Cedar Creek Barn', w: 2000, h: 1333 },
-  // dsc05010 is the staff work area, not a treatment room — captioned for what it is.
-  { src: '/images/facility/nurses-station-staff-desks.jpg', caption: 'Clinical staff station, staffed 24/7', w: 2000, h: 1333 },
-  { src: '/images/facility/bathroom-vanity-and-toilet.jpg', caption: 'Modern private baths', w: 2000, h: 1333 },
-  // Was dsc09536, an outdoor pool shot, under "light-filled common areas". dsc09526 is the
-  // white-oak living room and is what the caption always meant.
-  { src: '/images/facility/living-room-green-sofas-white-oak.jpg', caption: 'Light-filled common areas', w: 2000, h: 1333 },
-  // Was dsc05013 — the medication room, with a toilet visible through an open door.
-  { src: '/images/facility/lounge-tv-and-sofas.jpg', caption: 'Restful living spaces', w: 2000, h: 1335 },
-  { src: '/images/facility/lounge-small-tv-and-longhorn-skull.jpg', caption: 'A quiet lounge for downtime', w: 2000, h: 1335 },
-  // Substantiates the "Housekeeping & Laundry Service" amenity claimed on /treatment/mental-health-residential.
-  { src: '/images/facility/laundry-room.jpg', caption: 'On-site laundry service', w: 2000, h: 1335 },
-  // 14th entry added for FW-11: with two double-width tiles the md mosaic is 20 cells, so 14
-  // photos fill exactly 5 rows with no trailing hole. Drop one and the gap comes back.
-  { src: '/images/facility/dining-room-communal-tables.jpg', caption: 'Communal dining room', w: 2000, h: 1333 },
-  // Was the overhead aerial (roof plan, parking, legible vehicles) — removed under FW-41.
-  // Replaced rather than dropped: 14 photos is what makes the mosaic fill exactly 5 rows.
-  { src: '/images/facility/exterior-front-entrance-winter.jpg', caption: 'Our front entrance', w: 2000, h: 1125 },
+  // 15 entries, and the count is load-bearing. Gallery spans tiles 0, 5 and 10 across two
+  // columns AND two rows, so those three occupy four grid cells each: 12 x 1 + 3 x 4 = 24,
+  // which is exactly six full rows of four. Drop or add one and the last row breaks.
+  // Tiles 0, 5 and 10 are therefore the three widest, most establishing shots.
+  { src: '/images/facility/exterior-front-elevation-through-oaks.jpg', caption: 'The main house under mature oaks', w: 2048, h: 1536 },  // wide tile
+  { src: '/images/facility/bedroom-two-beds.jpg', caption: 'A semi-private bedroom', w: 2048, h: 1365 },
+  { src: '/images/facility/lounge-green-sofas-and-macrame.jpg', caption: 'Light-filled common areas', w: 2048, h: 1365 },
+  { src: '/images/facility/kitchen-double-island.jpg', caption: 'Our on-site kitchen', w: 2048, h: 1368 },
+  { src: '/images/facility/entry-hall-french-doors.jpg', caption: 'The front entry hall', w: 2048, h: 1365 },
+  { src: '/images/facility/grounds-pool-and-rear-elevation.jpg', caption: 'Outdoor pool & patio', w: 2048, h: 1536 },  // wide tile
+  { src: '/images/facility/dining-room-long-table-and-fireplace.jpg', caption: 'Communal dining room', w: 2048, h: 1368 },
+  { src: '/images/facility/bathroom-vanity-and-mirror.jpg', caption: 'Resident bathrooms', w: 2048, h: 1365 },
+  { src: '/images/facility/lounge-vaulted-ceiling-armchairs.jpg', caption: 'A quiet lounge for downtime', w: 2048, h: 1368 },
+  { src: '/images/facility/group-room-long-table.jpg', caption: 'Group therapy & activity room', w: 2048, h: 1368 },
+  { src: '/images/facility/exterior-side-elevation-and-terraces.jpg', caption: 'The upper deck & terraced grounds', w: 2048, h: 1536 },  // wide tile
+  { src: '/images/facility/grounds-fire-pit-and-rear-elevation.jpg', caption: 'Wooded grounds & fire pit', w: 2048, h: 1536 },
+  { src: '/images/facility/recreation-room-ping-pong.jpg', caption: 'Recreation room', w: 2048, h: 1368 },
+  { src: '/images/facility/laundry-room-stacked-washer-dryers.jpg', caption: 'On-site laundry service', w: 2048, h: 1368 },
+  { src: '/images/facility/grounds-barn-and-sport-court.jpg', caption: 'The barn, sport court & outdoor gym', w: 2048, h: 1536 },
 ];

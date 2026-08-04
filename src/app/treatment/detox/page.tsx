@@ -42,7 +42,7 @@ export default function DetoxPage() {
         eyebrow="Safe, Clinical Stabilization"
         title="Medically supervised drug & alcohol detox"
         subtitle="Comfort-first withdrawal management and 24/7 clinical support in a private residential setting — the safe foundation for everything that follows."
-        image="/images/facility/bedroom-semi-private-two-queens.jpg"
+        image="/images/facility/exterior-front-elevation-through-oaks.jpg"
         crumbs={[{ label: 'Treatment', href: '/treatment' }, { label: 'Medical Detox' }]}
       />
 
@@ -75,8 +75,8 @@ export default function DetoxPage() {
         eyebrow="The First Step Toward Recovery"
         title="What is medical detoxification?"
         imageSide="left"
-        image="/images/facility/nurses-station-staff-desks.jpg"
-        imageAlt="A calm clinical care space at Fort Worth Wellness Center"
+        image="/images/facility/great-room-seating-open-to-kitchen.jpg"
+        imageAlt="The great room seating area, open to the kitchen, at Fort Worth Wellness Center"
         body={
           <>
             <p>
@@ -137,7 +137,7 @@ export default function DetoxPage() {
       </section>
 
       <InsuranceBand />
-      <CTABand image="/images/facility/bedroom-private-single-queen.jpg" />
+      <CTABand image="/images/facility/kitchen-toward-living-area.jpg" />
     </>
   );
 }

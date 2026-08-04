@@ -37,7 +37,7 @@ export default function FaqPage() {
         eyebrow="Answers, Plainly"
         title="Frequently asked questions"
         subtitle="The questions people ask us most, gathered in one place — about getting started, what insurance covers, and what each level of care actually involves. If yours isn't here, call us; we answer around the clock."
-        image="/images/facility/living-room-green-sofas-white-oak.jpg"
+        image="/images/facility/dining-room-long-table-and-fireplace.jpg"
         crumbs={[{ label: 'FAQ' }]}
       />
 
@@ -108,7 +108,7 @@ export default function FaqPage() {
       </section>
 
       <InsuranceBand />
-      <CTABand image="/images/facility/exterior-front-elevation-winter.jpg" />
+      <CTABand image="/images/facility/exterior-front-elevation-through-oaks.jpg" />
 
       {/* The one FAQPage block on the site — see the note above.
           No BreadcrumbList here: PageHero already emits it from the `crumbs` it renders. */}
