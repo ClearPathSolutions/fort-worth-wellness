@@ -1,10 +1,9 @@
 import type { Metadata } from 'next';
 import JsonLd from '@/components/JsonLd';
 import { breadcrumbSchema, pageMeta } from '@/lib/seo';
-import Image from 'next/image';
 import Link from 'next/link';
-import { getAllPosts, formatDate } from '@/lib/posts';
-import ClarionBlog from '@/components/ClarionBlog';
+import { getUnifiedPosts, formatDate } from '@/lib/posts';
+import PostImage from '@/components/PostImage';
 import SectionHeading from '@/components/SectionHeading';
 import CTABand from '@/components/CTABand';
 import Reveal from '@/components/ui/Reveal';
@@ -17,8 +16,14 @@ export const metadata: Metadata = pageMeta({
   path: '/blog/',
 });
 
-export default function BlogPage() {
-  const posts = getAllPosts();
+// New Clarion posts should appear without a redeploy (matches the Clarion feed
+// revalidation window in lib/clarion.ts).
+export const revalidate = 300;
+
+export default async function BlogPage() {
+  // One unified, newest-first list: live Clarion posts merged with the legacy
+  // library. The newest of ALL posts is featured; the rest fill the grid.
+  const posts = await getUnifiedPosts();
   const [featured, ...rest] = posts;
 
   return (
@@ -45,17 +50,7 @@ export default function BlogPage() {
         </div>
       </section>
 
-      {/* Latest, Clarion-managed posts — auto-hidden until Clarion has published posts */}
-      <section className="section clarion-embed-section bg-cream-deep">
-        <div className="container-wide">
-          <SectionHeading align="left" eyebrow="Latest" title="Fresh from our team" />
-          <div className="mt-10">
-            <ClarionBlog />
-          </div>
-        </div>
-      </section>
-
-      {/* Featured (original library) */}
+      {/* Featured — newest post overall (Clarion or legacy) */}
       {featured && (
         <section className="section bg-cream pb-0">
           <div className="container-wide">
@@ -65,13 +60,11 @@ export default function BlogPage() {
                 className="group grid overflow-hidden rounded-xl2 bg-white shadow-card ring-1 ring-ink/[0.06] transition-all duration-300 hover:shadow-lift lg:grid-cols-2"
               >
                 <div className="relative aspect-[16/10] lg:aspect-auto">
-                  <Image
+                  <PostImage
                     src={featured.image}
                     alt={featured.title}
-                    fill
                     priority
                     sizes="(max-width: 1024px) 100vw, 50vw"
-                    className="object-cover transition-transform duration-700 ease-smooth group-hover:scale-105"
                   />
                 </div>
                 <div className="flex flex-col justify-center p-8 lg:p-12">
@@ -82,9 +75,11 @@ export default function BlogPage() {
                   <p className="mt-4 text-ink/65">{featured.excerpt}</p>
                   <div className="mt-6 flex items-center gap-4 text-sm text-ink/50">
                     <span>{formatDate(featured.date)}</span>
-                    <span className="flex items-center gap-1.5">
-                      <Clock width={15} height={15} /> {featured.readingMin} min read
-                    </span>
+                    {featured.readingMin > 0 && (
+                      <span className="flex items-center gap-1.5">
+                        <Clock width={15} height={15} /> {featured.readingMin} min read
+                      </span>
+                    )}
                   </div>
                   <span className="mt-6 inline-flex items-center gap-1.5 font-semibold text-steel">
                     Read article
@@ -97,7 +92,7 @@ export default function BlogPage() {
         </section>
       )}
 
-      {/* Library grid (original 42 posts) */}
+      {/* Library grid — every other post, newest first */}
       <section className="section bg-cream">
         <div className="container-wide">
           <SectionHeading align="left" eyebrow="All Articles" title="Browse the library" />
@@ -109,20 +104,20 @@ export default function BlogPage() {
                   className="group flex h-full flex-col overflow-hidden rounded-xl2 bg-white shadow-card ring-1 ring-ink/[0.06] transition-all duration-300 hover:-translate-y-1 hover:shadow-lift"
                 >
                   <div className="relative aspect-[16/10] overflow-hidden">
-                    <Image
+                    <PostImage
                       src={p.image}
                       alt={p.title}
-                      fill
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      className="object-cover transition-transform duration-700 ease-smooth group-hover:scale-105"
                     />
                   </div>
                   <div className="flex flex-1 flex-col p-6">
                     <div className="flex items-center gap-3 text-xs text-ink/50">
                       <span>{formatDate(p.date)}</span>
-                      <span className="flex items-center gap-1">
-                        <Clock width={13} height={13} /> {p.readingMin} min
-                      </span>
+                      {p.readingMin > 0 && (
+                        <span className="flex items-center gap-1">
+                          <Clock width={13} height={13} /> {p.readingMin} min
+                        </span>
+                      )}
                     </div>
                     <h3 className="mt-3 text-lg leading-snug">{p.title}</h3>
                     <p className="mt-2 flex-1 text-sm leading-relaxed text-ink/60 line-clamp-3">{p.excerpt}</p>

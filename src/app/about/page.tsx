@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
 import { pageMeta } from '@/lib/seo';
 import Image from 'next/image';
+import PostImage from '@/components/PostImage';
 import { team, teamScopeNote } from '@/lib/site';
+import { extraStaff } from '@/lib/staff-feed';
 import PageHero from '@/components/PageHero';
 import SectionHeading from '@/components/SectionHeading';
 import FeatureGrid from '@/components/blocks/FeatureGrid';
@@ -41,7 +43,9 @@ function initials(name: string) {
     .join('');
 }
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  // Locally curated entries win; the portal only contributes people not listed here.
+  const roster = [...team, ...(await extraStaff('fort-worth-wellness', team))];
   return (
     <>
       <PageHero
@@ -123,24 +127,38 @@ export default function AboutPage() {
             intro="A dedicated, compassionate leadership team guiding every part of your care."
           />
           {/*
-            One row of four, not three-plus-one. `lg:w-[calc(33.333%-16px)]` inside a
-            `max-w-5xl` box left the fourth leader stranded on her own centred row under a
-            full row of three — the clearest "hanging off" moment on the page. Four members,
-            four columns: the row fills exactly, and it now matches the four-up values grid
-            above it and uses the same page frame as every other section.
-            If a fifth leader is added, move to `lg:grid-cols-3` (6 slots) rather than
-            leaving a partial row.
+            Four across, and still `flex-wrap justify-center` rather than a grid.
+
+            Three columns left the fourth leader stranded on her own centred row under a
+            full row of three — the clearest "hanging off" moment on the page. Four columns
+            fills the curated row exactly and matches the four-up values grid above it, and
+            dropping `max-w-5xl` puts it on the same frame as every other section.
+
+            A plain `grid` would have been the obvious fix, and it is the wrong one here: the
+            roster is no longer a fixed four. `extraStaff` appends whatever the portal returns,
+            so the count is decided at request time. `justify-center` is what keeps a partial
+            trailing row centred under the one above it instead of hanging off the left edge —
+            the same reason /who-we-help uses this pattern for its seven tracks.
+            The width maths is exact: 4 x (25% - 18px) + 3 x 24px gap = 100%.
           */}
-          <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {team.map((m, i) => (
-              <Reveal key={m.name} delay={i * 70}>
+          <div className="mt-14 flex flex-wrap justify-center gap-6">
+            {roster.map((m, i) => (
+              <Reveal
+                key={m.name}
+                delay={i * 70}
+                className="w-full sm:w-[calc(50%-12px)] lg:w-[calc(25%-18px)]"
+              >
                 <div className="h-full overflow-hidden rounded-xl2 bg-white/[0.04] ring-1 ring-white/10">
                   <div className="relative aspect-[4/3] bg-steel-dark/40">
                     {m.image ? (
-                      <Image
+                      /* PostImage, not next/image: `roster` now includes portal-managed
+                         staff whose `photoUrl` is a remote URL on a host that is not in
+                         `remotePatterns`. next/image throws on those rather than degrading,
+                         so a single portal headshot would have taken the whole page down.
+                         `object-top` is passed through so faces are not cropped. */
+                      <PostImage
                         src={m.image}
                         alt={m.name}
-                        fill
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                         className="object-cover object-top"
                       />

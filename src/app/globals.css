@@ -148,110 +148,26 @@
 }
 
 /* ===========================================================================
-   ClarionLabs — styles for markup we do NOT author.
+   ClarionLabs chat launcher — a style for markup we do NOT author.
    ===========================================================================
-   These rules live OUTSIDE `@layer components` on purpose (FW-44).
-
-   Tailwind tree-shakes anything inside `@layer` against the content scan, and every class
-   below is injected at runtime by Clarion's script — so it appears nowhere in `src/` and was
-   being purged from the compiled CSS. Verified: before this move, only `.clarion-blog-list`
-   and `.clarion-blog-empty` survived (both incidentally retained via a `:has()` selector on
-   `.clarion-embed-section`, which *is* referenced in `blog/page.tsx`). Every other rule —
-   cards, covers, titles, post body — was silently absent, so the embed would have rendered
-   essentially unstyled.
-
+   Lives OUTSIDE `@layer components` on purpose (FW-44): Tailwind tree-shakes
+   anything inside a layer against the content scan, and this class is injected at
+   runtime by Clarion's script, so it appears nowhere in `src/` and would be purged.
    Plain top-level CSS is emitted verbatim, which is what third-party hooks need.
-   Do not move these back inside a layer.
-   ========================================================================= */
 
-/* ---- Chat launcher position (FW-06) ----
-   The widget pins its container to `bottom: 20px`, which lands it on top of the right-hand
-   "Verify" button in MobileCallBar. It injects its stylesheet at runtime and therefore wins
-   on source order, so `!important` is the only reliable lever here.
-   Scoped below `md`, which is exactly where MobileCallBar is visible. */
+   The ~80 lines of `.clarion-blog-*` rules that used to sit here are gone with the
+   client-side embed they styled (main: "unify Clarion + legacy posts into one
+   server-rendered list"). That markup is ours now and carries Tailwind classes.
+
+   This rule is NOT part of that and is kept deliberately. The chat widget still
+   loads in `layout.tsx` and `MobileCallBar` still renders, so FW-06 still applies:
+   the widget pins itself to `bottom: 20px`, which lands it on top of the right-hand
+   "Verify" button on phones. It injects its stylesheet at runtime and therefore wins
+   on source order, so `!important` is the only reliable lever. Scoped below `md`,
+   which is exactly where MobileCallBar is visible.
+   ========================================================================= */
 @media (max-width: 767px) {
   .clarion-chat {
     bottom: calc(78px + env(safe-area-inset-bottom)) !important;
   }
 }
-
-/* ---- ClarionLabs blog embed (injected markup, styled to match) ---- */
-  .clarion-blog-list {
-    @apply grid gap-6 sm:grid-cols-2 lg:grid-cols-3;
-  }
-  .clarion-blog-card {
-    @apply flex flex-col overflow-hidden rounded-xl2 bg-white shadow-card ring-1 ring-ink/[0.06] transition-all duration-300 hover:-translate-y-1 hover:shadow-lift;
-  }
-  .clarion-blog-cover {
-    @apply aspect-[16/10] w-full object-cover;
-  }
-  .clarion-blog-card .clarion-blog-title {
-    @apply px-6 pt-6 text-left font-serif text-lg leading-snug text-ink hover:text-steel;
-  }
-  .clarion-blog-meta {
-    @apply flex flex-wrap items-center gap-x-3 gap-y-1 px-6 pt-2 text-xs text-ink/50;
-  }
-  .clarion-blog-excerpt {
-    @apply flex-1 px-6 pt-3 text-sm leading-relaxed text-ink/65;
-  }
-  .clarion-blog-readmore {
-    @apply mx-6 mb-6 mt-4 inline-flex w-fit items-center gap-1.5 text-sm font-semibold text-steel hover:gap-2;
-  }
-  .clarion-blog-empty,
-  .clarion-blog-loading,
-  .clarion-blog-error {
-    @apply py-16 text-center text-ink/55;
-  }
-  /* Post detail view */
-  .clarion-blog-back {
-    @apply mb-8 inline-flex items-center gap-1.5 text-sm font-semibold text-steel hover:gap-2;
-  }
-  .clarion-blog-post {
-    @apply mx-auto max-w-prose;
-  }
-  .clarion-blog-post-title {
-    @apply font-serif text-3xl leading-tight text-ink sm:text-4xl;
-  }
-  .clarion-blog-post .clarion-blog-cover {
-    @apply mt-6 aspect-[16/9] rounded-xl2 shadow-card;
-  }
-  .clarion-blog-body {
-    @apply mt-8 text-[1.0625rem] leading-[1.75] text-ink/80;
-  }
-  .clarion-blog-body > * + * {
-    @apply mt-5;
-  }
-  .clarion-blog-body h2 {
-    @apply mt-10 font-serif text-2xl leading-snug text-ink;
-  }
-  .clarion-blog-body h3 {
-    @apply mt-8 font-serif text-xl leading-snug text-ink;
-  }
-  .clarion-blog-body ul {
-    @apply list-disc space-y-2 pl-6 marker:text-steel;
-  }
-  .clarion-blog-body ol {
-    @apply list-decimal space-y-2 pl-6 marker:text-steel;
-  }
-  .clarion-blog-body a {
-    @apply font-medium text-steel underline decoration-steel/30 underline-offset-2 hover:decoration-steel;
-  }
-  .clarion-blog-body img {
-    @apply my-6 rounded-xl2;
-  }
-  .clarion-blog-title,
-  .clarion-blog-readmore,
-  .clarion-blog-back {
-    @apply cursor-pointer border-0 bg-transparent;
-  }
-
-  /* Show the Clarion blog section only when it actually has posts (a list with
-     cards, or an opened post). Hidden while loading, empty, or errored — so the
-     original library below is what shows until Clarion has published posts. */
-  .clarion-embed-section {
-    display: none;
-  }
-  .clarion-embed-section:has(.clarion-blog-list:not(:has(.clarion-blog-empty))),
-  .clarion-embed-section:has(.clarion-blog-post) {
-    display: block;
-  }
