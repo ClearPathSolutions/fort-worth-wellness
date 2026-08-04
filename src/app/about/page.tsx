@@ -1,16 +1,17 @@
 import type { Metadata } from 'next';
 import { pageMeta } from '@/lib/seo';
+import Link from 'next/link';
 import Image from 'next/image';
 import PostImage from '@/components/PostImage';
 import { team, teamScopeNote } from '@/lib/site';
-import { roster } from '@/lib/staff-feed';
+import { roster, initials } from '@/lib/staff-feed';
 import PageHero from '@/components/PageHero';
 import SectionHeading from '@/components/SectionHeading';
 import FeatureGrid from '@/components/blocks/FeatureGrid';
 import InsuranceBand from '@/components/InsuranceBand';
 import CTABand from '@/components/CTABand';
 import Reveal from '@/components/ui/Reveal';
-import { ChevronDown, Compass, Heart, Home as HomeIcon, Leaf, Shield, Sparkle, Users } from '@/components/icons';
+import { ArrowRight, Compass, Heart, Home as HomeIcon, Leaf, Shield, Sparkle, Users } from '@/components/icons';
 
 export const metadata: Metadata = pageMeta({
   title: 'Our Mission & Approach to Care',
@@ -34,14 +35,6 @@ const whyChoose = [
   { icon: Heart, title: 'Comfortable Amenities', body: 'Semi-private rooms, modern living areas, and plenty of space to breathe.' },
   { icon: Shield, title: 'Support for the Long Haul', body: "When your program ends, we don't say goodbye — ongoing aftercare keeps you steady at home." },
 ];
-
-function initials(name: string) {
-  return name
-    .split(' ')
-    .map((p) => p[0])
-    .slice(0, 2)
-    .join('');
-}
 
 export default async function AboutPage() {
   // Curated entries own the headshots; the portal supplies the bios and any extra people.
@@ -201,34 +194,17 @@ export default async function AboutPage() {
                     </h3>
                     <p className="mt-1 text-sm text-sand-light">{m.role}</p>
 
-                    {/*
-                      Bios run 530-1440 characters. Printed inline, one card would be several
-                      times the height of its neighbour — the exact unevenness this grid was
-                      rebuilt to remove. A native <details> keeps every card identical until
-                      someone asks, needs no JavaScript, and is keyboard-operable for free.
-                      Cards whose bio is withheld (see BIO_HELD in lib/staff-feed) simply do
-                      not render the toggle.
-                    */}
-                    {m.bio && (
-                      <details className="group/bio mt-3">
-                        <summary className="inline-flex cursor-pointer list-none items-center gap-1.5 text-sm font-semibold text-steel-light hover:text-white [&::-webkit-details-marker]:hidden">
-                          Read bio
-                          <ChevronDown
-                            width={15}
-                            height={15}
-                            className="transition-transform duration-300 group-open/bio:rotate-180"
-                          />
-                        </summary>
-                        <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-white/70">
-                          {m.bio}
-                        </p>
-                      </details>
-                    )}
                   </div>
                 </div>
               </Reveal>
             ))}
           </div>
+
+          <Reveal className="mt-10 text-center" delay={100}>
+            <Link href="/team" className="btn-outline-light">
+              Read full bios <ArrowRight width={16} height={16} />
+            </Link>
+          </Reveal>
 
           {/*
             FW-36. Every leader listed above holds a role shared across the Texas facilities — the
