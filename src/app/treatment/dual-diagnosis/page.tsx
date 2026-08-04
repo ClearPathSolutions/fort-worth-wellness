@@ -53,7 +53,7 @@ export default function DualDiagnosisPage() {
         eyebrow="Advanced Care for Complex Mental Health"
         title="Integrated dual diagnosis treatment"
         subtitle="A dual-pathway approach for those struggling with primary mental health disorders and co-occurring substance use — treated together, never in isolation."
-        image="/images/facility/lounge-barn-upstairs-open.jpg"
+        image="/images/facility/exterior-side-elevation-and-terraces.jpg"
         crumbs={[{ label: 'Treatment', href: '/treatment' }, { label: 'Dual Diagnosis' }]}
       />
 
@@ -85,8 +85,8 @@ export default function DualDiagnosisPage() {
         eyebrow="Understanding Dual Diagnosis"
         title="Two challenges, deeply intertwined"
         imageSide="left"
-        image="/images/facility/bedroom-semi-private-two-queens.jpg"
-        imageAlt="A private, restful resident suite at Fort Worth Wellness Center"
+        image="/images/facility/bedroom-two-beds.jpg"
+        imageAlt="A semi-private resident bedroom with two beds at Fort Worth Wellness Center"
         body={
           <>
             <p>
@@ -139,8 +139,8 @@ export default function DualDiagnosisPage() {
         bg="cream-deep"
         eyebrow="Why Choose Our Sanctuary"
         title="A private setting for comprehensive psychiatric wellness"
-        image="/images/facility/pool-tanning-ledge-winter.jpg"
-        imageAlt="A light-filled common area at Fort Worth Wellness Center"
+        image="/images/facility/great-room-seating-open-to-kitchen.jpg"
+        imageAlt="The great room seating area, open to the kitchen, at Fort Worth Wellness Center"
         body={
           <p>
             Choosing our Fort Worth location means entering a world where mental health is the primary
@@ -162,7 +162,7 @@ export default function DualDiagnosisPage() {
       </section>
 
       <InsuranceBand />
-      <CTABand image="/images/facility/exterior-front-elevation-winter.jpg" />
+      <CTABand image="/images/facility/exterior-side-elevation-and-terraces.jpg" />
     </>
   );
 }

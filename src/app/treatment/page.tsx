@@ -32,7 +32,7 @@ export default function TreatmentPage() {
         eyebrow="Expert Care, Built Around You"
         title="Specialized mental health & dual diagnosis treatment"
         subtitle="A private, supportive space for those needing residential mental health care and integrated support for co-occurring addiction — focused on treating the whole person."
-        image="/images/facility/group-room-folding-tables.jpg"
+        image="/images/facility/lounge-vaulted-ceiling-armchairs.jpg"
         crumbs={[{ label: 'Treatment' }]}
       />
 
@@ -100,7 +100,7 @@ export default function TreatmentPage() {
       />
 
       <InsuranceBand />
-      <CTABand image="/images/facility/pool-and-deck-wide-winter.jpg" />
+      <CTABand image="/images/facility/exterior-front-elevation-through-oaks.jpg" />
     </>
   );
 }

@@ -49,7 +49,7 @@ type ClarionFullPost = ClarionFeedPost & { body_html?: string };
 
 // A placeholder cover for Clarion posts that ship without one, so cards/heroes
 // don't render a broken image. Uses an existing local facility photo.
-const FALLBACK_COVER = '/images/facility/dsc09517.jpg';
+const FALLBACK_COVER = '/images/facility/great-room-seating-open-to-kitchen.jpg';
 
 function estimateReadingMin(html: string): number {
   const text = html.replace(/<[^>]+>/g, ' ');

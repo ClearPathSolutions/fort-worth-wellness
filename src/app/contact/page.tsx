@@ -46,7 +46,7 @@ export default function ContactPage() {
         eyebrow="Professional Support Is Only a Call Away"
         title="Contact Fort Worth Wellness Center"
         subtitle="Our admissions team is available 24/7 to provide immediate, confidential guidance and help you begin your journey at our Fort Worth center."
-        image="/images/facility/pool-and-deck-wide-winter.jpg"
+        image="/images/facility/lounge-vaulted-ceiling-armchairs.jpg"
         crumbs={[{ label: 'Contact' }]}
         showActions={false}
       />
@@ -176,7 +176,7 @@ export default function ContactPage() {
         eyebrow="No Wait, No Voicemail"
         title="Want an answer right now?"
         body="The form above reaches our admissions team quickly — but if you would rather not wait, the line below is answered by a person around the clock. No script, no pressure, and nothing you say is shared."
-        image="/images/facility/great-room-dining-and-lounge.jpg"
+        image="/images/facility/great-room-seating-open-to-kitchen.jpg"
       />
     </>
   );

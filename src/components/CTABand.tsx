@@ -15,7 +15,7 @@ export default function CTABand({
   eyebrow = "We're available 24/7",
   title = 'Contact our 24/7 admissions team',
   body = 'Reaching out is the first step. Our team is here around the clock to listen, answer your questions, and help you find the right path forward — with no pressure and complete confidentiality.',
-  image = '/images/facility/living-room-green-sofas-white-oak.jpg',
+  image = '/images/facility/lounge-green-sofas-and-macrame.jpg',
 }: Props) {
   return (
     <section className="relative overflow-hidden bg-ink-900">

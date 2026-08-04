@@ -45,7 +45,7 @@ export default async function AboutPage() {
         eyebrow="We Are Your Partners in Healing"
         title="Get to know us"
         subtitle="We built Fort Worth Wellness to be a place where people can finally find peace — providing the expert medical and emotional support you need in a comfortable setting, so you can get back to the life you love."
-        image="/images/facility/entry-foyer-arched-doors-branded.jpg"
+        image="/images/facility/entry-hall-french-doors.jpg"
         crumbs={[{ label: 'Who We Are' }]}
       />
 
@@ -55,8 +55,8 @@ export default async function AboutPage() {
           <Reveal>
             <div className="relative aspect-[4/5] overflow-hidden rounded-xl2 shadow-soft">
               <Image
-                src="/images/facility/living-room-green-sofas-white-oak.jpg"
-                alt="A warm, home-like living space at Fort Worth Wellness Center"
+                src="/images/facility/great-room-seating-open-to-kitchen.jpg"
+                alt="The great room seating area, open to the kitchen, at Fort Worth Wellness Center"
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover"
@@ -219,7 +219,7 @@ export default async function AboutPage() {
       </section>
 
       <InsuranceBand />
-      <CTABand image="/images/facility/exterior-front-entrance-winter.jpg" />
+      <CTABand image="/images/facility/exterior-side-elevation-and-terraces.jpg" />
     </>
   );
 }

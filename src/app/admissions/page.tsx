@@ -33,7 +33,7 @@ export default function AdmissionsPage() {
         eyebrow="A Clear Path to Mental Wellness"
         title="Begin your journey at Fort Worth Wellness"
         subtitle="When your mind feels heavy, the right support makes all the difference. We offer personalized care and 24/7 guidance to help you regain balance and peace — and we make getting started simple."
-        image="/images/facility/corridor-seating-nook.jpg"
+        image="/images/facility/exterior-front-elevation-through-oaks.jpg"
         crumbs={[{ label: 'Admissions' }]}
       />
 
@@ -175,7 +175,7 @@ export default function AdmissionsPage() {
         </div>
       </section>
 
-      <CTABand image="/images/facility/entry-foyer-arched-doors-branded.jpg" />
+      <CTABand image="/images/facility/entry-hall-french-doors.jpg" />
     </>
   );
 }

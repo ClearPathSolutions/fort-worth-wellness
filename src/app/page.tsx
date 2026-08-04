@@ -90,8 +90,8 @@ export default function HomePage() {
       {/* ================= HERO ================= */}
       <section className="relative isolate overflow-hidden bg-ink-900">
         <Image
-          src="/images/facility/exterior-front-elevation-winter.jpg"
-          alt="Fort Worth Wellness Center's wooded grounds in Weatherford, Texas"
+          src="/images/facility/grounds-lawn-toward-pool.jpg"
+          alt="The lawn and grounds at Fort Worth Wellness Center in Weatherford, Texas, looking toward the pool"
           fill
           priority
           sizes="100vw"
@@ -156,8 +156,8 @@ export default function HomePage() {
           <Reveal className="relative order-2 lg:order-1">
             <div className="relative aspect-[5/6] overflow-hidden rounded-xl2 shadow-soft sm:aspect-[4/3] lg:aspect-[5/6]">
               <Image
-                src="/images/facility/bedroom-bright-two-beds-main-house.jpg"
-                alt="A bright, calm semi-private bedroom at Fort Worth Wellness Center"
+                src="/images/facility/lounge-vaulted-ceiling-armchairs.jpg"
+                alt="The vaulted-ceiling lounge with armchairs at Fort Worth Wellness Center"
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover"
@@ -411,17 +411,17 @@ export default function HomePage() {
             <div className="grid grid-cols-2 gap-3 sm:gap-4">
               <Reveal className="col-span-2">
                 <div className="relative aspect-[16/9] overflow-hidden rounded-xl2 shadow-card">
-                  <Image src="/images/facility/pool-and-deck-wide-winter.jpg" alt="Outdoor pool and patio" fill sizes="(max-width:1024px) 100vw, 50vw" className="object-cover" />
+                  <Image src="/images/facility/pool-and-tanning-ledge.jpg" alt="Outdoor pool and patio" fill sizes="(max-width:1024px) 100vw, 50vw" className="object-cover" />
                 </div>
               </Reveal>
               <Reveal delay={80}>
                 <div className="relative aspect-[3/2] overflow-hidden rounded-xl2 shadow-card">
-                  <Image src="/images/facility/kitchen-commercial-dish-and-prep.jpg" alt="Chef's kitchen and dining" fill sizes="(max-width:1024px) 50vw, 25vw" className="object-cover" />
+                  <Image src="/images/facility/kitchen-double-island.jpg" alt="Chef's kitchen and dining" fill sizes="(max-width:1024px) 50vw, 25vw" className="object-cover" />
                 </div>
               </Reveal>
               <Reveal delay={140}>
                 <div className="relative aspect-[3/2] overflow-hidden rounded-xl2 shadow-card">
-                  <Image src="/images/facility/barn-exterior-and-gravel-court-summer.jpg" alt="The Cedar Creek Barn" fill sizes="(max-width:1024px) 50vw, 25vw" className="object-cover" />
+                  <Image src="/images/facility/grounds-barn-and-sport-court.jpg" alt="The barn, sport court and outdoor gym" fill sizes="(max-width:1024px) 50vw, 25vw" className="object-cover" />
                 </div>
               </Reveal>
             </div>

@@ -186,7 +186,7 @@ export default async function PostPage({ params }: { params: { slug: string } })
         </section>
       )}
 
-      <CTABand image="/images/facility/lounge-tv-and-sofas.jpg" />
+      <CTABand image="/images/facility/lounge-green-sofas-and-macrame.jpg" />
 
       <JsonLd data={jsonLd} />
       {/* FW-27 — this page renders a Home / Blog trail but had no BreadcrumbList. */}

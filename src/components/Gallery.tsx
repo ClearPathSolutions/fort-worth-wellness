@@ -87,7 +87,12 @@ export default function Gallery({ photos }: { photos: GalleryPhoto[] }) {
       */}
       <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
         {photos.map((p, i) => {
-          const wide = i === 0 || i === 5;
+          // Three wide tiles, not two — the set is 15 photographs now. At md a wide tile occupies
+          // 4 cells (2 cols x 2 rows), so 12 x 1 + 3 x 4 = 24 = six full rows of four, with no
+          // half-empty trailing row. Two wide tiles would give 21 cells and leave three holes.
+          // At base the grid is 2 columns and the wide tiles span the full width: 3 x 2 + 12 = 18,
+          // which is nine exact rows, so the phone layout has no orphan either.
+          const wide = i === 0 || i === 5 || i === 10;
           return (
             <button
               key={p.src}
@@ -98,7 +103,7 @@ export default function Gallery({ photos }: { photos: GalleryPhoto[] }) {
               }}
               aria-haspopup="dialog"
               className={`group relative aspect-[4/3] overflow-hidden rounded-xl2 shadow-card ring-1 ring-ink/[0.06] focus:outline-none focus-visible:ring-2 focus-visible:ring-steel focus-visible:ring-offset-2 ${
-                wide ? 'md:col-span-2 md:row-span-2 md:aspect-auto' : ''
+                wide ? 'col-span-2 md:row-span-2 md:aspect-auto' : ''
               }`}
             >
               <Image

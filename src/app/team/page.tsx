@@ -29,7 +29,7 @@ export default async function TeamPage() {
         eyebrow="The People Behind the Care"
         title="Our team"
         subtitle="The clinicians and directors responsible for your care — who they are, what they have done, and how they approach the work."
-        image="/images/facility/corridor-seating-nook.jpg"
+        image="/images/facility/great-room-seating-open-to-kitchen.jpg"
         crumbs={[{ label: 'Who We Are', href: '/about' }, { label: 'Our Team' }]}
       />
 
@@ -120,7 +120,7 @@ export default async function TeamPage() {
         </div>
       </section>
 
-      <CTABand image="/images/facility/great-room-dining-and-lounge.jpg" />
+      <CTABand image="/images/facility/dining-room-long-table-and-fireplace.jpg" />
     </>
   );
 }
