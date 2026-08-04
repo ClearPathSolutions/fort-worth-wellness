@@ -12,8 +12,15 @@ type RevealProps = {
 
 /**
  * Fades + lifts children into view once, when scrolled to.
- * Falls back to visible immediately if IntersectionObserver is unavailable
- * or the user prefers reduced motion.
+ *
+ * FW-33. This wraps most of the site's body copy, and the server renders it at `opacity: 0`,
+ * so with JavaScript unavailable the page used to arrive almost entirely blank. Two fallbacks
+ * make that safe, and the docstring used to claim the second one without implementing it:
+ *
+ * 1. **No JavaScript** — a `<noscript>` rule in `layout.tsx` forces every `[data-reveal]`
+ *    element visible. That is why the `data-reveal` attribute below is not decorative.
+ * 2. **Reduced motion** — now actually checked. Those users skip the hidden state entirely
+ *    rather than depending on an IntersectionObserver callback to become readable.
  */
 export default function Reveal({ children, className = '', delay = 0, as = 'div' }: RevealProps) {
   const ref = useRef<HTMLDivElement>(null);
@@ -22,7 +29,10 @@ export default function Reveal({ children, className = '', delay = 0, as = 'div'
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    if (typeof IntersectionObserver === 'undefined') {
+    const prefersReducedMotion =
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion || typeof IntersectionObserver === 'undefined') {
       setShown(true);
       return;
     }
@@ -46,6 +56,7 @@ export default function Reveal({ children, className = '', delay = 0, as = 'div'
     <Tag
       ref={ref}
       className={className}
+      data-reveal={shown ? 'shown' : 'pending'}
       style={{
         opacity: shown ? 1 : 0,
         transform: shown ? 'none' : 'translateY(22px)',

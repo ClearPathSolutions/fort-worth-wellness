@@ -1,4 +1,7 @@
 import type { Metadata } from 'next';
+import { pageMeta } from '@/lib/seo';
+import { faqGroup } from '@/lib/faqs';
+import { site } from '@/lib/site';
 import PageHero from '@/components/PageHero';
 import SectionHeading from '@/components/SectionHeading';
 import SplitFeature from '@/components/blocks/SplitFeature';
@@ -9,11 +12,12 @@ import CTABand from '@/components/CTABand';
 import Reveal from '@/components/ui/Reveal';
 import { Brain, Check, Compass, Heart, Home as HomeIcon, Leaf, Sparkle } from '@/components/icons';
 
-export const metadata: Metadata = {
-  title: 'Residential Mental Health Treatment in Fort Worth, TX',
+export const metadata: Metadata = pageMeta({
+  title: 'Residential Mental Health Care',
   description:
-    'Luxury residential mental health care in Fort Worth with 24/7 psychiatric support, evidence-based therapy, and a restorative home-like setting for lasting stability.',
-};
+    'Residential mental health care in Fort Worth with 24/7 psychiatric support, evidence-based therapy, and a restorative home-like setting for lasting stability.',
+  path: '/treatment/mental-health-residential/',
+});
 
 const glance = [
   'Dedicated 24/7 residential support',
@@ -49,7 +53,7 @@ const modalities = [
 
 const amenities = [
   'Private & Semi-Private Suites',
-  'Chef-Prepared Nutrition',
+  'Home-Cooked Meals',
   'Serene Outdoor Gardens',
   'Mindfulness & Yoga Space',
   'Modern, Home-Like Living Spaces',
@@ -70,14 +74,6 @@ const conditions = [
   'Co-Occurring Disorders',
 ];
 
-const faqs = [
-  { q: 'What is residential mental health treatment?', a: 'It is a 24/7, live-in program where you receive intensive psychiatric care and therapy in a safe, structured environment.' },
-  { q: 'How long is a typical stay?', a: 'Stay lengths are personalized to your needs, typically ranging from 30 to 90 days to ensure deep, lasting restoration.' },
-  { q: 'Will I see a psychiatrist?', a: 'Yes. You will have regular sessions with our psychiatric team for medication management and clinical oversight of your care plan.' },
-  { q: 'What conditions do you focus on?', a: 'We focus on complex cases of depression, anxiety, PTSD, bipolar disorder, and personality disorders.' },
-  { q: 'Is the setting private?', a: 'Absolutely. We are a boutique, low-capacity facility in a quiet neighborhood to ensure maximum privacy and discretion.' },
-  { q: 'Can my family be involved?', a: 'Yes — we encourage family therapy and education sessions to help your loved ones support your long-term wellness.' },
-];
 
 export default function MentalHealthResidentialPage() {
   return (
@@ -86,7 +82,7 @@ export default function MentalHealthResidentialPage() {
         eyebrow="Find Stability. Reclaim Wellness."
         title="Residential mental health treatment in Fort Worth"
         subtitle="Advanced psychiatric care in a private, restorative environment — where clinical excellence meets personal restoration, away from the triggers of daily life."
-        image="/images/facility/dsc09517.jpg"
+        image="/images/facility/bedroom-bright-two-beds-main-house.jpg"
         crumbs={[{ label: 'Treatment', href: '/treatment' }, { label: 'Mental Health Residential' }]}
       />
 
@@ -147,8 +143,8 @@ export default function MentalHealthResidentialPage() {
               </p>
               <ul className="mt-6 grid gap-2.5 sm:grid-cols-2">
                 {modalities.map((m) => (
-                  <li key={m} className="flex items-center gap-2.5 text-white/80">
-                    <Check width={16} height={16} className="shrink-0 text-steel-light" /> {m}
+                  <li key={m} className="flex items-start gap-2.5 text-white/80">
+                    <Check width={16} height={16} className="mt-1 shrink-0 text-steel-light" /> {m}
                   </li>
                 ))}
               </ul>
@@ -159,15 +155,15 @@ export default function MentalHealthResidentialPage() {
               <p className="eyebrow !text-sand-light">
                 <span className="h-px w-6 bg-sand-light" /> Elevated Comfort
               </p>
-              <h3 className="mt-4 !text-white text-2xl">A luxury, home-like atmosphere</h3>
+              <h3 className="mt-4 !text-white text-2xl">A warm, home-like atmosphere</h3>
               <p className="mt-3 text-white/65">
-                Our facility is designed to feel like a high-end private residence, removing the cold,
+                Our facility is designed to feel like a private home, removing the cold,
                 institutional feel of traditional clinics.
               </p>
               <ul className="mt-6 grid gap-2.5 sm:grid-cols-2">
                 {amenities.map((m) => (
-                  <li key={m} className="flex items-center gap-2.5 text-white/80">
-                    <Sparkle width={15} height={15} className="shrink-0 text-sand-light" /> {m}
+                  <li key={m} className="flex items-start gap-2.5 text-white/80">
+                    <Sparkle width={15} height={15} className="mt-1 shrink-0 text-sand-light" /> {m}
                   </li>
                 ))}
               </ul>
@@ -181,8 +177,8 @@ export default function MentalHealthResidentialPage() {
         eyebrow="Conditions We Treat"
         title="Evidence-based support for complex challenges"
         imageSide="left"
-        image="/images/facility/dsc05013.jpg"
-        imageAlt="A restful living space at Fort Worth Wellness Center"
+        image="/images/facility/lounge-tv-and-sofas.jpg"
+        imageAlt="A restful lounge at Fort Worth Wellness Center"
         body={
           <p>
             We provide a safe, supportive environment for those managing a range of psychiatric
@@ -198,13 +194,13 @@ export default function MentalHealthResidentialPage() {
         <div className="container-fw">
           <SectionHeading eyebrow="Questions & Answers" title="Frequently asked questions" />
           <div className="mt-12">
-            <FAQ items={faqs} />
+            <FAQ items={faqGroup('residential')} />
           </div>
         </div>
       </section>
 
       <InsuranceBand />
-      <CTABand image="/images/facility/dsc09533.jpg" />
+      <CTABand image="/images/facility/pool-and-deck-wide-winter.jpg" />
     </>
   );
 }

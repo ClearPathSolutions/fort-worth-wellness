@@ -13,7 +13,7 @@ export default function MobileCallBar() {
         <a href={site.phone.href} className="btn-gold h-11 text-[15px]">
           <Phone width={16} height={16} /> Call Now
         </a>
-        <Link href="/admissions" className="btn-primary h-11 text-[15px]">
+        <Link href="/admissions/#verify" className="btn-primary h-11 text-[15px]">
           <Shield width={16} height={16} /> Verify
         </Link>
       </div>

@@ -1,4 +1,6 @@
 import type { Metadata } from 'next';
+import { pageMeta } from '@/lib/seo';
+import { faqGroup } from '@/lib/faqs';
 import Link from 'next/link';
 import { site } from '@/lib/site';
 import PageHero from '@/components/PageHero';
@@ -9,11 +11,12 @@ import CTABand from '@/components/CTABand';
 import Reveal from '@/components/ui/Reveal';
 import { ArrowRight, Phone, Pin, Plane } from '@/components/icons';
 
-export const metadata: Metadata = {
-  title: 'Admissions — Start Mental Health Treatment in Fort Worth',
+export const metadata: Metadata = pageMeta({
+  title: 'Admissions — Start Treatment Today',
   description:
     'Our Fort Worth admissions team makes starting mental health care simple — same-day placement, clear insurance guidance, and 24/7 confidential support.',
-};
+  path: '/admissions/',
+});
 
 const steps = [
   { n: '01', title: 'Reach Out Anytime', body: 'Call or complete our secure form to connect with an admissions specialist. Every conversation is confidential, and our team is available 24/7 to listen and guide you.' },
@@ -22,13 +25,6 @@ const steps = [
   { n: '04', title: 'Admission & Arrival', body: 'We coordinate your arrival and ensure a smooth transition. From the moment you arrive, you are welcomed into a safe, supportive environment built to help you heal.' },
 ];
 
-const faqs = [
-  { q: 'How quickly can I be admitted?', a: `Many individuals can be admitted the same day or within 24 hours. Our team works quickly to assess your needs, verify insurance, and coordinate arrival. Call us at ${site.phone.display} to get started.` },
-  { q: 'Will my job be protected if I take time off for treatment?', a: 'Many employees qualify for protection under the Family and Medical Leave Act (FMLA), which may allow leave for medical treatment without losing your job. Our team can help you understand the process and provide documentation if needed.' },
-  { q: 'Is treatment confidential?', a: 'Yes. Your privacy is protected by federal confidentiality laws and HIPAA regulations. We do not share your information without your written permission.' },
-  { q: 'What types of insurance do you accept?', a: 'We accept most major private insurance providers. Since coverage varies, we recommend using our verification form or calling our admissions team to confirm your specific benefits.' },
-  { q: 'Can my family be involved in my treatment?', a: 'Yes. With your permission, family involvement can be an important part of recovery. We offer family communication and therapy options to strengthen support systems and improve long-term outcomes.' },
-];
 
 export default function AdmissionsPage() {
   return (
@@ -37,7 +33,7 @@ export default function AdmissionsPage() {
         eyebrow="A Clear Path to Mental Wellness"
         title="Begin your journey at Fort Worth Wellness"
         subtitle="When your mind feels heavy, the right support makes all the difference. We offer personalized care and 24/7 guidance to help you regain balance and peace — and we make getting started simple."
-        image="/images/facility/dsc09517.jpg"
+        image="/images/facility/corridor-seating-nook.jpg"
         crumbs={[{ label: 'Admissions' }]}
       />
 
@@ -66,7 +62,15 @@ export default function AdmissionsPage() {
       {/* Verify insurance — form */}
       <section id="verify" className="section bg-ink text-white">
         <div className="container-wide grid gap-10 lg:grid-cols-2 lg:gap-16">
-          <div className="lg:pt-4">
+          {/*
+            The verification form is the tallest block on the page (it carries the extra
+            date-of-birth row), and this column holds a heading and one small card — so at lg
+            it ended a couple of hundred pixels short and left the bottom-left of the section
+            empty. `flex flex-col` + `lg:mt-auto` on the phone card pins that card to the
+            bottom of the column instead: heading at the top, card level with the foot of the
+            form, and the gap distributed between them where it reads as breathing room.
+          */}
+          <div className="flex flex-col lg:pt-4">
             <SectionHeading
               tone="light"
               align="left"
@@ -74,7 +78,7 @@ export default function AdmissionsPage() {
               title="Check your insurance benefits"
               intro="Submit your information securely and our admissions specialists will review your benefits and contact you promptly. We explain coverage clearly, outline any potential costs, and help you take the next step with confidence."
             />
-            <Reveal className="mt-8" delay={80}>
+            <Reveal className="mt-8 lg:mt-auto lg:pt-8" delay={80}>
               <div className="flex items-center gap-4 rounded-xl2 bg-white/[0.06] p-5 ring-1 ring-white/10">
                 <span className="flex h-12 w-12 items-center justify-center rounded-full bg-sand/20 text-sand-light">
                   <Phone width={22} height={22} />
@@ -94,6 +98,7 @@ export default function AdmissionsPage() {
               subtitle="Confidential and free — no obligation. We'll get right back to you."
               requireDob
               formKey="insurance_verification"
+              submitLabel="Verify my benefits"
             />
           </Reveal>
         </div>
@@ -151,7 +156,7 @@ export default function AdmissionsPage() {
                 <a href={site.address.mapUrl} target="_blank" rel="noopener noreferrer" className="btn-primary">
                   Get directions <ArrowRight width={16} height={16} />
                 </a>
-                <Link href="/contact-us" className="btn-ghost">
+                <Link href="/contact" className="btn-ghost">
                   Contact us
                 </Link>
               </div>
@@ -165,12 +170,12 @@ export default function AdmissionsPage() {
         <div className="container-fw">
           <SectionHeading eyebrow="Questions & Answers" title="Frequently asked questions" />
           <div className="mt-12">
-            <FAQ items={faqs} />
+            <FAQ items={faqGroup('admissions')} />
           </div>
         </div>
       </section>
 
-      <CTABand image="/images/facility/dji0591.jpg" />
+      <CTABand image="/images/facility/entry-foyer-arched-doors-branded.jpg" />
     </>
   );
 }

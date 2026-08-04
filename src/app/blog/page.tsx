@@ -1,4 +1,6 @@
 import type { Metadata } from 'next';
+import JsonLd from '@/components/JsonLd';
+import { breadcrumbSchema, pageMeta } from '@/lib/seo';
 import Image from 'next/image';
 import Link from 'next/link';
 import { getAllPosts, formatDate } from '@/lib/posts';
@@ -8,11 +10,12 @@ import CTABand from '@/components/CTABand';
 import Reveal from '@/components/ui/Reveal';
 import { ArrowRight, Clock } from '@/components/icons';
 
-export const metadata: Metadata = {
-  title: 'Blog — Recovery & Mental Health Insights',
+export const metadata: Metadata = pageMeta({
+  title: 'Blog — Mental Health Insights',
   description:
     'Expert articles on mental health, addiction recovery, detox, and dual diagnosis from the clinical team at Fort Worth Wellness Center.',
-};
+  path: '/blog/',
+});
 
 export default function BlogPage() {
   const posts = getAllPosts();
@@ -23,6 +26,7 @@ export default function BlogPage() {
       {/* Header */}
       <section className="bg-ink-900 pt-16">
         <div className="container-fw pb-14 pt-6">
+          <JsonLd data={breadcrumbSchema([{ label: 'Blog' }])} />
           <nav aria-label="Breadcrumb" className="mb-5 flex items-center gap-2 text-sm text-white/60">
             <Link href="/" className="hover:text-white">
               Home
@@ -33,7 +37,7 @@ export default function BlogPage() {
           <p className="eyebrow !text-sand-light">
             <span className="h-px w-6 bg-sand-light" /> Insights &amp; Education
           </p>
-          <h1 className="mt-4 text-4xl !text-white sm:text-5xl">Recovery &amp; mental health insights</h1>
+          <h1 className="mt-4 max-w-3xl text-4xl !text-white sm:text-5xl">Recovery &amp; mental health insights</h1>
           <p className="mt-4 max-w-2xl text-white/70">
             Guidance, education, and encouragement from our clinical team — on mental health,
             addiction recovery, detox, and lasting wellness.
@@ -134,7 +138,7 @@ export default function BlogPage() {
         </div>
       </section>
 
-      <CTABand image="/images/facility/dji0587.jpg" />
+      <CTABand image="/images/facility/dining-room-communal-tables.jpg" />
     </>
   );
 }

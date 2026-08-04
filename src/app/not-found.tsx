@@ -1,6 +1,15 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { site } from '@/lib/site';
 import { ArrowRight, Phone } from '@/components/icons';
+
+// FW-34: previously fell through to the layout's default title, so a 404 announced itself as
+// the homepage. `noindex` because a soft-404 in the index is worse than no entry at all.
+export const metadata: Metadata = {
+  title: 'Page Not Found',
+  description: `The page you were looking for isn't here. Call ${site.phone.display} and our team will point you the right way.`,
+  robots: { index: false, follow: true },
+};
 
 export default function NotFound() {
   return (

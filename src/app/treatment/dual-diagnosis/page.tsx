@@ -1,4 +1,6 @@
 import type { Metadata } from 'next';
+import { pageMeta } from '@/lib/seo';
+import { faqGroup } from '@/lib/faqs';
 import { site } from '@/lib/site';
 import PageHero from '@/components/PageHero';
 import SectionHeading from '@/components/SectionHeading';
@@ -9,11 +11,12 @@ import CTABand from '@/components/CTABand';
 import Reveal from '@/components/ui/Reveal';
 import { Check } from '@/components/icons';
 
-export const metadata: Metadata = {
-  title: 'Dual Diagnosis Treatment in Fort Worth, TX',
+export const metadata: Metadata = pageMeta({
+  title: 'Dual Diagnosis Treatment',
   description:
     'Integrated dual diagnosis care in Fort Worth — treating mental health and co-occurring substance use together, addressing the root cause for lasting stability.',
-};
+  path: '/treatment/dual-diagnosis/',
+});
 
 const glance = [
   'Mental health as the driver of care',
@@ -42,28 +45,6 @@ const whyChoose = [
   'Specialized psychiatric oversight',
 ];
 
-const faqs = [
-  {
-    q: 'How is your dual diagnosis approach different?',
-    a: 'By prioritizing psychiatric stability, we address the underlying drivers of self-medication — such as untreated depression or trauma — allowing for a more sustainable, profound recovery than traditional programs.',
-  },
-  {
-    q: 'Can I come if substance use is a secondary concern?',
-    a: 'Yes. Our sanctuary is designed for those who need intensive psychiatric support, even if substance use is a secondary or past concern.',
-  },
-  {
-    q: 'Will I work with a psychiatrist?',
-    a: 'Our clinical model includes regular, direct sessions with an on-staff psychiatrist to ensure your medication protocols are precisely balanced for both your mental health and recovery needs.',
-  },
-  {
-    q: 'How do you address trauma?',
-    a: 'Trauma is often the silent catalyst for co-occurring disorders, so we integrate specialized modalities like EMDR and trauma-informed counseling to help you process the past and regulate your nervous system.',
-  },
-  {
-    q: 'Do you accept insurance?',
-    a: `Yes — we work with most major PPO insurance providers. Our admissions team can perform a confidential verification of your benefits. Call us at ${site.phone.display} to learn more.`,
-  },
-];
 
 export default function DualDiagnosisPage() {
   return (
@@ -72,7 +53,7 @@ export default function DualDiagnosisPage() {
         eyebrow="Advanced Care for Complex Mental Health"
         title="Integrated dual diagnosis treatment"
         subtitle="A dual-pathway approach for those struggling with primary mental health disorders and co-occurring substance use — treated together, never in isolation."
-        image="/images/facility/dsc05010.jpg"
+        image="/images/facility/lounge-barn-upstairs-open.jpg"
         crumbs={[{ label: 'Treatment', href: '/treatment' }, { label: 'Dual Diagnosis' }]}
       />
 
@@ -104,7 +85,7 @@ export default function DualDiagnosisPage() {
         eyebrow="Understanding Dual Diagnosis"
         title="Two challenges, deeply intertwined"
         imageSide="left"
-        image="/images/facility/dsc05028.jpg"
+        image="/images/facility/bedroom-semi-private-two-queens.jpg"
         imageAlt="A private, restful resident suite at Fort Worth Wellness Center"
         body={
           <>
@@ -114,11 +95,20 @@ export default function DualDiagnosisPage() {
               use. We recognize these challenges are deeply intertwined, as many people begin using
               substances to self-medicate the weight of untreated psychiatric pain.
             </p>
+            {/*
+              FW-17. The removed sentence credited the National Alliance on Mental Illness with
+              "roughly 50% of individuals with a severe mental health disorder are also affected by
+              substance use." NAMI's published figure is 34.5% of U.S. adults with any mental
+              illness also having a substance use disorder; it says severity raises the likelihood
+              but does not publish the ~50% number this claimed. Unsubstantiable as written, so the
+              statistic and the attribution are gone and the qualitative point stands on its own.
+              (Note for the tracker: NAMI is a nonprofit, not a federal agency as FW-17 describes.)
+            */}
             <p>
-              Research from the National Alliance on Mental Illness shows roughly 50% of individuals
-              with a severe mental health disorder are also affected by substance use. We treat the
-              whole person — addressing the root emotional causes and the resulting habits at the
-              same time, so one never hinders the healing of the other.
+              Co-occurring mental health and substance use conditions are common, and each one tends
+              to reinforce the other. We treat the whole person — addressing the root emotional
+              causes and the resulting habits at the same time, so one never hinders the healing of
+              the other.
             </p>
           </>
         }
@@ -135,8 +125,8 @@ export default function DualDiagnosisPage() {
           <Reveal className="mx-auto mt-12 max-w-3xl" delay={80}>
             <ul className="grid gap-3 sm:grid-cols-2">
               {therapies.map((t) => (
-                <li key={t} className="flex items-center gap-3 rounded-xl bg-white p-4 shadow-card ring-1 ring-ink/[0.05]">
-                  <Check width={16} height={16} className="shrink-0 text-steel" />
+                <li key={t} className="flex items-start gap-3 rounded-xl bg-white p-4 shadow-card ring-1 ring-ink/[0.05]">
+                  <Check width={16} height={16} className="mt-1 shrink-0 text-steel" />
                   <span className="text-ink/80">{t}</span>
                 </li>
               ))}
@@ -148,8 +138,8 @@ export default function DualDiagnosisPage() {
       <SplitFeature
         bg="cream-deep"
         eyebrow="Why Choose Our Sanctuary"
-        title="A private estate for comprehensive psychiatric wellness"
-        image="/images/facility/dsc09536.jpg"
+        title="A private setting for comprehensive psychiatric wellness"
+        image="/images/facility/pool-tanning-ledge-winter.jpg"
         imageAlt="A light-filled common area at Fort Worth Wellness Center"
         body={
           <p>
@@ -166,13 +156,13 @@ export default function DualDiagnosisPage() {
         <div className="container-fw">
           <SectionHeading eyebrow="Questions & Answers" title="Frequently asked questions" />
           <div className="mt-12">
-            <FAQ items={faqs} />
+            <FAQ items={faqGroup('dual-diagnosis')} />
           </div>
         </div>
       </section>
 
       <InsuranceBand />
-      <CTABand image="/images/facility/dji0577.jpg" />
+      <CTABand image="/images/facility/exterior-front-elevation-winter.jpg" />
     </>
   );
 }

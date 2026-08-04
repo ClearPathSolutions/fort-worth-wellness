@@ -26,8 +26,10 @@ export async function GET(req: Request, { params }: { params: { path: string[] }
   }
 
   const search = new URL(req.url).search;
+  // Same reasoning as the lead route (FW-04): derive the forwarded origin from the
+  // platform-set `host`, never from the caller-supplied `Origin` header.
   const host = req.headers.get('host') || 'fort-worth-wellness.vercel.app';
-  const origin = req.headers.get('origin') || `https://${host}`;
+  const origin = process.env.CLARION_ORIGIN || `https://${host}`;
 
   try {
     const upstream = await fetch(`${CLARION_API}/${path}${search}`, {

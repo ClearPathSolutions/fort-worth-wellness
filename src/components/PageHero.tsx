@@ -1,6 +1,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { site } from '@/lib/site';
+import { breadcrumbSchema } from '@/lib/seo';
+import JsonLd from '@/components/JsonLd';
 import { ArrowRight, Phone } from '@/components/icons';
 
 type Crumb = { label: string; href?: string };
@@ -24,6 +26,9 @@ export default function PageHero({
 }: Props) {
   return (
     <section className="relative isolate overflow-hidden bg-ink-900">
+      {/* FW-27: emitted here so every page using PageHero gets it from the same crumbs it renders,
+          instead of a hand-maintained copy per page that can drift from the visible trail. */}
+      {crumbs.length > 0 && <JsonLd data={breadcrumbSchema(crumbs)} />}
       <Image
         src={image}
         alt=""
@@ -75,7 +80,7 @@ export default function PageHero({
               <a href={site.phone.href} className="btn-white">
                 <Phone width={17} height={17} /> Call {site.phone.display}
               </a>
-              <Link href="/admissions" className="btn-outline-light">
+              <Link href="/admissions/#verify" className="btn-outline-light">
                 Verify Insurance <ArrowRight width={16} height={16} />
               </Link>
             </div>

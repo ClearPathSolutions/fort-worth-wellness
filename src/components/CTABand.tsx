@@ -15,7 +15,7 @@ export default function CTABand({
   eyebrow = "We're available 24/7",
   title = 'Contact our 24/7 admissions team',
   body = 'Reaching out is the first step. Our team is here around the clock to listen, answer your questions, and help you find the right path forward — with no pressure and complete confidentiality.',
-  image = '/images/facility/dji0591.jpg',
+  image = '/images/facility/living-room-green-sofas-white-oak.jpg',
 }: Props) {
   return (
     <section className="relative overflow-hidden bg-ink-900">
@@ -41,7 +41,7 @@ export default function CTABand({
             <a href={site.phone.href} className="btn-white">
               <Phone width={17} height={17} /> Call {site.phone.display}
             </a>
-            <Link href="/contact-us" className="btn-outline-light">
+            <Link href="/contact" className="btn-outline-light">
               Send a message <ArrowRight width={16} height={16} />
             </Link>
           </div>
