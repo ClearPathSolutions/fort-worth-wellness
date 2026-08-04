@@ -5,6 +5,7 @@ import { Mail, Phone, Pin, Star } from '@/components/icons';
 
 const explore = [
   { label: 'Who We Are', href: '/about' },
+  { label: 'Our Team', href: '/team' },
   { label: 'Who We Help', href: '/who-we-help' },
   { label: 'Tour the Facility', href: '/tour' },
   { label: 'Admissions', href: '/admissions' },

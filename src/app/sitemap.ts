@@ -8,6 +8,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const routes = [
     '/',
     '/about/',
+    '/team/',
     '/treatment/',
     '/treatment/detox/',
     '/treatment/mental-health-residential/',

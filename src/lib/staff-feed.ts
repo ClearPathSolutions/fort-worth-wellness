@@ -58,6 +58,17 @@ const BIO_HELD: Record<string, string> = {
   'corney best': 'heading spells it "Corney", the bio body spells it "Cortney"',
 };
 
+/** Two-letter monogram for anyone without a headshot. */
+export function initials(name: string): string {
+  return name
+    .split(/\s+/)
+    .map((p) => p[0])
+    .filter(Boolean)
+    .slice(0, 2)
+    .join('')
+    .toUpperCase();
+}
+
 /** Loose name key so "Dr. Jane Smith, LPC" and "Jane Smith" match. */
 function nameKey(raw: string): string {
   return raw
@@ -115,4 +126,40 @@ export async function roster(
     }));
 
   return [...curated, ...extras];
+}
+
+/**
+ * Split a bio into paragraphs for display.
+ *
+ * The shared document has these written as three or four proper paragraphs, but the portal
+ * stores the field as one flat string — every bio comes back with zero newlines, up to 1,436
+ * characters of it. Rendered as-is that is a twenty-line wall of text, which is what made the
+ * first attempt at showing bios unreadable.
+ *
+ * This only ever inserts breaks at sentence boundaries and never alters a character, so the
+ * worst case is a paragraph break in a slightly different place than the author chose. If the
+ * portal is ever taught to preserve line breaks, delete this and split on `\n\n` instead.
+ */
+export function bioParagraphs(bio: string): string[] {
+  const sentences = bio.match(/[^.!?]+[.!?]+["')\]]*\s*/g);
+  if (!sentences) return [bio.trim()];
+
+  const paras: string[] = [];
+  let buf = '';
+  for (const s of sentences) {
+    buf += s;
+    // ~320 chars is about three sentences of this prose — enough to hold a thought,
+    // short enough to stay scannable.
+    if (buf.trim().length >= 320) {
+      paras.push(buf.trim());
+      buf = '';
+    }
+  }
+  const tail = buf.trim();
+  if (tail) {
+    // Avoid orphaning a single trailing sentence as its own paragraph.
+    if (paras.length && tail.length < 140) paras[paras.length - 1] += ' ' + tail;
+    else paras.push(tail);
+  }
+  return paras;
 }
