@@ -3,14 +3,14 @@ import { pageMeta } from '@/lib/seo';
 import Image from 'next/image';
 import PostImage from '@/components/PostImage';
 import { team, teamScopeNote } from '@/lib/site';
-import { extraStaff } from '@/lib/staff-feed';
+import { roster } from '@/lib/staff-feed';
 import PageHero from '@/components/PageHero';
 import SectionHeading from '@/components/SectionHeading';
 import FeatureGrid from '@/components/blocks/FeatureGrid';
 import InsuranceBand from '@/components/InsuranceBand';
 import CTABand from '@/components/CTABand';
 import Reveal from '@/components/ui/Reveal';
-import { Compass, Heart, Home as HomeIcon, Leaf, Shield, Sparkle, Users } from '@/components/icons';
+import { ChevronDown, Compass, Heart, Home as HomeIcon, Leaf, Shield, Sparkle, Users } from '@/components/icons';
 
 export const metadata: Metadata = pageMeta({
   title: 'Our Mission & Approach to Care',
@@ -44,8 +44,8 @@ function initials(name: string) {
 }
 
 export default async function AboutPage() {
-  // Locally curated entries win; the portal only contributes people not listed here.
-  const roster = [...team, ...(await extraStaff('fort-worth-wellness', team))];
+  // Curated entries own the headshots; the portal supplies the bios and any extra people.
+  const staff = await roster('fort-worth-wellness', team);
   return (
     <>
       <PageHero
@@ -142,7 +142,7 @@ export default async function AboutPage() {
             The width maths is exact: 4 x (25% - 18px) + 3 x 24px gap = 100%.
           */}
           <div className="mt-14 flex flex-wrap justify-center gap-6">
-            {roster.map((m, i) => (
+            {staff.map((m, i) => (
               <Reveal
                 key={m.name}
                 delay={i * 70}
@@ -200,6 +200,30 @@ export default async function AboutPage() {
                       )}
                     </h3>
                     <p className="mt-1 text-sm text-sand-light">{m.role}</p>
+
+                    {/*
+                      Bios run 530-1440 characters. Printed inline, one card would be several
+                      times the height of its neighbour — the exact unevenness this grid was
+                      rebuilt to remove. A native <details> keeps every card identical until
+                      someone asks, needs no JavaScript, and is keyboard-operable for free.
+                      Cards whose bio is withheld (see BIO_HELD in lib/staff-feed) simply do
+                      not render the toggle.
+                    */}
+                    {m.bio && (
+                      <details className="group/bio mt-3">
+                        <summary className="inline-flex cursor-pointer list-none items-center gap-1.5 text-sm font-semibold text-steel-light hover:text-white [&::-webkit-details-marker]:hidden">
+                          Read bio
+                          <ChevronDown
+                            width={15}
+                            height={15}
+                            className="transition-transform duration-300 group-open/bio:rotate-180"
+                          />
+                        </summary>
+                        <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-white/70">
+                          {m.bio}
+                        </p>
+                      </details>
+                    )}
                   </div>
                 </div>
               </Reveal>
