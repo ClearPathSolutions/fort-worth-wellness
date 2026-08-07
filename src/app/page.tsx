@@ -125,7 +125,14 @@ export default function HomePage() {
                 Expert psychiatric care, private residential support, and integrated dual diagnosis
                 treatment — combined to help you find lasting stability on a tranquil Texas campus.
               </p>
-              <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+              {/*
+                `text-shadow:none` because the hero's scrim shadow is declared on the whole text
+                column (see FW-10 above) and CSS inherits it into every descendant — including
+                these two labels. On the eyebrow, h1 and subtitle that shadow is doing real work,
+                lifting light text off a bright photograph. On a solid white pill and a solid gold
+                pill it has no contrast job at all and only smears the phone number.
+              */}
+              <div className="mt-9 flex flex-col gap-3 [text-shadow:none] sm:flex-row">
                 <a href={site.phone.href} className="btn-white">
                   <Phone width={17} height={17} /> Call {site.phone.display}
                 </a>
