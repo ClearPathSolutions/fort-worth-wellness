@@ -196,7 +196,7 @@ export default function HomePage() {
               align="left"
               eyebrow="Who We Are"
               title="Setting a new standard for mental health excellence in Texas"
-              intro="Fort Worth Wellness was founded on a simple belief: everyone deserves a life defined by peace, not their diagnosis. We've moved away from cold, clinical, one-size-fits-all care toward deeply personalized strategies that help you regain control and find lasting emotional stability."
+              intro="Fort Worth Wellness Center was founded on a simple belief: everyone deserves a life defined by peace, not their diagnosis. We've moved away from cold, clinical, one-size-fits-all care toward deeply personalized strategies that help you regain control and find lasting emotional stability."
             />
             <Reveal className="mt-6" delay={80}>
               <p className="prose-fw">

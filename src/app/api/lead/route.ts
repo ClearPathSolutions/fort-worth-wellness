@@ -160,7 +160,7 @@ async function alertLeadFailure(detail: {
 
   const isAllowlist = detail.status === 403;
   const lines = [
-    '🔴 *Fort Worth Wellness — a website lead was REJECTED and is not captured.*',
+    '🔴 *Fort Worth Wellness Center — a website lead was REJECTED and is not captured.*',
     `• form: \`${detail.formKey}\``,
     `• origin sent: \`${detail.origin}\``,
     `• upstream status: \`${detail.status ?? 'no response'}\` after ${detail.attempts} attempt(s)`,

@@ -114,7 +114,7 @@ export default async function TeamPage() {
           <Reveal className="mx-auto mt-12 max-w-4xl" delay={120}>
             <p className="border-t border-ink/10 pt-8 text-sm text-ink/55">{teamScopeNote}</p>
             <Link href="/about" className="btn-ghost mt-6">
-              More about Fort Worth Wellness <ArrowRight width={16} height={16} />
+              More about Fort Worth Wellness Center <ArrowRight width={16} height={16} />
             </Link>
           </Reveal>
         </div>

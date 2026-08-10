@@ -76,7 +76,7 @@ export default async function PostPage({ params }: { params: { slug: string } })
                 uncapped post title runs the full width and no longer lines up with the body. */}
             <h1 className="max-w-3xl text-3xl leading-[1.15] !text-white sm:text-4xl lg:text-[2.9rem]">{post.title}</h1>
             <div className="mt-6 flex flex-wrap items-center gap-4 text-sm text-white/70">
-              <span>By the {site.shortName} Clinical Team</span>
+              <span>By the {site.name} Clinical Team</span>
               <span className="h-1 w-1 rounded-full bg-white/30" />
               <span>{formatDate(post.date)}</span>
               {post.readingMin > 0 && (

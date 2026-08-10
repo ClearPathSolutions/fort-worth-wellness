@@ -5,7 +5,6 @@
 
 export const site = {
   name: 'Fort Worth Wellness Center',
-  shortName: 'Fort Worth Wellness',
   tagline: 'A Private Sanctuary for Mental Wellness in Texas',
   description:
     'Fort Worth Wellness Center provides residential mental health, dual diagnosis, and medical detox care with 24/7 clinical support in a private, restorative Texas setting.',
@@ -235,10 +234,11 @@ export type TeamMember = {
  * Joshua and Haley have none on record, so none are shown.
  */
 export const team: TeamMember[] = [
+  // No credential: the client's staff list gives one for Deborah (BSN, RN) and Corney
+  // (M.C.J., LCDC) and deliberately none for Olivia, so the LPC that used to sit here is gone.
   {
     name: 'Olivia Hadjerioua',
     role: 'Executive Director',
-    credential: 'LPC',
     image: '/images/team/olivia-hadjerioua.png',
   },
   { name: 'Deborah Wade', role: 'Director of Nursing', credential: 'BSN, RN' },
@@ -251,8 +251,13 @@ export const team: TeamMember[] = [
 ];
 
 /** Shown with the team, because all of the above are shared across the Texas facilities. */
+/**
+ * Written when the roster was four shared directors. It now also covers two case managers and a
+ * clinical director who work at this facility, so it says "several of" rather than implying the
+ * whole list is shared — which would be inaccurate in the other direction.
+ */
 export const teamScopeNote =
-  'Our leadership team is shared across our Texas facilities, including our sister location in Dallas.';
+  'Several of our directors work across our Texas facilities, including our sister location in Dallas.';
 
 // Curated facility gallery — real photos of the Weatherford property.
 export type GalleryPhoto = { src: string; caption: string; w: number; h: number };

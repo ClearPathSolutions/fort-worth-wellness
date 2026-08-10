@@ -40,7 +40,7 @@ export default function TreatmentPage() {
       <section className="section bg-cream">
         <div className="container-fw">
           <SectionHeading
-            eyebrow="The Fort Worth Wellness Difference"
+            eyebrow="The Fort Worth Wellness Center Difference"
             title="A mental health–first center"
             intro="Whether you're seeking help for a standalone condition like anxiety or depression, or dealing with a complex dual diagnosis where substance use has become a coping mechanism, our team is here to help you find your way back to yourself."
           />

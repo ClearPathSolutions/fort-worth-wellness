@@ -37,25 +37,34 @@ export type ExtraMember = {
 };
 
 /**
- * Bios withheld from the site, by name key, with the reason.
+ * First-name corrections applied inside a person's own bio.
  *
- * Both defects are in the shared bios document itself and are reproduced verbatim by
- * the portal, so neither is fixable in this repo — they need an edit at
- * support.quadranthealthgroup.com/dev/staff, after which the entry can simply be
- * deleted from this list. The person still appears on the page; only the bio is held.
+ * Both of these bios were previously withheld from the site entirely, because each one called
+ * its subject by a different name than the card above it. That was the safe call while the
+ * correct spelling was genuinely unknown. It no longer is: the owner supplied a written staff
+ * list naming both people, which is the authoritative source for how each name is spelled.
  *
- * - `jacci westbrook` — the bio names her "Jessica" twice ("Drawing from her own lived
- *   experience, Jessica brings…" / "Jessica is proud to be part of the team…"). A staff
- *   bio that calls the person by someone else's name is not something to publish.
+ * - `corney best` — the bios document headed her entry "Corney Best" but spelled it "Cortney"
+ *   in all four sentences of the body, and the portal's `name` field copies the heading. The
+ *   owner's list reads "Corney Best, M.C.J., LCDC", confirming the heading. So the body is the
+ *   side that is wrong.
  *
- * - `corney best` — the document heading reads "Corney Best" while all four sentences of
- *   the body read "Cortney", and the portal's `name` field copies the heading. So the
- *   card title and the bio would disagree, in public, about the clinical director's own
- *   name. Whichever spelling is right, they have to match before either goes up.
+ * - `jacci westbrook` — her bio refers to "Jessica" twice. The owner's list reads
+ *   "Jacci Westbrook", so those are simply the wrong name.
+ *
+ * Deliberately narrow. Each rule only ever rewrites the subject's own first name, inside their
+ * own bio, as a whole word — never a surname, never anyone else's name, never any other prose.
+ * The bio is otherwise published exactly as the portal returns it.
+ *
+ * This is a correction at the point of display, not at the source. The shared bios document
+ * still has the wrong spellings, so anything else generated from it will still be wrong, and
+ * any re-import would reintroduce them here. Worth fixing properly at
+ * support.quadranthealthgroup.com/dev/staff — after which these rules become no-ops and can be
+ * deleted.
  */
-const BIO_HELD: Record<string, string> = {
-  'jacci westbrook': 'bio refers to her as "Jessica"',
-  'corney best': 'heading spells it "Corney", the bio body spells it "Cortney"',
+const BIO_NAME_FIX: Record<string, { wrong: RegExp; right: string }> = {
+  'corney best': { wrong: /\bCortney\b/g, right: 'Corney' },
+  'jacci westbrook': { wrong: /\bJessica\b/g, right: 'Jacci' },
 };
 
 /** Two-letter monogram for anyone without a headshot. */
@@ -83,8 +92,9 @@ function nameKey(raw: string): string {
 
 function publishableBio(name: string, bio: string | null): string | undefined {
   if (!bio) return undefined;
-  if (BIO_HELD[nameKey(name)]) return undefined;
-  return bio.trim() || undefined;
+  const fix = BIO_NAME_FIX[nameKey(name)];
+  const text = (fix ? bio.replace(fix.wrong, fix.right) : bio).trim();
+  return text || undefined;
 }
 
 async function fetchFeed(facility: string): Promise<FeedPerson[]> {

@@ -12,7 +12,7 @@ import { Compass, Heart, Users } from '@/components/icons';
 export const metadata: Metadata = pageMeta({
   title: 'Tour Our Private Fort Worth Campus',
   description:
-    'Explore the Fort Worth Wellness campus — a calm, boutique residential setting with private suites, wooded grounds, and comfortable amenities designed for healing.',
+    'Explore the Fort Worth Wellness Center campus — a calm, boutique residential setting with private suites, wooded grounds, and comfortable amenities designed for healing.',
   path: '/tour/',
 });
 
