@@ -234,20 +234,43 @@ export type TeamMember = {
  * Joshua and Haley have none on record, so none are shown.
  */
 export const team: TeamMember[] = [
-  // No credential: the client's staff list gives one for Deborah (BSN, RN) and Corney
-  // (M.C.J., LCDC) and deliberately none for Olivia, so the LPC that used to sit here is gone.
+  // Order, titles and credentials are the owner's written staff list verbatim, which is also
+  // why Olivia carries no credential: that list gives one for Deborah and Corney and none for
+  // her, so the LPC that used to sit here is gone.
+  //
+  // All seven are listed locally now, where they used to be four. The other three arrived via
+  // the portal feed, which returns `photoUrl: null` for the whole Texas team — so they had no
+  // way to get a headshot. Listing them here gives them one; `roster()` still matches each
+  // person to the portal by name and takes their bio prose from it, so nothing about the bios
+  // changes. Anyone the portal knows about who is not named here is still appended.
   {
     name: 'Olivia Hadjerioua',
     role: 'Executive Director',
     image: '/images/team/olivia-hadjerioua.png',
   },
-  { name: 'Deborah Wade', role: 'Director of Nursing', credential: 'BSN, RN' },
+  {
+    name: 'Deborah Wade',
+    role: 'Director of Nursing',
+    credential: 'BSN, RN',
+    image: '/images/team/deborah-wade.jpg',
+  },
   { name: 'Joshua Leder', role: 'Director of Operations', image: '/images/team/joshua-leder.png' },
   {
+    // The supplied headshot is filed under "Haley Hayes"; it is the same frame as the one
+    // already committed here, so it is the same person under a different surname. Her name is
+    // spelled Wadlington on the owner's staff list, which is what the site follows.
     name: 'Haley Wadlington',
     role: 'Director of Client Care',
     image: '/images/team/haley-wadlington.png',
   },
+  {
+    name: 'Corney Best',
+    role: 'Clinical Director',
+    credential: 'M.C.J., LCDC',
+    image: '/images/team/corney-best.jpg',
+  },
+  { name: 'Jacci Westbrook', role: 'Case Manager', image: '/images/team/jacci-westbrook.jpg' },
+  { name: 'Krystal Moore', role: 'Case Manager', image: '/images/team/krystal-moore.jpg' },
 ];
 
 /** Shown with the team, because all of the above are shared across the Texas facilities. */
