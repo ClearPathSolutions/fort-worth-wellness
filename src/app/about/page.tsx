@@ -44,7 +44,7 @@ export default async function AboutPage() {
       <PageHero
         eyebrow="We Are Your Partners in Healing"
         title="Get to know us"
-        subtitle="We built Fort Worth Wellness to be a place where people can finally find peace — providing the expert medical and emotional support you need in a comfortable setting, so you can get back to the life you love."
+        subtitle="We built Fort Worth Wellness Center to be a place where people can finally find peace — providing the expert medical and emotional support you need in a comfortable setting, so you can get back to the life you love."
         image="/images/facility/entry-hall-french-doors.jpg"
         crumbs={[{ label: 'Who We Are' }]}
       />
@@ -66,7 +66,7 @@ export default async function AboutPage() {
           <div>
             <SectionHeading
               align="left"
-              eyebrow="The Fort Worth Wellness Way"
+              eyebrow="The Fort Worth Wellness Center Way"
               title="A different kind of care"
               intro="Most people picture treatment as a cold, clinical hospital stay. We do things differently — a space that feels like home, where you can actually relax and focus on getting better."
             />
@@ -104,7 +104,7 @@ export default async function AboutPage() {
       <FeatureGrid
         bg="cream"
         eyebrow="Trusted & Experienced"
-        heading="Why Fort Worth Wellness is your top choice"
+        heading="Why Fort Worth Wellness Center is your top choice"
         intro="Six reasons families across Texas trust us with the people they love."
         features={whyChoose}
         columns={3}

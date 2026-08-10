@@ -13,7 +13,7 @@ import { ArrowRight, Compass, Home as HomeIcon, Shield, Star, Users } from '@/co
 export const metadata: Metadata = pageMeta({
   title: 'Aftercare & Alumni Support',
   description:
-    'Stay connected after treatment with Fort Worth Wellness aftercare and alumni support — a structured step-down plan and lifelong community for continued growth.',
+    'Stay connected after treatment with Fort Worth Wellness Center aftercare and alumni support — a structured step-down plan and lifelong community for continued growth.',
   path: '/treatment/aftercare/',
 });
 
@@ -100,7 +100,7 @@ export default function AftercarePage() {
               <div>
                 <h3 className="text-xl">Are you one of our alumni?</h3>
                 <p className="mx-auto mt-3 max-w-lg text-ink/65">
-                  Your story helps someone still deciding whether to reach out. If {site.shortName}{' '}
+                  Your story helps someone still deciding whether to reach out. If {site.name}{' '}
                   was part of your recovery, we&apos;d be grateful if you shared your experience.
                 </p>
               </div>

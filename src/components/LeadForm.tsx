@@ -284,7 +284,7 @@ export default function LeadForm({
         <label className="flex items-start gap-3 text-sm text-ink/60">
           <input type="checkbox" name="consent" required className="mt-1 h-4 w-4 accent-steel" />
           <span>
-            I consent to be contacted by {site.shortName}. My information is kept strictly
+            I consent to be contacted by {site.name}. My information is kept strictly
             confidential and is never shared.
           </span>
         </label>

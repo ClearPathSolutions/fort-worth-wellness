@@ -31,7 +31,7 @@ export default function AdmissionsPage() {
     <>
       <PageHero
         eyebrow="A Clear Path to Mental Wellness"
-        title="Begin your journey at Fort Worth Wellness"
+        title="Begin your journey at Fort Worth Wellness Center"
         subtitle="When your mind feels heavy, the right support makes all the difference. We offer personalized care and 24/7 guidance to help you regain balance and peace — and we make getting started simple."
         image="/images/facility/exterior-front-elevation-through-oaks.jpg"
         crumbs={[{ label: 'Admissions' }]}
@@ -109,7 +109,7 @@ export default function AdmissionsPage() {
         <div className="container-fw">
           <SectionHeading
             eyebrow="What to Expect"
-            title="The Fort Worth Wellness experience"
+            title="The Fort Worth Wellness Center experience"
             intro="When you arrive, our team welcomes you and helps you get settled. Your safety and emotional stability come first."
           />
           <Reveal className="mx-auto mt-10 max-w-3xl prose-fw space-y-5" delay={80}>
