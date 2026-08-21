@@ -76,6 +76,29 @@ export const clarion = {
   color: '#4a7aa4', // brand steel blue — matches buttons + Longhorn logo
 };
 
+/**
+ * Third-party measurement.
+ *
+ * Note what this changes about the site's privacy posture — see the note beside `<Analytics />`
+ * in `app/layout.tsx`. Both tags below set first-party cookies and both can associate a visitor
+ * with the URL they are on, and on this site the URL is the sensitive part: a request for
+ * `/treatment/dual-diagnosis` is a health inference about the person making it. That is the
+ * pattern behind the HHS OCR bulletin on tracking technologies and the FTC's actions against
+ * BetterHelp and GoodRx. Owner's call, made knowingly — but it is a decision, not a default,
+ * and anything added to the GTM container inherits it without further review.
+ */
+export const analytics = {
+  /** Google Tag Manager container. */
+  gtmId: process.env.NEXT_PUBLIC_GTM_ID || 'GTM-TC7PQ4LR',
+  /**
+   * CallTrackingMetrics. `t.js` performs dynamic number insertion — it rewrites the numbers
+   * rendered from `site.phone` so calls can be attributed to a source. Supplied as a
+   * protocol-relative `//264810.tctm.co/t.js`; pinned to https here because the site is
+   * https-only and a protocol-relative src has no benefit left.
+   */
+  callTrackingSrc: 'https://264810.tctm.co/t.js',
+};
+
 export type NavChild = { label: string; href: string; blurb?: string };
 export type NavItem = { label: string; href: string; children?: NavChild[] };
 
