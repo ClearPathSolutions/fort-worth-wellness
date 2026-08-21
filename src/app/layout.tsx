@@ -9,7 +9,7 @@ import Footer from '@/components/Footer';
 import JsonLd from '@/components/JsonLd';
 import MobileCallBar from '@/components/MobileCallBar';
 import { organizationSchema } from '@/lib/seo';
-import { clarion, site } from '@/lib/site';
+import { analytics, clarion, site } from '@/lib/site';
 
 const serif = Fraunces({
   subsets: ['latin'],
@@ -81,6 +81,21 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </noscript>
       </head>
       <body className="min-h-screen">
+        {/*
+          GTM's <noscript> fallback. It has to be the first thing inside <body> per Google's
+          snippet, and it cannot go through next/script — Script renders nothing without JS,
+          which is the one case this exists to cover.
+        */}
+        <noscript>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <iframe
+            src={`https://www.googletagmanager.com/ns.html?id=${analytics.gtmId}`}
+            height="0"
+            width="0"
+            style={{ display: 'none', visibility: 'hidden' }}
+            title="Google Tag Manager"
+          />
+        </noscript>
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-steel focus:px-5 focus:py-2 focus:text-white"
@@ -120,17 +135,54 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
 
         {/*
-          FW-45. The site had no measurement of any kind — no GA4, no GTM, no pixel — so nothing
+          Google Tag Manager. `afterInteractive` rather than `beforeInteractive`: GTM is not
+          needed to render anything, and beforeInteractive would block hydration behind a
+          third-party fetch on a site whose Core Web Vitals are its own ranking factor.
+
+          The container is a loaded gun pointed at the note below — whatever is added inside it
+          later (GA4, Meta pixel, an ad-platform remarketing tag) ships without touching this
+          repo and without any of the reasoning below being re-read. If a pixel goes in, the
+          cookieless argument for Vercel Analytics stops being true of the site as a whole.
+        */}
+        <Script id="gtm-loader" strategy="afterInteractive">
+          {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','${analytics.gtmId}');`}
+        </Script>
+
+        {/*
+          CallTrackingMetrics. `t.js` swaps the numbers rendered from `site.phone` for tracking
+          numbers so calls can be attributed to a source.
+
+          Two consequences worth knowing. The swap is client-side, so a visitor with JS disabled,
+          or one who taps before the script lands, gets the real number — which is correct
+          behaviour on a 24/7 crisis line and should not be "fixed" by hiding the number until
+          CTM is ready. And the number in `organizationSchema()` stays the real one on purpose:
+          structured data is read by crawlers, and feeding a rotating tracking number to Google's
+          knowledge panel is how a business ends up with a dead number in search results.
+        */}
+        <Script src={analytics.callTrackingSrc} strategy="afterInteractive" />
+
+        {/*
+          FW-45, amended. The site had no measurement of any kind — no GA4, no GTM, no pixel — so nothing
           about it could be evaluated: which pages produce calls, where people abandon the form,
           whether any paid spend returns anything.
 
-          Vercel Analytics specifically, and the reason is compliance rather than convenience. This
-          is a behavioural-health site where the page path itself is sensitive: a request for
-          `/treatment/dual-diagnosis` is a health inference about the person making it. GA4 storing
-          that against a persistent `_ga` client id is the pattern that has drawn regulatory
-          attention at healthcare providers. Vercel Analytics is cookieless and stores no visitor
-          identifier, so there is no profile to associate a diagnosis-shaped URL with — and no
-          consent banner is required.
+          Vercel Analytics was chosen for compliance rather than convenience: this is a
+          behavioural-health site where the page path itself is sensitive — a request for
+          `/treatment/dual-diagnosis` is a health inference about the person making it — and
+          Vercel Analytics is cookieless, storing no visitor identifier to associate one with.
+
+          That argument no longer covers the site as a whole. GTM and CallTrackingMetrics were
+          added above at the owner's instruction, and both set first-party cookies and both can
+          tie a visitor to the URL they are on. This paragraph is kept because it still explains
+          why THIS component is here and why it is worth keeping, but do not read it as a
+          statement that the site is tracker-free — it is not, and it has not been since the two
+          tags above landed. What follows from that is a matter for the owner and their counsel:
+          a HIPAA business associate agreement with Google and with CTM, or a consent gate, or
+          both. See the note on `analytics` in `lib/site.ts`.
 
           Both components render nothing and only load in production.
         */}
