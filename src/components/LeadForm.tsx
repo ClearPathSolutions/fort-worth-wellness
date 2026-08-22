@@ -2,16 +2,9 @@
 
 import { useState, type FormEvent } from 'react';
 import { track } from '@vercel/analytics';
-import { site } from '@/lib/site';
+import { clarion, site } from '@/lib/site';
+import { ctmSessionIdWhenReady, getAttribution } from '@/lib/attribution';
 import { ArrowRight, Check, Phone, Star } from '@/components/icons';
-
-declare global {
-  interface Window {
-    ClarionForms?: {
-      submit: (payload: { form_key: string; data: Record<string, unknown> }) => Promise<Response>;
-    };
-  }
-}
 
 type Props = {
   /** headline shown above the form */
@@ -69,24 +62,71 @@ export default function LeadForm({
       message: (raw.message || '').trim(),
     };
 
+    /*
+      FW-46. Attribution, gathered once and sent identically on both delivery paths below.
+
+      This is deliberately no longer `window.ClarionForms.submit()`. That helper does deliver
+      the lead, and it does send `ctm_visitor_sid` correctly — but it builds its own payload and
+      reads `utm_*` and `gclid` from the *live* `location.search`, which by submit time is
+      usually empty. Every visitor who read a second page before converting arrived with a
+      correct landing page and no campaign, which is invisible in the CRM: the record looks
+      populated. The envelope below is the same shape the vendor script posts, to the same
+      endpoint, with the campaign taken from storage instead of the URL — plus `wbraid`/`gbraid`,
+      which it never collected at all and which CTM's own routing rules key on.
+
+      `ctm_visitor_sid` must stay **flat and top-level**; Clarion's parser does not look for it
+      anywhere else, and a nested copy attaches the lead to no visit while looking correct.
+    */
+    const { clickIds, ...attribution } = getAttribution();
+    const ctmVisitorSid = await ctmSessionIdWhenReady();
+    // Meta / Microsoft click ids go in with the form's own fields, not in `utm` — see
+    // `getAttribution()`. `data` is a free-form map by design, so extra keys are safe here.
+    Object.assign(data, clickIds);
+
+    /*
+      If we could not find a CTM session id, deliberately give up the direct route and go
+      through our own server instead (FW-46).
+
+      `__ctmid` is a first-party cookie, so it rides along in the headers of a request to
+      `/api/lead/` whether or not our JavaScript managed to read it — and the route parses it
+      independently. That covers the cases this component cannot: `document.cookie` throwing
+      under a strict privacy mode, or a regression in our own reader. Posting straight to
+      Clarion with `ctm_visitor_sid: null` would throw that recovery away and file the lead
+      against no visit, which is the exact fault this work exists to fix.
+
+      A null id is still sent honestly when neither source has one — never a substitute id.
+    */
+    const preferServerRelay = !ctmVisitorSid;
+
     try {
-      // Primary: ClarionLabs official form capture (window.ClarionForms.submit).
+      // Primary: straight to Clarion's public forms API, exactly as the vendor script would.
       let delivered = false;
-      const cf = typeof window !== 'undefined' ? window.ClarionForms : undefined;
-      if (cf && typeof cf.submit === 'function') {
+      if (!preferServerRelay) {
         try {
-          const res = await cf.submit({ form_key: formKey, data });
-          // Must be a real, non-failing Response. The previous `!res || res.ok !== false`
-          // treated a nullish return as delivered, which would have skipped the server-route
-          // fallback if Clarion's script ever stopped returning one (FW-34).
-          delivered = !!res && res.ok !== false;
+          const res = await fetch(`${clarion.api}/forms/public/submit`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              site_key: clarion.siteKey,
+              form_key: formKey,
+              data,
+              ...attribution,
+              ctm_visitor_sid: ctmVisitorSid,
+              user_agent: navigator.userAgent,
+            }),
+            keepalive: true,
+          });
+          delivered = res.ok;
         } catch {
+          // Network error, or this origin is not on Clarion's allowlist so the CORS preflight
+          // failed. Either way nothing was recorded; the server route is the second chance.
           delivered = false;
         }
       }
 
-      // Fallback: server route (also posts to Clarion's forms API) if the
-      // client script didn't load or the capture didn't confirm.
+      // Fallback: server route (also posts to Clarion's forms API) if the browser POST could
+      // not be made or was rejected. Attribution rides along so a lead that takes this path is
+      // no less attributed than one that does not — it used to send none at all.
       if (!delivered) {
         // Trailing slash is required, not cosmetic: `trailingSlash: true` in next.config.mjs
         // makes the slashless form 308 to this one, so omitting it costs an extra round trip on
@@ -94,7 +134,17 @@ export default function LeadForm({
         const res = await fetch('/api/lead/', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...raw, formKey }),
+          body: JSON.stringify({
+            ...raw,
+            formKey,
+            page_url: attribution.page_url,
+            landing_page_url: attribution.landing_page_url,
+            referrer: attribution.referrer,
+            utm: attribution.utm,
+            gclid: attribution.gclid,
+            ctm_visitor_sid: ctmVisitorSid,
+            click_ids: clickIds,
+          }),
         });
         if (!res.ok) {
           // FW-02: the route now reports real failures, and its message is more useful than a

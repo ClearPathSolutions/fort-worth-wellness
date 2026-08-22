@@ -4,6 +4,7 @@ import Script from 'next/script';
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import './globals.css';
+import AttributionTracker from '@/components/AttributionTracker';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import JsonLd from '@/components/JsonLd';
@@ -102,6 +103,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           Skip to content
         </a>
+        {/*
+          FW-46. Persists the campaign that brought this visitor here, on every pageview. It has
+          to live in the root layout: an ad lands on whatever page it points at — usually not one
+          with a form — and the query string is gone by the time they reach one. Renders nothing.
+        */}
+        <AttributionTracker />
         <Header />
         <main id="main">{children}</main>
         <Footer />
@@ -126,7 +133,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           strategy="afterInteractive"
         />
 
-        {/* ClarionLabs form capture — exposes window.ClarionForms.submit() used by LeadForm */}
+        {/*
+          ClarionLabs form capture. `LeadForm` no longer calls its `window.ClarionForms.submit()`
+          helper — that helper reads the campaign from the live URL, which is empty by submit
+          time (FW-46) — so this is kept only as the vendor's install signal, which is what makes
+          the forms integration show as present on Clarion's side.
+
+          ⚠️ Do NOT put `data-clarion-form` on a form on this site. The script auto-binds a
+          submit listener to any form carrying that attribute and does not check
+          `defaultPrevented`, so it would POST the lead a second time alongside `LeadForm`'s own
+          submit — one enquiry, two records, and a phone call from admissions each way.
+        */}
         <Script
           src={clarion.formsSrc}
           data-site-key={clarion.siteKey}

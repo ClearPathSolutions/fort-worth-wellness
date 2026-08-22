@@ -79,6 +79,90 @@ function isRateLimited(ip: string): boolean {
   return false;
 }
 
+/**
+ * CallTrackingMetrics' visitor session id: 24 hex characters, no dashes (FW-46).
+ *
+ * Worth being strict about, because the failure is silent. A value of the wrong shape — most
+ * likely some other store's UUID, which has dashes — is accepted by Clarion, returns 200, and
+ * attaches the lead to no visit at all. An absent id is the honest outcome and `null` is the
+ * correct thing to send; a plausible-looking wrong one is worse than nothing, because it looks
+ * like the attribution is working.
+ */
+const CTM_ID = /^[0-9a-f]{24}$/i;
+
+/**
+ * The CTM id for this lead, preferring the browser's own read and falling back to the cookie.
+ *
+ * The fallback is the point of this function. `__ctmid` is a first-party cookie, so it is sent
+ * on the request to this route automatically — which means a client-side regression (t.js
+ * blocked by an extension, our own reader broken by a refactor) cannot silently un-attribute
+ * every lead on the site. It is the difference between one bad deploy costing a day of
+ * attribution and costing it until somebody notices, which on this fault means never.
+ */
+function ctmVisitorSid(body: Record<string, unknown>, req: Request): string | null {
+  const fromClient = typeof body.ctm_visitor_sid === 'string' ? body.ctm_visitor_sid : null;
+  if (fromClient && CTM_ID.test(fromClient)) return fromClient;
+
+  const raw = req.headers.get('cookie')?.match(/(?:^|;\s*)__ctmid=([^;]*)/)?.[1];
+  const fromCookie = raw ? decodeURIComponent(raw) : null;
+  if (fromCookie && CTM_ID.test(fromCookie)) {
+    if (fromClient) {
+      // eslint-disable-next-line no-console
+      console.warn('[lead] browser sent a non-CTM-shaped sid; using the __ctmid cookie instead');
+    }
+    return fromCookie;
+  }
+
+  if (fromClient) {
+    // eslint-disable-next-line no-console
+    console.warn('[lead] sid is not CTM-shaped and no __ctmid cookie — no visit will attach');
+    return null;
+  }
+  // eslint-disable-next-line no-console
+  console.warn('[lead] no CTM session id — t.js was likely blocked or had not loaded');
+  return null;
+}
+
+/*
+ * Attribution arrives from the browser, and this endpoint is public and unauthenticated, so
+ * every value is caller-controlled and gets capped before being forwarded. Nothing here trusts
+ * a length, a key count or a type.
+ */
+const MAX_VALUE_LEN = 512;
+const MAX_UTM_KEYS = 12;
+
+/** A single caller-supplied string, or null. Never an object, never unbounded. */
+function cappedString(value: unknown): string | null {
+  if (typeof value !== 'string') return null;
+  const trimmed = value.trim();
+  return trimmed ? trimmed.slice(0, MAX_VALUE_LEN) : null;
+}
+
+/** `utm` as a flat string map, rebuilt key by key rather than passed through. */
+function cappedUtm(value: unknown): Record<string, string> | null {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
+  const out: Record<string, string> = {};
+  for (const [key, raw] of Object.entries(value as Record<string, unknown>)) {
+    if (Object.keys(out).length >= MAX_UTM_KEYS) break;
+    // Rebuilt on a fresh object literal and key-filtered, so `__proto__` and friends cannot
+    // ride in from a hostile payload.
+    if (!/^[a-z0-9_]{1,32}$/i.test(key)) continue;
+    const str = cappedString(raw);
+    if (str) out[key] = str;
+  }
+  return Object.keys(out).length > 0 ? out : null;
+}
+
+/** Everything the lead needs beyond the person's own answers. */
+type Attribution = {
+  pageUrl: string;
+  landingPageUrl: string | null;
+  referrer: string | null;
+  utm: Record<string, string> | null;
+  gclid: string | null;
+  ctmVisitorSid: string | null;
+};
+
 type ClarionResult =
   | { ok: true; id?: string }
   | { ok: false; status?: number; body?: string; error?: string };
@@ -94,10 +178,11 @@ function isTransient(r: ClarionResult): boolean {
 async function submitOnce(
   formKey: string,
   data: Record<string, string>,
-  ctx: { origin: string; userAgent: string; pageUrl: string },
+  ctx: { origin: string; userAgent: string; attribution: Attribution },
 ): Promise<ClarionResult> {
   const ac = new AbortController();
   const timeout = setTimeout(() => ac.abort(), 5000);
+  const { attribution } = ctx;
   try {
     const res = await fetch(`${clarion.api}/forms/public/submit`, {
       method: 'POST',
@@ -107,11 +192,17 @@ async function submitOnce(
         site_key: clarion.siteKey,
         form_key: formKey,
         data,
-        page_url: ctx.pageUrl,
-        referrer: null,
+        page_url: attribution.pageUrl,
+        // FW-46. These four were hardcoded `null`, so every lead that fell back to this route
+        // was unattributable by construction — no campaign, no landing page, no referrer, and
+        // no CTM visit to file it against. They are now whatever the browser actually saw.
+        landing_page_url: attribution.landingPageUrl,
+        referrer: attribution.referrer,
+        utm: attribution.utm,
+        gclid: attribution.gclid,
+        // Flat and top-level, which is the whole trick — Clarion's parser looks nowhere else.
+        ctm_visitor_sid: attribution.ctmVisitorSid,
         user_agent: ctx.userAgent,
-        utm: null,
-        gclid: null,
       }),
     });
     const body = await res.text().catch(() => '');
@@ -197,7 +288,7 @@ async function alertLeadFailure(detail: {
 async function submitToClarion(
   formKey: string,
   data: Record<string, string>,
-  ctx: { origin: string; userAgent: string; pageUrl: string },
+  ctx: { origin: string; userAgent: string; attribution: Attribution },
 ): Promise<{ result: ClarionResult; attempts: number }> {
   const backoffMs = [500, 1500];
   let result = await submitOnce(formKey, data, ctx);
@@ -262,6 +353,9 @@ export async function POST(req: Request) {
     date_of_birth: dob,
     seeking_for: who,
     message,
+    // Meta / Microsoft click ids, folded in with the lead's own fields rather than into `utm`,
+    // which Clarion only accepts the five canonical keys in (FW-46).
+    ...(cappedUtm(body.click_ids) ?? {}),
   };
 
   // Origin that Clarion must have allowlisted (the deployment's own origin).
@@ -274,15 +368,36 @@ export async function POST(req: Request) {
   const origin =
     process.env.CLARION_ORIGIN || (host ? `https://${host}` : site.url);
 
+  /*
+   * FW-46. Attribution as the browser observed it, capped and rebuilt rather than passed
+   * through. `page_url` still falls back to the `Referer` header — that is this route's only
+   * independent read of where the visitor was — but the campaign and landing page can only come
+   * from the client, because by submit time they exist nowhere else.
+   */
+  const attribution: Attribution = {
+    pageUrl: cappedString(body.page_url) || req.headers.get('referer') || origin,
+    landingPageUrl: cappedString(body.landing_page_url),
+    referrer: cappedString(body.referrer),
+    utm: cappedUtm(body.utm),
+    gclid: cappedString(body.gclid),
+    ctmVisitorSid: ctmVisitorSid(body, req),
+  };
+
   const { result, attempts } = await submitToClarion(formKey, data, {
     origin,
     userAgent: req.headers.get('user-agent') || BROWSER_UA,
-    pageUrl: req.headers.get('referer') || origin,
+    attribution,
   });
 
   if (result.ok) {
     // eslint-disable-next-line no-console
-    console.log(`[lead] accepted by Clarion (form_key=${formKey}, attempts=${attempts}):`, result.id);
+    // `ctm` is logged as a boolean, not the id: it is enough to spot the fault this route was
+    // silently failing at (a lead accepted with no visit attached) without putting a visitor
+    // identifier into runtime logs.
+    console.log(
+      `[lead] accepted by Clarion (form_key=${formKey}, attempts=${attempts}, ctm=${!!attribution.ctmVisitorSid}, campaign=${!!attribution.utm || !!attribution.gclid}):`,
+      result.id,
+    );
     return NextResponse.json({ ok: true });
   }
 
