@@ -62,7 +62,26 @@ type Touch = {
   at: number;
 };
 
-type Visit = { landing: string; referrer: string; at: number };
+type Visit = {
+  /**
+   * Our own first-party visit id.
+   *
+   * ⚠️ This is **not** CallTrackingMetrics' session id and must never be sent as
+   * `ctm_visitor_sid`. It is a UUID — dashes and all — and substituting it for CTM's 24-hex id
+   * is the single worst thing that can be done here: Clarion accepts it, returns 200, and files
+   * the lead against no visit, so the attribution looks fixed and is not. `ctmSessionId()` below
+   * is the only source for that field, and the server re-validates the shape independently.
+   */
+  id: string;
+  landing: string;
+  referrer: string;
+  /** First pageview of this visit. */
+  startedAt: number;
+  /** Most recent pageview, which is what the idle window is measured against. */
+  at: number;
+  /** How many pages deep, as a count — deliberately never which pages. See `getSession()`. */
+  views: number;
+};
 
 /*
  * Storage helpers. Every access is wrapped: `localStorage` throws outright in Safari private
@@ -138,10 +157,37 @@ export function recordPageview(): void {
   // page from. Refreshed on each pageview so the idle window tracks activity, not first paint.
   const visit = readJson<Visit>(VISIT_KEY);
   if (!visit || now - visit.at > VISIT_IDLE_MS) {
-    writeJson(VISIT_KEY, { landing: location.href, referrer: externalReferrer(), at: now });
+    writeJson(VISIT_KEY, {
+      id: newVisitId(),
+      landing: location.href,
+      referrer: externalReferrer(),
+      startedAt: now,
+      at: now,
+      views: 1,
+    } satisfies Visit);
   } else {
-    writeJson(VISIT_KEY, { ...visit, at: now });
+    // Fields are defaulted rather than assumed present: a visitor mid-visit across a deploy has
+    // whatever shape the previous version wrote.
+    writeJson(VISIT_KEY, {
+      ...visit,
+      id: visit.id || newVisitId(),
+      startedAt: visit.startedAt || visit.at || now,
+      at: now,
+      views: (visit.views || 1) + 1,
+    } satisfies Visit);
   }
+}
+
+/** A first-party visit id. Not CTM's — see the warning on `Visit.id`. */
+function newVisitId(): string {
+  try {
+    if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+      return crypto.randomUUID();
+    }
+  } catch {
+    /* fall through */
+  }
+  return `v-${Math.random().toString(36).slice(2)}${Math.random().toString(36).slice(2)}`;
 }
 
 export type Attribution = {
@@ -220,6 +266,54 @@ export function getAttribution(): Attribution {
  *    of ours in `sessionStorage` could only ever be staler, and would not survive the second tab
  *    that the cookie handles fine.
  */
+export type Session = {
+  id: string;
+  started_at: string;
+  last_active_at: string;
+  pageviews: number;
+  landing_page_url: string;
+  referrer: string | null;
+  first_touch: {
+    at: string;
+    utm: Record<string, string> | null;
+    gclid: string | null;
+  } | null;
+};
+
+/**
+ * The richer session context sent alongside the lead.
+ *
+ * **What is deliberately not in here: the pages they visited.** A session object usually carries
+ * a pageview path history, and on this site that would be a browsing profile of a named person
+ * — the payload it travels with contains their name, phone, email and date of birth — where the
+ * paths themselves are health inferences (`/treatment/dual-diagnosis` says what someone is
+ * seeking treatment for). `pageviews` is therefore a count and nothing more. The landing page is
+ * included because it is the page the campaign bought and it is already sent as
+ * `landing_page_url`; a *history* is a different disclosure from an entry point.
+ *
+ * Returns `null` when there is nothing meaningful to say, so the key can be omitted entirely
+ * rather than sent empty.
+ */
+export function getSession(): Session | null {
+  const visit = readJson<Visit>(VISIT_KEY);
+  if (!visit) return null;
+
+  const stored = readJson<Touch>(CAMPAIGN_KEY);
+  const campaign = stored && Date.now() - stored.at < CAMPAIGN_TTL_MS ? stored : null;
+  const { utm, gclid } = getAttribution();
+  const startedAt = visit.startedAt || visit.at;
+
+  return {
+    id: visit.id || 'unknown',
+    started_at: new Date(startedAt).toISOString(),
+    last_active_at: new Date(visit.at || startedAt).toISOString(),
+    pageviews: visit.views || 1,
+    landing_page_url: visit.landing || location.href,
+    referrer: visit.referrer || null,
+    first_touch: campaign ? { at: new Date(campaign.at).toISOString(), utm, gclid } : null,
+  };
+}
+
 const CTM_ID = /^[0-9a-f]{24}$/i;
 
 export function ctmSessionId(): string | null {

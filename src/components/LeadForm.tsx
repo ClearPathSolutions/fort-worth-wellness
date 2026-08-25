@@ -3,7 +3,7 @@
 import { useState, type FormEvent } from 'react';
 import { track } from '@vercel/analytics';
 import { clarion, site } from '@/lib/site';
-import { ctmSessionIdWhenReady, getAttribution } from '@/lib/attribution';
+import { ctmSessionIdWhenReady, getAttribution, getSession } from '@/lib/attribution';
 import { ArrowRight, Check, Phone, Star } from '@/components/icons';
 
 type Props = {
@@ -78,6 +78,7 @@ export default function LeadForm({
       anywhere else, and a nested copy attaches the lead to no visit while looking correct.
     */
     const { clickIds, ...attribution } = getAttribution();
+    const session = getSession();
     const ctmVisitorSid = await ctmSessionIdWhenReady();
     // Meta / Microsoft click ids go in with the form's own fields, not in `utm` — see
     // `getAttribution()`. `data` is a free-form map by design, so extra keys are safe here.
@@ -102,8 +103,8 @@ export default function LeadForm({
       // Primary: straight to Clarion's public forms API, exactly as the vendor script would.
       let delivered = false;
       if (!preferServerRelay) {
-        try {
-          const res = await fetch(`${clarion.api}/forms/public/submit`, {
+        const postDirect = (withSession: boolean) =>
+          fetch(`${clarion.api}/forms/public/submit`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -113,9 +114,25 @@ export default function LeadForm({
               ...attribution,
               ctm_visitor_sid: ctmVisitorSid,
               user_agent: navigator.userAgent,
+              ...(withSession && session ? { session } : {}),
             }),
             keepalive: true,
           });
+
+        try {
+          let res = await postDirect(true);
+          /*
+            `session` is a key Clarion has not been asked to accept, and if their validation is
+            strict an unknown field turns every lead into an error. A 4xx means nothing was
+            recorded, so retrying without it is safe and cannot double-send — and losing
+            admissions enquiries to gain attribution is not a trade worth making.
+
+            The same retry exists on the server route, deliberately: this path runs first, so a
+            mitigation only on the relay would never fire for the leads that go direct.
+          */
+          if (!res.ok && res.status >= 400 && res.status < 500 && session) {
+            res = await postDirect(false);
+          }
           delivered = res.ok;
         } catch {
           // Network error, or this origin is not on Clarion's allowlist so the CORS preflight
@@ -144,6 +161,7 @@ export default function LeadForm({
             gclid: attribution.gclid,
             ctm_visitor_sid: ctmVisitorSid,
             click_ids: clickIds,
+            session,
           }),
         });
         if (!res.ok) {
