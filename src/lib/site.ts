@@ -95,6 +95,12 @@ export const analytics = {
    * rendered from `site.phone` so calls can be attributed to a source. Supplied as a
    * protocol-relative `//264810.tctm.co/t.js`; pinned to https here because the site is
    * https-only and a protocol-relative src has no benefit left.
+   *
+   * `264810` is the account id for the whole facility group; a different `aid` is a different
+   * account, so do not change it without checking which facility it points at.
+   *
+   * The tag itself must load with `async` and must stay that way — see the long note beside it
+   * in `app/layout.tsx` for the two silent failures a synchronous tag causes here.
    */
   callTrackingSrc: 'https://264810.tctm.co/t.js',
 };

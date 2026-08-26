@@ -178,9 +178,26 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           behaviour on a 24/7 crisis line and should not be "fixed" by hiding the number until
           CTM is ready. And the number in `organizationSchema()` stays the real one on purpose:
           structured data is read by crawlers, and feeding a rotating tracking number to Google's
-          knowledge panel is how a business ends up with a dead number in search results.
+          knowledge panel is how a business ended up with a dead number in search results.
+
+          ⚠️ This is a plain `<script async>`, NOT `next/script`, and NOT a synchronous tag.
+          Do not "correct" it back to a blocking tag — the CTM rollout spec's section 2 says to
+          load t.js eagerly and that guidance is wrong for this stack. Two silent failures come
+          from a synchronous tag:
+
+            1. A sync tag in <head> executes before <body> exists. CTM's number scan defaults its
+               root to `document.body` and no-ops when that is null, so it can miss every number
+               on the page. Nothing swaps, every visitor sees the same hardcoded number, and CTM
+               is left guessing which web session an inbound call belongs to — so call
+               attribution fails intermittently rather than obviously.
+            2. On React it rewrites the numbers before hydration, and React then reverts the swap
+               when it replaces the server HTML.
+
+          It also sits at the end of <body> rather than in <head> on purpose: `async` decouples
+          fetching from parsing but says nothing about *when* it runs, so a cached copy could
+          still execute against a null `document.body` from <head>. Down here, body exists.
         */}
-        <Script src={analytics.callTrackingSrc} strategy="afterInteractive" />
+        <script async src={analytics.callTrackingSrc}></script>
 
         {/*
           FW-45, amended. The site had no measurement of any kind — no GA4, no GTM, no pixel — so nothing
