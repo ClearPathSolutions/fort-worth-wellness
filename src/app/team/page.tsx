@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 import { pageMeta } from '@/lib/seo';
-import { team, teamScopeNote } from '@/lib/site';
+import { medicalOversight, team, teamScopeNote } from '@/lib/site';
 import { roster, bioParagraphs, initials } from '@/lib/staff-feed';
 import PageHero from '@/components/PageHero';
 import PostImage from '@/components/PostImage';
@@ -110,6 +111,48 @@ export default async function TeamPage() {
               );
             })}
           </div>
+
+          {/*
+            Dr. Tambini sits below the roster in her own block rather than inside it, and the
+            block says what she is before it says who she is. She provides medical oversight
+            across Quadrant's facilities and is not based at this campus; dropping a physician
+            into a list of Weatherford staff would let a family infer an on-site doctor that
+            this building does not have. Placement is the claim here, so the placement is
+            separate and the relationship is spelled out.
+          */}
+          <Reveal className="mx-auto mt-12 max-w-4xl" delay={100}>
+            <div className="rounded-xl2 bg-white p-8 shadow-card ring-1 ring-ink/[0.06]">
+              <p className="eyebrow">
+                <span className="h-px w-6 bg-steel" /> Medical Oversight
+              </p>
+              <div className="mt-6 grid gap-6 sm:grid-cols-[120px_minmax(0,1fr)] sm:gap-8">
+                <div className="relative aspect-[4/5] w-28 overflow-hidden rounded-xl2 ring-1 ring-ink/[0.06] sm:w-full">
+                  <Image
+                    src={medicalOversight.image}
+                    alt={medicalOversight.name}
+                    fill
+                    sizes="120px"
+                    className="object-cover object-top"
+                  />
+                </div>
+                <div>
+                  <h2 className="text-xl leading-tight">{medicalOversight.name}</h2>
+                  <p className="mt-1 text-sm font-semibold uppercase tracking-wider text-sand">
+                    {medicalOversight.role} &middot; Quadrant Health Group
+                  </p>
+                  <p className="mt-4 text-sm leading-relaxed text-ink/70">
+                    {medicalOversight.scopeNote}
+                  </p>
+                  <Link
+                    href={`/team/${medicalOversight.slug}`}
+                    className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-steel hover:gap-2"
+                  >
+                    Read Dr. Tambini&rsquo;s full biography <ArrowRight width={15} height={15} />
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </Reveal>
 
           <Reveal className="mx-auto mt-12 max-w-4xl" delay={120}>
             <p className="border-t border-ink/10 pt-8 text-sm text-ink/55">{teamScopeNote}</p>

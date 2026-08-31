@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { services, site } from './site';
+import { medicalOversight, services, site } from './site';
 
 /**
  * Builds a page's `metadata` so canonical and Open Graph can never drift apart.
@@ -124,6 +124,44 @@ export function faqSchema(items: { q: string; a: string }[]) {
  *   review-submission deep link, not a profile URL, so it does not belong here.
  * - **`priceRange`** — no published pricing.
  */
+/**
+ * `Person` schema for the physician providing medical oversight.
+ *
+ * This is the machine-readable half of the medical-authority claim the page makes in prose.
+ * `sameAs` points at the Quadrant profile the bio is copied from, so the two are linked rather
+ * than being two unattributed copies of the same text.
+ *
+ * `worksFor` is The Sober Connection and NOT this facility, matching what the source states and
+ * what `medicalOversight.scopeNote` tells the reader. A Person schema that named her an employee
+ * of Fort Worth Wellness Center would be asserting something untrue in the one format that gets
+ * consumed without a human reading it.
+ */
+export function personSchema() {
+  const m = medicalOversight;
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    '@id': `${site.url}/team/${m.slug}/#person`,
+    name: m.name,
+    honorificPrefix: 'Dr.',
+    jobTitle: m.role,
+    image: `${site.url}${m.image}`,
+    url: `${site.url}/team/${m.slug}/`,
+    sameAs: [m.sourceUrl],
+    description: m.bio[0],
+    worksFor: {
+      '@type': 'Organization',
+      name: 'The Sober Connection',
+    },
+    knowsAbout: m.boardCertifications,
+    hasCredential: m.boardCertifications.map((c) => ({
+      '@type': 'EducationalOccupationalCredential',
+      credentialCategory: 'Board Certification',
+      about: { '@type': 'MedicalSpecialty', name: c },
+    })),
+  };
+}
+
 export function organizationSchema() {
   return {
     '@context': 'https://schema.org',
