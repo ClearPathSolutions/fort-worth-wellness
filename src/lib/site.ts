@@ -302,6 +302,47 @@ export const team: TeamMember[] = [
   { name: 'Krystal Moore', role: 'Case Manager', image: '/images/team/krystal-moore.jpg' },
 ];
 
+/**
+ * Medical oversight — deliberately NOT a member of the `team` array above.
+ *
+ * Dr. Tambini is not Fort Worth Wellness Center staff. Her title at Quadrant Health Group is
+ * "Medical Oversight", and she is Founder and CEO of The Sober Connection, a separate
+ * physician-led medical services organisation that contracts with behavioural healthcare
+ * facilities. Rendering her in the Weatherford roster between the Director of Nursing and the
+ * case managers would tell a family she works at this building, which she does not — the same
+ * class of claim as the facility photographs that turned out to be another property.
+ *
+ * She therefore gets her own scoped section and her own page, both of which state the
+ * relationship in words rather than leaving it to be inferred from adjacency.
+ *
+ * The bio is reproduced verbatim from quadranthealthgroup.com/team/pamela-tambini/ at the
+ * client's instruction. Nothing here is paraphrased and no credential is inferred: on a page
+ * whose entire purpose is to establish medical authority, an embellished credential is the one
+ * error that would matter most. If the Quadrant page changes, re-copy it — do not edit around it.
+ */
+export const medicalOversight = {
+  name: 'Dr. Pamela Tambini',
+  role: 'Medical Oversight',
+  /** Board certifications, stated exactly as the source states them. */
+  credential: 'MD',
+  image: '/images/team/pamela-tambini.jpg',
+  slug: 'pamela-tambini',
+  sourceUrl: 'https://www.quadranthealthgroup.com/team/pamela-tambini/',
+  /** Governs how she is introduced everywhere she appears on this site. */
+  scopeNote:
+    'Dr. Tambini provides medical oversight across Quadrant Health Group\u2019s facilities, including Fort Worth Wellness Center. She is not based at the Weatherford campus.',
+  bio: [
+    'Dr. Pamela Tambini is a board-certified physician in Internal Medicine and Addiction Medicine, entrepreneur, and healthcare executive dedicated to advancing evidence-based treatment for individuals with substance use and co-occurring mental health disorders. She is the Founder and Chief Executive Officer of The Sober Connection, a physician-led medical services organization that partners with behavioral healthcare facilities nationwide to provide comprehensive medical leadership, provider staffing, quality assurance, and regulatory compliance solutions.',
+    'With extensive experience across the continuum of addiction treatment\u2014including medical detoxification, residential treatment, partial hospitalization, intensive outpatient, and outpatient care\u2014Dr. Tambini has developed scalable clinical programs that improve patient outcomes while helping organizations maintain regulatory excellence and operational efficiency. Her expertise includes addiction medicine, psychopharmacology, withdrawal management, medical stabilization, utilization review, physician leadership, and multi-state healthcare operations.',
+    'Prior to founding The Sober Connection, Dr. Tambini served as a hospitalist within the Veterans Health Administration, where she managed medically complex patients and collaborated with multidisciplinary teams to deliver high-quality inpatient care. Her clinical expertise, combined with her operational leadership, provides a unique perspective on integrating medical excellence with sustainable healthcare systems.',
+    'Under Dr. Tambini\u2019s leadership, The Sober Connection has grown into a multi-state organization supporting behavioral healthcare facilities through physician staffing, medical directorships, quality improvement initiatives, provider education, credentialing, policy development, and clinical oversight. She is recognized for building high-performing medical teams, implementing standardized clinical processes, and helping treatment centers navigate accreditation, licensing, and payer requirements.',
+    'Dr. Tambini is passionate about raising the standard of addiction medicine by combining compassionate patient care with innovative operational strategies. Her leadership philosophy emphasizes clinical integrity, accountability, and collaboration, with a focus on creating systems that support both providers and the patients they serve.',
+    'She remains actively involved in medical education, physician mentorship, and the ongoing advancement of best practices in behavioral healthcare while continuing to care for patients and advise organizations on clinical program development, healthcare operations, and quality improvement initiatives.',
+  ],
+  /** Drives the Person schema; both are stated on the source page. */
+  boardCertifications: ['Internal Medicine', 'Addiction Medicine'],
+};
+
 /** Shown with the team, because all of the above are shared across the Texas facilities. */
 /**
  * Written when the roster was four shared directors. It now also covers two case managers and a

@@ -9,6 +9,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/',
     '/about/',
     '/team/',
+    '/team/pamela-tambini/',
     '/treatment/',
     '/treatment/detox/',
     '/treatment/mental-health-residential/',
