@@ -1,3 +1,115 @@
+/**
+ * Content-Security-Policy (FW-47).
+ *
+ * Added so Clarion-hosted blog images have an explicit, cacheable home in `img-src` rather than
+ * depending on the site having no policy at all.
+ *
+ * ⚠️ Read this before editing. A CSP here is not a lint rule — it is a kill switch for the two
+ * things on this site that convert. The chat launcher and the lead form are both third-party
+ * JavaScript that inject their own markup, stylesheets and network calls, and an origin missing
+ * from the list below does not warn: it silently stops working. That is why the repo shipped
+ * without a policy for so long.
+ *
+ * Every origin below was OBSERVED on the deployed site, not guessed — a crawl of /, /blog/, a
+ * Clarion post, /admissions/ and /contact/, recording every request by resource type. If you
+ * add a tag, re-run that crawl and extend the list, or the tag will half-load.
+ *
+ * ‼️ Note what the crawl found, because it is not in this repo: the GTM container
+ * (GTM-TC7PQ4LR) has since loaded GA4, Google Ads, DoubleClick and **Microsoft Clarity**, a
+ * session-recording and heatmap tool. Clarity can capture interaction with the intake form on a
+ * behavioural-health site. Nobody has to touch this repo to add more. See the note beside
+ * `analytics` in `lib/site.ts`.
+ *
+ * MODE. Defaults to `Content-Security-Policy-Report-Only`, which reports violations without
+ * enforcing them, so a missed origin costs a console warning instead of an admissions enquiry.
+ * Set `CSP_ENFORCE=true` in the environment to switch to the enforcing header once a deploy has
+ * gone by with no violations reported.
+ */
+const CSP_DIRECTIVES = {
+  'default-src': ["'self'"],
+  'base-uri': ["'self'"],
+  'object-src': ["'none'"],
+  'frame-ancestors': ["'self'"],
+  // Forms submit via fetch (see LeadForm), never a native POST, so 'self' is not restrictive.
+  'form-action': ["'self'"],
+  // 'unsafe-inline' and 'unsafe-eval' are required by Google Tag Manager, which also injects 13
+  // inline scripts on this page. They blunt what a script-src can defend against; the policy is
+  // still worth having for the other directives, but do not read this as XSS-proof.
+  //
+  // Expect `script-src-elem` violations for `http://264810.tctm.co/...` when running the dev
+  // server over http, and do not "fix" them by adding a bare host here. CTM's t.js injects a
+  // second, protocol-relative copy of itself (`//264810.tctm.co/t.js`), which resolves to http on
+  // an http page and https on the deployed site — so the https entry below is correct in
+  // production and the local violations are an artifact of the dev server's scheme.
+  'script-src': [
+    "'self'",
+    "'unsafe-inline'",
+    "'unsafe-eval'",
+    'https://264810.tctm.co',
+    'https://www.clarionlabs.ai',
+    'https://www.googletagmanager.com',
+    'https://googleads.g.doubleclick.net',
+    'https://www.googleadservices.com',
+    'https://scripts.clarity.ms',
+    'https://www.clarity.ms',
+  ],
+  // Clarion's widget injects its own stylesheet at runtime, hence 'unsafe-inline'.
+  'style-src': ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+  // next/font self-hosts the Google fonts at build time, so no external font origin is needed.
+  'font-src': ["'self'", 'data:', 'https://fonts.gstatic.com'],
+  'img-src': [
+    "'self'",
+    'data:',
+    'blob:',
+    // The reason this policy exists: Clarion-hosted post covers and inline blog images.
+    'https://api.clarionlabs.ai',
+    // Today's actual cover host — an author-supplied Unsplash URL. Post covers can point at any
+    // host the author uploaded to, so this list is the ceiling on what a post can display.
+    'https://images.unsplash.com',
+    'https://264810.tctm.co',
+    'https://www.googletagmanager.com',
+    'https://www.google.com',
+    'https://www.google-analytics.com',
+    'https://googleads.g.doubleclick.net',
+    'https://stats.g.doubleclick.net',
+    'https://c.clarity.ms',
+    'https://c.bing.com',
+  ],
+  'connect-src': [
+    "'self'",
+    'https://api.clarionlabs.ai',
+    'https://www.clarionlabs.ai',
+    'https://264810.tctm.co',
+    'https://www.googletagmanager.com',
+    'https://analytics.google.com',
+    'https://www.google-analytics.com',
+    'https://stats.g.doubleclick.net',
+    'https://ad.doubleclick.net',
+    'https://www.google.com',
+    'https://l.clarity.ms',
+    'https://*.clarity.ms',
+  ],
+  // CTM can embed a FormReactor and GTM uses a noscript iframe; both need a home here.
+  'frame-src': [
+    "'self'",
+    'https://www.googletagmanager.com',
+    'https://td.doubleclick.net',
+    'https://264810.tctm.co',
+    'https://*.clarionlabs.ai',
+  ],
+  'worker-src': ["'self'", 'blob:'],
+  'upgrade-insecure-requests': [],
+};
+
+const CSP_VALUE = Object.entries(CSP_DIRECTIVES)
+  .map(([directive, values]) => (values.length ? `${directive} ${values.join(' ')}` : directive))
+  .join('; ');
+
+const CSP_HEADER_NAME =
+  process.env.CSP_ENFORCE === 'true'
+    ? 'Content-Security-Policy'
+    : 'Content-Security-Policy-Report-Only';
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
@@ -23,12 +135,11 @@ const nextConfig = {
    * worth correcting before launch: the pages a visitor requests are themselves a health
    * inference about them, and the forms carry intake data.
    *
-   * Deliberately NOT a Content-Security-Policy. Three third-party scripts are injected at
-   * runtime (Clarion's widget, form capture and blog embed) and they inject their own
-   * stylesheets and markup; a CSP written without knowing their exact origins and inline
-   * hashes would silently break the chat launcher and the lead form — the two things on
-   * this site that actually convert. That needs Clarion's origin list, so it is an owner
-   * task, not a guess.
+   * A Content-Security-Policy is now included — see `CSP_DIRECTIVES` above for the origin list,
+   * why it ships in Report-Only first, and how to enforce it. The concern that used to live in
+   * this comment (a guessed policy silently breaking the chat launcher and the lead form) is
+   * answered by deriving every origin from a crawl of the deployed site rather than guessing,
+   * and by not enforcing until a deploy has proven the list.
    *
    * HSTS is absent for the same reason it should be: Vercel already sets it at the edge
    * (verified `max-age=63072000; includeSubDomains; preload` on the current deployment),
@@ -39,6 +150,7 @@ const nextConfig = {
       {
         source: '/:path*',
         headers: [
+          { key: CSP_HEADER_NAME, value: CSP_VALUE },
           { key: 'X-Content-Type-Options', value: 'nosniff' },
           { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
