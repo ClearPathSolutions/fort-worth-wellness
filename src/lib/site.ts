@@ -249,10 +249,10 @@ export type TeamMember = {
  * Crediting another facility's clinician as this one's is a material misstatement about who
  * provides clinical care, so it came off rather than waiting for a replacement.
  *
- * **Fort Worth's actual clinical director is still missing**, deliberately. The bios document
- * spells her name "Cortney" Best four times in the body and "Corney" Best once in the heading, and a
- * clinical director's name is not something to guess. Add her — with `credential: 'M.C.J., LCDC'` —
- * as soon as the spelling is confirmed.
+ * The clinical director's name is settled: **Cortney** Best. The bios document spells her
+ * Cortney four times in the body and Corney once in the heading; the owner's first staff list
+ * repeated the heading, then he corrected it. The body was right, and the heading, the portal's
+ * `name` field and the headshot filename all carry the same typo.
  *
  * Also still held, per FW-36: both case managers (Jacci Westbrook, whose bio refers to "Jessica"
  * three times, and Krystal Moore, `MSW`).
@@ -264,7 +264,7 @@ export type TeamMember = {
  */
 export const team: TeamMember[] = [
   // Order, titles and credentials are the owner's written staff list verbatim, which is also
-  // why Olivia carries no credential: that list gives one for Deborah and Corney and none for
+  // why Olivia carries no credential: that list gives one for Deborah and Cortney and none for
   // her, so the LPC that used to sit here is gone.
   //
   // All seven are listed locally now, where they used to be four. The other three arrived via
@@ -293,13 +293,22 @@ export const team: TeamMember[] = [
     image: '/images/team/haley-wadlington.png',
   },
   {
-    name: 'Corney Best',
+    // "Cortney", not "Corney". The owner's first staff list said Corney and the site followed it;
+    // he has since corrected himself — the typo was his. That resolves the discrepancy the other
+    // way from how it was originally called: the bios document's BODY, which spells her Cortney
+    // in all four sentences, was right all along, and the document heading, the portal's `name`
+    // field and the headshot filename all carry the same propagated typo.
+    name: 'Cortney Best',
     role: 'Clinical Director',
     credential: 'M.C.J., LCDC',
-    image: '/images/team/corney-best.jpg',
+    image: '/images/team/cortney-best.jpg',
   },
   { name: 'Jacci Westbrook', role: 'Case Manager', image: '/images/team/jacci-westbrook.jpg' },
   { name: 'Krystal Moore', role: 'Case Manager', image: '/images/team/krystal-moore.jpg' },
+  // No bio anywhere yet — not in the portal feed, not in the bios document. He renders with the
+  // page's existing "Full bio coming soon" line rather than a written-for-him paragraph, which is
+  // the same treatment every other unbio'd person got.
+  { name: 'Landon Hawpe', role: 'Head Chef', image: '/images/team/landon-hawpe.jpg' },
 ];
 
 /**
