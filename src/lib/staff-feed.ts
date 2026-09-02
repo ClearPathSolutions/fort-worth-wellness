@@ -44,13 +44,17 @@ export type ExtraMember = {
  * correct spelling was genuinely unknown. It no longer is: the owner supplied a written staff
  * list naming both people, which is the authoritative source for how each name is spelled.
  *
- * - `corney best` — the bios document headed her entry "Corney Best" but spelled it "Cortney"
- *   in all four sentences of the body, and the portal's `name` field copies the heading. The
- *   owner's list reads "Corney Best, M.C.J., LCDC", confirming the heading. So the body is the
- *   side that is wrong.
- *
  * - `jacci westbrook` — her bio refers to "Jessica" twice. The owner's list reads
  *   "Jacci Westbrook", so those are simply the wrong name.
+ *
+ * There used to be a second rule here rewriting "Cortney" to "Corney" in the clinical director's
+ * bio, on the strength of the owner's first staff list. He has since corrected himself: she is
+ * Cortney. Her bio body already said Cortney in all four sentences, so that rule was not fixing
+ * a bio — it was corrupting a correct one into the typo, on every render. Deleted outright
+ * rather than reversed, because there is now nothing in her bio to correct.
+ *
+ * The lesson worth keeping: a rule like this is only ever as good as the source it trusts, and
+ * it fails silently and confidently when that source is wrong.
  *
  * Deliberately narrow. Each rule only ever rewrites the subject's own first name, inside their
  * own bio, as a whole word — never a surname, never anyone else's name, never any other prose.
@@ -63,8 +67,23 @@ export type ExtraMember = {
  * deleted.
  */
 const BIO_NAME_FIX: Record<string, { wrong: RegExp; right: string }> = {
-  'corney best': { wrong: /\bCortney\b/g, right: 'Corney' },
   'jacci westbrook': { wrong: /\bJessica\b/g, right: 'Jacci' },
+};
+
+/**
+ * Spelling variants that must collapse to one person.
+ *
+ * `nameKey` is the ONLY thing joining a curated entry to its portal bio, and a miss does not
+ * degrade quietly — `roster()` treats an unmatched feed entry as a portal-only person and
+ * appends it, so the page renders the same human twice, once with a headshot and once without.
+ *
+ * The portal still calls the clinical director "Corney Best" while this repo now correctly calls
+ * her "Cortney Best", which is exactly that miss. Aliasing the portal's spelling onto ours keeps
+ * them one record. Delete the entry once the portal is corrected — it becomes a no-op, though a
+ * harmless one.
+ */
+const NAME_ALIASES: Record<string, string> = {
+  'corney best': 'cortney best',
 };
 
 /** Two-letter monogram for anyone without a headshot. */
@@ -80,7 +99,7 @@ export function initials(name: string): string {
 
 /** Loose name key so "Dr. Jane Smith, LPC" and "Jane Smith" match. */
 function nameKey(raw: string): string {
-  return raw
+  const k = raw
     .replace(/^(dr|mr|mrs|ms)\.?\s+/i, '')
     .replace(/[“”"'’]/g, '')
     .replace(/,.*$/, '')
@@ -88,6 +107,7 @@ function nameKey(raw: string): string {
     .replace(/[^a-z ]/gi, '')
     .trim()
     .toLowerCase();
+  return NAME_ALIASES[k] ?? k;
 }
 
 function publishableBio(name: string, bio: string | null): string | undefined {
