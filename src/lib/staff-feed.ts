@@ -141,7 +141,10 @@ export async function roster(
 
   const curated: TeamMember[] = local.map((m) => {
     const match = byKey.get(nameKey(m.name));
-    return match ? { ...m, bio: publishableBio(m.name, match.bio) } : m;
+    // `?? m.bio` matters: the portal wins when it HAS prose, but adding someone to the portal
+    // with the bio field left blank would otherwise silently delete the copy written here.
+    // Landon and Jacob are both in that position right now — curated bio, no portal entry yet.
+    return match ? { ...m, bio: publishableBio(m.name, match.bio) ?? m.bio } : m;
   });
 
   const already = new Set(local.map((m) => nameKey(m.name)));
@@ -171,6 +174,13 @@ export async function roster(
  * portal is ever taught to preserve line breaks, delete this and split on `\n\n` instead.
  */
 export function bioParagraphs(bio: string): string[] {
+  // A bio authored in this repo carries real paragraph breaks, so use the author's own
+  // paragraphing and do not touch it. The sentence-chunking below exists only for the portal,
+  // which flattens every bio to a single line — this is the `\n\n` case its own comment
+  // anticipated. Guarded on `> 1` so a flat portal string still falls through.
+  const authored = bio.split(/\n{2,}/).map((t) => t.trim()).filter(Boolean);
+  if (authored.length > 1) return authored;
+
   const sentences = bio.match(/[^.!?]+[.!?]+["')\]]*\s*/g);
   if (!sentences) return [bio.trim()];
 

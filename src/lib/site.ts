@@ -344,23 +344,26 @@ export const team: TeamMember[] = [
   },
   { name: 'Jacci Westbrook', role: 'Case Manager', image: '/images/team/jacci-westbrook.jpg' },
   { name: 'Krystal Moore', role: 'Case Manager', image: '/images/team/krystal-moore.jpg' },
-  // No bio anywhere yet — not in the portal feed, not in the bios document, which still carries
-  // him under "OTHER FACILITY BIOS NEEDED". He renders with the page's existing "Full bio coming
-  // soon" line rather than a written-for-him paragraph, same as anyone else unbio'd.
-  { name: 'Landon Hawpe', role: 'Head Chef', image: '/images/team/landon-hawpe.jpg' },
   {
-    // Added 2026-09-21. No headshot and no bio exist yet anywhere — not in either Staff Headshots
-    // drop, not in the portal, not in the bios document — so he renders with the monogram tile and
-    // the "Full bio coming soon" line. Both appear on their own the moment the material lands;
-    // the bio needs no redeploy at all if it goes into the portal.
+    // Bio supplied 2026-09-21 and reproduced verbatim. It also settles the title: the bios
+    // document had him under "OTHER FACILITY BIOS NEEDED" as "Landon Hawpe - Case Manager DDC",
+    // which was wrong on both counts — he is Head Chef, across both Texas facilities.
+    name: 'Landon Hawpe',
+    role: 'Head Chef',
+    image: '/images/team/landon-hawpe.jpg',
+    bio: 'Landon Hawpe serves as Head Chef for Dallas Detox Center and Fort Worth Wellness Center, bringing years of culinary experience and a personal passion for recovery to his role. Having spent most of his adult life in fine dining, Landon has served as Executive Chef at several restaurants, developing a deep appreciation for creating memorable experiences through food.\n\nAs Landon progressed in his own recovery, he felt called to take his culinary career in a more meaningful direction. About three years ago, he transitioned from the restaurant industry into behavioral healthcare, combining his love of food with his desire to serve people whose journeys he personally understands.\n\nToday, Landon oversees culinary services across both Texas facilities, creating thoughtful, high-quality meals that bring comfort, nourishment, and a sense of community to the treatment experience. For Landon, food is more than a meal\u2014it is an opportunity to care for others and contribute to an environment where people can focus on healing and recovery.',
+  },
+  {
+    // Headshot and bio both supplied 2026-09-21; the bio is reproduced verbatim.
     //
-    // `aboutHidden` because the owner's list adds him to /team only. That is also the better
-    // layout: /about centres a partial trailing row, so a ninth card there would sit alone under
-    // a row of four — the exact "hanging off" shape the comment above that grid exists to prevent.
-    // Eight fills two rows of four precisely. Drop this flag to show him there too.
+    // `aboutHidden` stays, because the owner's list adds him to /team only. That is also the
+    // better layout: /about centres a partial trailing row, so a ninth card there would sit alone
+    // under a row of four — the exact "hanging off" shape the comment above that grid exists to
+    // prevent. Eight fills two rows of four precisely. Drop this flag to show him there too.
     name: 'Jacob Doss',
     role: 'Alumni Coordinator',
-    aboutHidden: true,
+    image: '/images/team/jacob-doss.jpg',
+    bio: 'Jacob Doss serves as the Alumni Coordinator for Quadrant Health Group\u2019s Texas facilities, supporting both Dallas Detox Center and Fort Worth Wellness Center. His role focuses on helping clients stay connected to the support, relationships, and sense of community they begin building during treatment.\n\nJacob brings a personal understanding of mental health, addiction, treatment, and recovery to his work, allowing him to connect with clients in a genuine and relatable way. By building relationships while clients are still in residential treatment, he helps make the transition into alumni support feel more natural and ensures they know that support does not end at discharge.\n\nThrough alumni outreach, events, continued communication, and community engagement, Jacob works to create a strong and welcoming alumni network across both Texas locations. His goal is to make sure clients leave treatment knowing they are still part of a community\u2014one they can stay connected to, contribute to, and continue growing alongside long after discharge.',
   },
 ];
 
