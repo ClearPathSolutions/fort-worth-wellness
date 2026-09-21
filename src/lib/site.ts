@@ -63,6 +63,30 @@ export const site = {
   },
 } as const;
 
+/**
+ * Official social profiles, in the order they render in the footer.
+ *
+ * This list is also the source of schema.org `sameAs` on the site-wide MedicalBusiness
+ * (see `organizationSchema` in `seo.ts`) — that property is how a search engine ties these
+ * profiles to this domain as one entity, so add a new profile HERE rather than dropping a
+ * link straight into the footer, or the markup and the structured data drift apart.
+ *
+ * `icon` keys a brand mark in `components/icons.tsx`; this file stays plain data, with no
+ * JSX, because it is imported by both server and client components.
+ *
+ * Only profiles the business actually controls belong here. `sameAs` is an identity claim,
+ * not a link list — pointing it at a page someone else runs asserts something untrue.
+ */
+export const social = [
+  { icon: 'instagram', label: 'Instagram', href: 'https://www.instagram.com/fortworthwellness_' },
+  { icon: 'facebook', label: 'Facebook', href: 'https://www.facebook.com/fortworthwellnesscenter/' },
+  {
+    icon: 'linkedin',
+    label: 'LinkedIn',
+    href: 'https://www.linkedin.com/company/fort-worth-wellness-center',
+  },
+] as const;
+
 // ClarionLabs live-chat widget. The site key is PUBLIC by design (origin-pinned
 // + rate-limited, like an Intercom app id) — safe to ship in the page.
 // Set NEXT_PUBLIC_CLARION_SITE_KEY in the environment (e.g. Vercel) to override

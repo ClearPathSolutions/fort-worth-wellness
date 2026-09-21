@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { medicalOversight, services, site } from './site';
+import { medicalOversight, services, site, social } from './site';
 
 /**
  * Builds a page's `metadata` so canonical and Open Graph can never drift apart.
@@ -116,12 +116,14 @@ export function faqSchema(items: { q: string; a: string }[]) {
  * Added: `areaServed`, `hasOfferCatalog` (from the real `services` list), `hasMap`, and
  * `openingHoursSpecification` in place of the looser `openingHours` string.
  *
+ * `sameAs` now carries the three official social profiles (see `social` in `site.ts`, which is
+ * also what the footer renders — one list, so the markup and the structured data cannot drift).
+ * `site.reviewUrl` is still excluded: it is a review-submission deep link, not a profile URL.
+ *
  * Deliberately still absent, because each would mean inventing a fact:
  * - **`geo`** — needs verified coordinates for 101 Mariah Drive. A wrong lat/long on a healthcare
  *   NAP propagates into directories and Google Business Profile, and note that question 6 in
  *   `issues.md` has the street number itself unresolved (101 here vs 100 on the Dallas site).
- * - **`sameAs`** — the site has no social profiles to point at. `site.reviewUrl` is a
- *   review-submission deep link, not a profile URL, so it does not belong here.
  * - **`priceRange`** — no published pricing.
  */
 /**
@@ -183,6 +185,7 @@ export function organizationSchema() {
       addressCountry: 'US',
     },
     hasMap: site.address.mapUrl,
+    sameAs: social.map((s) => s.href),
     medicalSpecialty: ['Psychiatric', 'Addiction Medicine'],
     areaServed: [
       { '@type': 'City', name: 'Fort Worth' },
