@@ -402,15 +402,21 @@ export const gallery: GalleryPhoto[] = [
   // columns AND two rows, so those three occupy four grid cells each: 12 x 1 + 3 x 4 = 24,
   // which is exactly six full rows of four. Drop or add one and the last row breaks.
   // Tiles 0, 5 and 10 are therefore the three widest, most establishing shots.
+  //
+  // The two lounge tiles were swapped 2026-09-21 at the owner's request: the vaulted-ceiling
+  // room with the chandelier is the one that reads "light-filled", and the enclosed green-sofa
+  // room is the quiet one. Captions kept their grid slots and the photographs moved between
+  // them, so the mosaic is unchanged — only the pairing. `w`/`h` travel with their own file
+  // because the lightbox passes them to next/image.
   { src: '/images/facility/exterior-front-elevation-through-oaks.jpg', caption: 'The main house under mature oaks', w: 2048, h: 1536 },  // wide tile
   { src: '/images/facility/bedroom-two-beds.jpg', caption: 'A semi-private bedroom', w: 2048, h: 1365 },
-  { src: '/images/facility/lounge-green-sofas-and-macrame.jpg', caption: 'Light-filled common areas', w: 2048, h: 1365 },
+  { src: '/images/facility/lounge-vaulted-ceiling-armchairs.jpg', caption: 'Light-filled common areas', w: 2048, h: 1368 },
   { src: '/images/facility/kitchen-double-island.jpg', caption: 'Our on-site kitchen', w: 2048, h: 1368 },
   { src: '/images/facility/entry-hall-french-doors.jpg', caption: 'The front entry hall', w: 2048, h: 1365 },
   { src: '/images/facility/grounds-pool-and-rear-elevation.jpg', caption: 'Outdoor pool & patio', w: 2048, h: 1536 },  // wide tile
   { src: '/images/facility/dining-room-long-table-and-fireplace.jpg', caption: 'Communal dining room', w: 2048, h: 1368 },
   { src: '/images/facility/bathroom-vanity-and-mirror.jpg', caption: 'Resident bathrooms', w: 2048, h: 1365 },
-  { src: '/images/facility/lounge-vaulted-ceiling-armchairs.jpg', caption: 'A quiet lounge for downtime', w: 2048, h: 1368 },
+  { src: '/images/facility/lounge-green-sofas-and-macrame.jpg', caption: 'A quiet lounge for downtime', w: 2048, h: 1365 },
   { src: '/images/facility/group-room-long-table.jpg', caption: 'Group therapy & activity room', w: 2048, h: 1368 },
   { src: '/images/facility/exterior-side-elevation-and-terraces.jpg', caption: 'The upper deck & terraced grounds', w: 2048, h: 1536 },  // wide tile
   { src: '/images/facility/grounds-fire-pit-and-rear-elevation.jpg', caption: 'Wooded grounds & fire pit', w: 2048, h: 1536 },
