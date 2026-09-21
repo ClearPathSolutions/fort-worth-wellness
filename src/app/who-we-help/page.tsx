@@ -117,7 +117,7 @@ export default function WhoWeHelpPage() {
         eyebrow="Available 24/7"
         title="Your private path to peace begins here"
         body="Whether you're a professional, a veteran, a first responder, or a student, our team is here to help you find the right pathway. Reach out for a confidential consultation and verify your insurance coverage."
-        image="/images/facility/group-room-long-table.jpg"
+        image="/images/facility/group-room-desks-and-seating.jpg"
       />
     </>
   );

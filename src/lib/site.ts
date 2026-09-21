@@ -247,7 +247,7 @@ export const services: Service[] = [
     short: 'Dual Diagnosis',
     blurb:
       'Integrated care that treats mental health conditions and co-occurring substance use at the same time, addressing the root cause.',
-    image: '/images/facility/group-room-long-table.jpg',
+    image: '/images/facility/group-room-desks-and-seating.jpg',
   },
   {
     slug: 'aftercare',
@@ -438,13 +438,13 @@ export const gallery: GalleryPhoto[] = [
   { src: '/images/facility/exterior-front-elevation-through-oaks.jpg', caption: 'The main house under mature oaks', w: 2048, h: 1536 },  // wide tile
   { src: '/images/facility/bedroom-two-beds.jpg', caption: 'A semi-private bedroom', w: 2048, h: 1365 },
   { src: '/images/facility/lounge-vaulted-ceiling-armchairs.jpg', caption: 'Light-filled common areas', w: 2048, h: 1368 },
-  { src: '/images/facility/kitchen-double-island.jpg', caption: 'Our on-site kitchen', w: 2048, h: 1368 },
+  { src: '/images/facility/kitchen-island-and-double-range.jpg', caption: 'Our on-site kitchen', w: 2048, h: 1368 },
   { src: '/images/facility/entry-hall-french-doors.jpg', caption: 'The front entry hall', w: 2048, h: 1365 },
   { src: '/images/facility/grounds-pool-and-rear-elevation.jpg', caption: 'Outdoor pool & patio', w: 2048, h: 1536 },  // wide tile
   { src: '/images/facility/dining-room-long-table-and-fireplace.jpg', caption: 'Communal dining room', w: 2048, h: 1368 },
   { src: '/images/facility/bathroom-vanity-and-mirror.jpg', caption: 'Resident bathrooms', w: 2048, h: 1365 },
   { src: '/images/facility/lounge-green-sofas-and-macrame.jpg', caption: 'A quiet lounge for downtime', w: 2048, h: 1365 },
-  { src: '/images/facility/group-room-long-table.jpg', caption: 'Group therapy & activity room', w: 2048, h: 1368 },
+  { src: '/images/facility/group-room-desks-and-seating.jpg', caption: 'Group therapy & activity room', w: 2048, h: 1368 },
   { src: '/images/facility/exterior-side-elevation-and-terraces.jpg', caption: 'The upper deck & terraced grounds', w: 2048, h: 1536 },  // wide tile
   { src: '/images/facility/grounds-fire-pit-and-rear-elevation.jpg', caption: 'Wooded grounds & fire pit', w: 2048, h: 1536 },
   { src: '/images/facility/recreation-room-ping-pong.jpg', caption: 'Recreation room', w: 2048, h: 1368 },
