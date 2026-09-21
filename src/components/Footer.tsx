@@ -1,7 +1,16 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { services, site } from '@/lib/site';
-import { Mail, Phone, Pin, Star } from '@/components/icons';
+import { services, site, social } from '@/lib/site';
+import { Facebook, Instagram, Linkedin, Mail, Phone, Pin, Star } from '@/components/icons';
+
+// Keyed by `social[].icon` in site.ts, so a profile added there renders here with no
+// further wiring. Typed against those keys: add a profile with an unknown icon and this
+// fails the build rather than rendering a blank chip.
+const socialIcons: Record<(typeof social)[number]['icon'], typeof Instagram> = {
+  instagram: Instagram,
+  facebook: Facebook,
+  linkedin: Linkedin,
+};
 
 const explore = [
   { label: 'Who We Are', href: '/about' },
@@ -63,6 +72,31 @@ export default function Footer() {
           <p className="mt-5 text-xs text-white/40">
             Established {site.founded} · {site.beds} licensed beds
           </p>
+
+          {/*
+            Social profiles. Labelled for screen readers via aria-label rather than visible
+            text, so the icon alone has to carry the meaning — hence the real brand marks.
+            The chips are 44px, which is the minimum comfortable touch target; the icon
+            inside is smaller than the chip so the tap area stays larger than the artwork.
+          */}
+          <ul className="mt-6 flex items-center gap-3">
+            {social.map((s) => {
+              const Icon = socialIcons[s.icon];
+              return (
+                <li key={s.href}>
+                  <a
+                    href={s.href}
+                    target="_blank"
+                    rel="noopener noreferrer me"
+                    aria-label={`${site.name} on ${s.label}`}
+                    className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/60 transition-colors hover:border-white/25 hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-sand-light"
+                  >
+                    <Icon width={18} height={18} />
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
         </div>
 
         {/* Treatment */}
