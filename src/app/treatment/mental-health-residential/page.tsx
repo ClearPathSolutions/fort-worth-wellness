@@ -13,9 +13,9 @@ import Reveal from '@/components/ui/Reveal';
 import { Brain, Check, Compass, Heart, Home as HomeIcon, Leaf, Sparkle } from '@/components/icons';
 
 export const metadata: Metadata = pageMeta({
-  title: 'Residential Mental Health Care',
+  title: 'Residential Inpatient Care',
   description:
-    'Residential mental health care in Fort Worth with 24/7 psychiatric support, evidence-based therapy, and a restorative home-like setting for lasting stability.',
+    'Residential inpatient care in Fort Worth with 24/7 psychiatric support, evidence-based therapy, and a restorative home-like setting for lasting stability.',
   path: '/treatment/mental-health-residential/',
 });
 
@@ -80,10 +80,10 @@ export default function MentalHealthResidentialPage() {
     <>
       <PageHero
         eyebrow="Find Stability. Reclaim Wellness."
-        title="Residential mental health treatment in Fort Worth"
+        title="Residential inpatient treatment in Fort Worth"
         subtitle="Advanced psychiatric care in a private, restorative environment — where clinical excellence meets personal restoration, away from the triggers of daily life."
         image="/images/facility/lounge-vaulted-ceiling-armchairs.jpg"
-        crumbs={[{ label: 'Treatment', href: '/treatment' }, { label: 'Mental Health Residential' }]}
+        crumbs={[{ label: 'Treatment', href: '/treatment' }, { label: 'Residential Inpatient' }]}
       />
 
       {/* At a glance */}

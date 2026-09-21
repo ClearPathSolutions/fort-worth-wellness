@@ -144,7 +144,7 @@ export const faqGroups: FaqGroup[] = [
     id: 'residential',
     title: 'Residential mental health',
     href: '/treatment/mental-health-residential',
-    hrefLabel: 'Mental Health Residential',
+    hrefLabel: 'Residential Inpatient',
   },
   {
     id: 'dual-diagnosis',
