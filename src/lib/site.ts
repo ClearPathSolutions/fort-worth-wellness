@@ -438,7 +438,7 @@ export const gallery: GalleryPhoto[] = [
   { src: '/images/facility/exterior-front-elevation-through-oaks.jpg', caption: 'The main house under mature oaks', w: 2048, h: 1536 },  // wide tile
   { src: '/images/facility/bedroom-two-beds.jpg', caption: 'A semi-private bedroom', w: 2048, h: 1365 },
   { src: '/images/facility/lounge-vaulted-ceiling-armchairs.jpg', caption: 'Light-filled common areas', w: 2048, h: 1368 },
-  { src: '/images/facility/kitchen-double-island.jpg', caption: 'Our on-site kitchen', w: 2048, h: 1368 },
+  { src: '/images/facility/kitchen-island-and-double-range.jpg', caption: 'Our on-site kitchen', w: 2048, h: 1368 },
   { src: '/images/facility/entry-hall-french-doors.jpg', caption: 'The front entry hall', w: 2048, h: 1365 },
   { src: '/images/facility/grounds-pool-and-rear-elevation.jpg', caption: 'Outdoor pool & patio', w: 2048, h: 1536 },  // wide tile
   { src: '/images/facility/dining-room-long-table-and-fireplace.jpg', caption: 'Communal dining room', w: 2048, h: 1368 },

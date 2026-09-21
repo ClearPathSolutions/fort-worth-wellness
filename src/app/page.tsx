@@ -423,7 +423,7 @@ export default function HomePage() {
               </Reveal>
               <Reveal delay={80}>
                 <div className="relative aspect-[3/2] overflow-hidden rounded-xl2 shadow-card">
-                  <Image src="/images/facility/kitchen-double-island.jpg" alt="Chef's kitchen and dining" fill sizes="(max-width:1024px) 50vw, 25vw" className="object-cover" />
+                  <Image src="/images/facility/kitchen-island-and-double-range.jpg" alt="Chef's kitchen with a marble-topped island and double range" fill sizes="(max-width:1024px) 50vw, 25vw" className="object-cover" />
                 </div>
               </Reveal>
               <Reveal delay={140}>
