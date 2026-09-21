@@ -38,7 +38,11 @@ const whyChoose = [
 
 export default async function AboutPage() {
   // Curated entries own the headshots; the portal supplies the bios and any extra people.
-  const staff = await roster('fort-worth-wellness', team);
+  // /about shows the facility roster; anyone flagged `aboutHidden` appears on /team only.
+  // Portal-only people never carry the flag, so they are unaffected.
+  const staff = (await roster('fort-worth-wellness', team)).filter(
+    (m) => !('aboutHidden' in m && m.aboutHidden),
+  );
   return (
     <>
       <PageHero

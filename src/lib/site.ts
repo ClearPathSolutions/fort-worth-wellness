@@ -120,7 +120,7 @@ export const nav: NavItem[] = [
         blurb: 'Safe, 24/7 medically supervised stabilization.',
       },
       {
-        label: 'Mental Health Residential',
+        label: 'Residential Inpatient',
         href: '/treatment/mental-health-residential',
         blurb: 'Intensive live-in psychiatric care.',
       },
@@ -199,9 +199,18 @@ export const services: Service[] = [
     image: '/images/facility/bedroom-two-beds.jpg',
   },
   {
+    // Renamed from "Mental Health Residential" — this location does not take primary mental
+    // health, so the old label claimed a level of care it does not provide.
+    //
+    // The slug and href deliberately still read `mental-health-residential`. The URL is indexed,
+    // is the target of a WordPress-era 301 in next.config.mjs, and is linked from blog bodies;
+    // changing it costs real equity and buys nothing a visitor sees, since every label rendered
+    // on the page now says Residential Inpatient. If it should change anyway, it needs a 301
+    // from the old path, the redirect chain in next.config.mjs re-pointed so it stays one hop,
+    // the sitemap entry updated and the in-body blog links rewritten — not just a rename here.
     slug: 'mental-health-residential',
     href: '/treatment/mental-health-residential',
-    title: 'Mental Health Residential',
+    title: 'Residential Inpatient',
     short: 'Residential',
     blurb:
       'Intensive, live-in psychiatric care for depression, anxiety, trauma, and mood disorders in a restorative home-like sanctuary.',
@@ -234,6 +243,11 @@ export type TeamMember = {
   credential?: string;
   image?: string;
   /**
+   * Hide from the /about preview grid while still appearing in full on /team. The two pages
+   * render the same roster, and this is the only thing that separates them.
+   */
+  aboutHidden?: boolean;
+  /**
    * Prose bio. Not authored here — it comes from the staff portal at request time, which is
    * where non-engineers edit it. Present on the type so a curated entry and a portal entry
    * are the same shape by the time the page renders.
@@ -263,19 +277,31 @@ export type TeamMember = {
  * Joshua and Haley have none on record, so none are shown.
  */
 export const team: TeamMember[] = [
-  // Order, titles and credentials are the owner's written staff list verbatim, which is also
-  // why Olivia carries no credential: that list gives one for Deborah and Cortney and none for
-  // her, so the LPC that used to sit here is gone.
+  // Order, titles and credentials are the owner's written staff list verbatim — reordered
+  // 2026-09-21 to the sequence he sent: Olivia, Cortney, Deborah, Joshua, Haley, Jacci,
+  // Krystal, Landon, then Jacob. It is also why Olivia carries no credential: that list gives
+  // one for Deborah and Cortney and none for her.
   //
-  // All seven are listed locally now, where they used to be four. The other three arrived via
-  // the portal feed, which returns `photoUrl: null` for the whole Texas team — so they had no
-  // way to get a headshot. Listing them here gives them one; `roster()` still matches each
-  // person to the portal by name and takes their bio prose from it, so nothing about the bios
-  // changes. Anyone the portal knows about who is not named here is still appended.
+  // Everyone is listed locally, where they used to be four. The rest arrived via the portal
+  // feed, which returns `photoUrl: null` for the whole Texas team — so they had no way to get a
+  // headshot. Listing them here gives them one; `roster()` still matches each person to the
+  // portal by name and takes their bio prose from it. Anyone the portal knows about who is not
+  // named here is still appended.
   {
     name: 'Olivia Hadjerioua',
     role: 'Executive Director',
     image: '/images/team/olivia-hadjerioua.png',
+  },
+  {
+    // "Cortney", not "Corney". The owner's first staff list said Corney and the site followed it;
+    // he has since corrected himself — the typo was his. That resolves the discrepancy the other
+    // way from how it was originally called: the bios document's BODY, which spells her Cortney
+    // in all four sentences, was right all along, and the document heading, the portal's `name`
+    // field and the headshot filename all carry the same propagated typo.
+    name: 'Cortney Best',
+    role: 'Clinical Director',
+    credential: 'M.C.J., LCDC',
+    image: '/images/team/cortney-best.jpg',
   },
   {
     name: 'Deborah Wade',
@@ -292,23 +318,26 @@ export const team: TeamMember[] = [
     role: 'Director of Client Care',
     image: '/images/team/haley-wadlington.png',
   },
-  {
-    // "Cortney", not "Corney". The owner's first staff list said Corney and the site followed it;
-    // he has since corrected himself — the typo was his. That resolves the discrepancy the other
-    // way from how it was originally called: the bios document's BODY, which spells her Cortney
-    // in all four sentences, was right all along, and the document heading, the portal's `name`
-    // field and the headshot filename all carry the same propagated typo.
-    name: 'Cortney Best',
-    role: 'Clinical Director',
-    credential: 'M.C.J., LCDC',
-    image: '/images/team/cortney-best.jpg',
-  },
   { name: 'Jacci Westbrook', role: 'Case Manager', image: '/images/team/jacci-westbrook.jpg' },
   { name: 'Krystal Moore', role: 'Case Manager', image: '/images/team/krystal-moore.jpg' },
-  // No bio anywhere yet — not in the portal feed, not in the bios document. He renders with the
-  // page's existing "Full bio coming soon" line rather than a written-for-him paragraph, which is
-  // the same treatment every other unbio'd person got.
+  // No bio anywhere yet — not in the portal feed, not in the bios document, which still carries
+  // him under "OTHER FACILITY BIOS NEEDED". He renders with the page's existing "Full bio coming
+  // soon" line rather than a written-for-him paragraph, same as anyone else unbio'd.
   { name: 'Landon Hawpe', role: 'Head Chef', image: '/images/team/landon-hawpe.jpg' },
+  {
+    // Added 2026-09-21. No headshot and no bio exist yet anywhere — not in either Staff Headshots
+    // drop, not in the portal, not in the bios document — so he renders with the monogram tile and
+    // the "Full bio coming soon" line. Both appear on their own the moment the material lands;
+    // the bio needs no redeploy at all if it goes into the portal.
+    //
+    // `aboutHidden` because the owner's list adds him to /team only. That is also the better
+    // layout: /about centres a partial trailing row, so a ninth card there would sit alone under
+    // a row of four — the exact "hanging off" shape the comment above that grid exists to prevent.
+    // Eight fills two rows of four precisely. Drop this flag to show him there too.
+    name: 'Jacob Doss',
+    role: 'Alumni Coordinator',
+    aboutHidden: true,
+  },
 ];
 
 /**
