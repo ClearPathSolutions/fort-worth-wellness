@@ -27,7 +27,7 @@ export default function NotFound() {
           <Link href="/" className="btn-primary">
             Back to home <ArrowRight width={16} height={16} />
           </Link>
-          <a href={site.phone.href} className="btn-ghost">
+          <a href={site.phone.href} className="btn-ghost" suppressHydrationWarning>
             <Phone width={16} height={16} /> Call {site.phone.display}
           </a>
         </div>

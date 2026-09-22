@@ -133,7 +133,7 @@ export default function HomePage() {
                 pill it has no contrast job at all and only smears the phone number.
               */}
               <div className="mt-9 flex flex-col gap-3 [text-shadow:none] sm:flex-row">
-                <a href={site.phone.href} className="btn-white">
+                <a href={site.phone.href} className="btn-white" suppressHydrationWarning>
                   <Phone width={17} height={17} /> Call {site.phone.display}
                 </a>
                 <Link href="/admissions/#verify" className="btn-gold">
@@ -487,7 +487,7 @@ export default function HomePage() {
                 </span>
                 <div>
                   <p className="text-sm text-ink/55">Prefer to talk now?</p>
-                  <a href={site.phone.href} className="font-serif text-2xl text-ink hover:text-steel">
+                  <a href={site.phone.href} className="font-serif text-2xl text-ink hover:text-steel" suppressHydrationWarning>
                     {site.phone.display}
                   </a>
                 </div>

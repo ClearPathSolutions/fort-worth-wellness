@@ -45,7 +45,7 @@ export default function InsuranceBand() {
           <Link href="/admissions/#verify" className="btn-primary">
             <Shield width={17} height={17} /> Verify Your Benefits <ArrowRight width={16} height={16} />
           </Link>
-          <a href={site.phone.href} className="btn-outline-light">
+          <a href={site.phone.href} className="btn-outline-light" suppressHydrationWarning>
             Or call {site.phone.display}
           </a>
         </div>

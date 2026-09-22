@@ -56,7 +56,7 @@ export default function Header() {
             <a href={`mailto:${site.email}`} className="link-underline hover:text-white">
               {site.email}
             </a>
-            <a href={site.phone.href} className="inline-flex items-center gap-1.5 font-semibold text-white">
+            <a href={site.phone.href} className="inline-flex items-center gap-1.5 font-semibold text-white" suppressHydrationWarning>
               <Phone width={15} height={15} /> {site.phone.display}
             </a>
           </div>
@@ -172,7 +172,7 @@ export default function Header() {
             <Link href="/admissions/#verify" className="btn-primary hidden h-11 whitespace-nowrap xl:inline-flex">
               Verify Insurance
             </Link>
-            <a href={site.phone.href} className="btn-gold hidden h-11 whitespace-nowrap sm:inline-flex xl:hidden">
+            <a href={site.phone.href} className="btn-gold hidden h-11 whitespace-nowrap sm:inline-flex xl:hidden" suppressHydrationWarning>
               <Phone width={16} height={16} /> Call Now
             </a>
 
@@ -180,7 +180,7 @@ export default function Header() {
             <a
               href={site.phone.href}
               className="btn-gold h-11 w-11 !px-0 sm:hidden"
-              aria-label={`Call ${site.phone.display}`}
+              aria-label={`Call ${site.phone.display}`} suppressHydrationWarning
             >
               <Phone width={18} height={18} />
             </a>
@@ -324,7 +324,7 @@ export default function Header() {
             <Link href="/admissions/#verify" className="btn-primary w-full">
               Verify Insurance <ArrowRight width={16} height={16} />
             </Link>
-            <a href={site.phone.href} className="btn-gold w-full">
+            <a href={site.phone.href} className="btn-gold w-full" suppressHydrationWarning>
               <Phone width={16} height={16} /> Call {site.phone.display}
             </a>
             <p className="text-center text-[13px] text-ink/55">{site.hours}</p>

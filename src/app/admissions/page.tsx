@@ -85,7 +85,7 @@ export default function AdmissionsPage() {
                 </span>
                 <div>
                   <p className="text-sm text-white/60">Rather talk it through?</p>
-                  <a href={site.phone.href} className="font-serif text-2xl !text-white hover:text-sand-light">
+                  <a href={site.phone.href} className="font-serif text-2xl !text-white hover:text-sand-light" suppressHydrationWarning>
                     {site.phone.display}
                   </a>
                 </div>

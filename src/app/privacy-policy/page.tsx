@@ -117,7 +117,7 @@ export default function PrivacyPolicyPage() {
                 </li>
                 <li>{site.address.full}</li>
                 <li>
-                  <a href={site.phone.href} className="text-steel hover:underline">
+                  <a href={site.phone.href} className="text-steel hover:underline" suppressHydrationWarning>
                     {site.phone.display}
                   </a>
                 </li>

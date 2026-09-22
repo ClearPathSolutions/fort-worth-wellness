@@ -22,7 +22,7 @@ export default function Error({ reset }: { error: Error & { digest?: string }; r
           away. We answer around the clock.
         </p>
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-          <a href={site.phone.href} className="btn-primary">
+          <a href={site.phone.href} className="btn-primary" suppressHydrationWarning>
             <Phone width={16} height={16} /> Call {site.phone.display}
           </a>
           <button type="button" onClick={reset} className="btn-ghost">

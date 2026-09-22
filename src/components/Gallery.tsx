@@ -85,7 +85,7 @@ export default function Gallery({ photos }: { photos: GalleryPhoto[] }) {
         height actually fills, which is what the original "every row stays full" comment claimed
         but did not do.
       */}
-      <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4" suppressHydrationWarning>
         {photos.map((p, i) => {
           // Three wide tiles, not two — the set is 15 photographs now. At md a wide tile occupies
           // 4 cells (2 cols x 2 rows), so 12 x 1 + 3 x 4 = 24 = six full rows of four, with no

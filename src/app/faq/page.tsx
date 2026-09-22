@@ -97,7 +97,7 @@ export default function FaqPage() {
             intro="Some questions are too specific for a page like this — about your medication, your coverage, or someone you're worried about. Those are the ones worth a conversation."
           />
           <Reveal className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row" delay={80}>
-            <a href={site.phone.href} className="btn-white">
+            <a href={site.phone.href} className="btn-white" suppressHydrationWarning>
               <Phone width={17} height={17} /> Call {site.phone.display}
             </a>
             <Link href="/contact" className="btn-outline-light">

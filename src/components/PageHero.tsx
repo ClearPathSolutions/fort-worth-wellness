@@ -41,7 +41,7 @@ export default function PageHero({
       <div className="absolute inset-0 bg-gradient-to-r from-ink-900/70 to-transparent" />
 
       <div className="container-fw relative">
-        <div className="max-w-2xl pb-14 pt-16 sm:pb-20 sm:pt-24 lg:pb-24 lg:pt-28">
+        <div className="max-w-2xl pb-14 pt-16 sm:pb-20 sm:pt-24 lg:pb-24 lg:pt-28" suppressHydrationWarning>
           {crumbs.length > 0 && (
             <nav aria-label="Breadcrumb" className="mb-5 flex flex-wrap items-center gap-2 text-sm text-white/60">
               <Link href="/" className="hover:text-white">
@@ -77,7 +77,7 @@ export default function PageHero({
 
           {showActions && (
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-              <a href={site.phone.href} className="btn-white">
+              <a href={site.phone.href} className="btn-white" suppressHydrationWarning>
                 <Phone width={17} height={17} /> Call {site.phone.display}
               </a>
               <Link href="/admissions/#verify" className="btn-outline-light">

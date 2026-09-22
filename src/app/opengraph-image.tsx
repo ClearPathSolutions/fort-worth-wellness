@@ -59,7 +59,7 @@ export default async function OpengraphImage() {
             paddingTop: 28,
           }}
         >
-          <div style={{ color: '#6a97bd', fontSize: 30 }}>{site.phone.display}</div>
+          <div style={{ color: '#6a97bd', fontSize: 30 }} suppressHydrationWarning>{site.phone.display}</div>
           <div style={{ color: 'rgba(255,255,255,0.28)', fontSize: 30 }}>·</div>
           <div style={{ color: 'rgba(255,255,255,0.72)', fontSize: 30 }}>{site.hours}</div>
         </div>

@@ -126,7 +126,7 @@ export default async function PostPage({ params }: { params: { slug: string } })
             </p>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <a href={site.phone.href} className="btn-primary">
+              <a href={site.phone.href} className="btn-primary" suppressHydrationWarning>
                 <Phone width={16} height={16} /> Call {site.phone.display}
               </a>
               <Link href="/admissions/#verify" className="btn-ghost">
@@ -144,7 +144,7 @@ export default async function PostPage({ params }: { params: { slug: string } })
                   Questions about treatment or getting started? We're here around the clock, with no
                   pressure and complete confidentiality.
                 </p>
-                <a href={site.phone.href} className="btn-white mt-5 w-full">
+                <a href={site.phone.href} className="btn-white mt-5 w-full" suppressHydrationWarning>
                   <Phone width={16} height={16} /> {site.phone.display}
                 </a>
                 <Link href="/contact" className="btn-outline-light mt-3 w-full">

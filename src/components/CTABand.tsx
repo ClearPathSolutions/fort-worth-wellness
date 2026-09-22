@@ -38,7 +38,7 @@ export default function CTABand({
           </h2>
           <p className="mt-5 max-w-xl text-lg leading-relaxed text-white/75">{body}</p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <a href={site.phone.href} className="btn-white">
+            <a href={site.phone.href} className="btn-white" suppressHydrationWarning>
               <Phone width={17} height={17} /> Call {site.phone.display}
             </a>
             <Link href="/contact" className="btn-outline-light">

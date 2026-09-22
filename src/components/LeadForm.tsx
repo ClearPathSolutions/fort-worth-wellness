@@ -218,7 +218,7 @@ export default function LeadForm({
           A member of our admissions team will reach out shortly. If you'd like to talk right now,
           we're here 24/7.
         </p>
-        <a href={site.phone.href} className="btn-primary mt-6">
+        <a href={site.phone.href} className="btn-primary mt-6" suppressHydrationWarning>
           <Phone width={16} height={16} /> Call {site.phone.display}
         </a>
 
@@ -244,7 +244,7 @@ export default function LeadForm({
       {title && <h3 className="text-2xl">{title}</h3>}
       {subtitle && <p className="mt-2 text-sm text-ink/60">{subtitle}</p>}
 
-      <form onSubmit={onSubmit} className="mt-6 space-y-4">
+      <form onSubmit={onSubmit} className="mt-6 space-y-4" suppressHydrationWarning>
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
             <label htmlFor="name" className="mb-1.5 block text-sm font-medium text-ink/80">
@@ -371,7 +371,7 @@ export default function LeadForm({
             <p>{message}</p>
             <a
               href={site.phone.href}
-              className="mt-2 inline-flex items-center gap-1.5 font-semibold text-red-900 underline"
+              className="mt-2 inline-flex items-center gap-1.5 font-semibold text-red-900 underline" suppressHydrationWarning
             >
               <Phone width={14} height={14} /> Call {site.phone.display}
             </a>
@@ -389,7 +389,7 @@ export default function LeadForm({
         </button>
         <p className="text-center text-xs text-ink/45">
           Prefer to talk now? Call{' '}
-          <a href={site.phone.href} className="font-semibold text-steel">
+          <a href={site.phone.href} className="font-semibold text-steel" suppressHydrationWarning>
             {site.phone.display}
           </a>{' '}
           — {site.hours.toLowerCase()}.
