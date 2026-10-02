@@ -288,6 +288,19 @@ const nextConfig = {
       //    redirecting an RSS URL to an HTML page just moves the error.
       // ----------------------------------------------------------------------
       { source: '/author/:slug', destination: '/blog/', permanent: true },
+
+      // ----------------------------------------------------------------------
+      // 8. Careers — there is no careers page on this site; job listings live on ADP.
+      //    Temporary (307), not permanent: the ADP URL carries tenant IDs that can change,
+      //    and browsers cache a 308 indefinitely, so a permanent rule would strand visitors
+      //    on a stale link after any ADP change.
+      // ----------------------------------------------------------------------
+      {
+        source: '/careers',
+        destination:
+          'https://workforcenow.adp.com/mascsr/default/mdf/recruitment/recruitment.html?cid=e1094ba9-8b93-4f55-9dab-3102a4eaaa49&ccId=9201318903306_2&lang=en_US',
+        permanent: false,
+      },
     ];
   },
 };
