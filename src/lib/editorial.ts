@@ -29,7 +29,7 @@ export const editorial = {
   phone: site.phone.display,
   phoneTel: site.phone.href.replace(/^tel:/, ''),
   /** YYYY-MM-DD — the date the content team last reviewed the policy. Blank until supplied. */
-  lastReviewed: '',
+  lastReviewed: '2026-10-07',
   /** Copy of the CSV's CONTENT_SIGNOFF cell. Blank until the content team signs off. */
   contentSignoff: '',
 };
