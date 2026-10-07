@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { medicalOversight, services, site, social } from './site';
+import { CORRECTIONS_ANCHOR, EDITORIAL_POLICY_URL, editorialPolicyReady } from './editorial';
 
 /**
  * Builds a page's `metadata` so canonical and Open Graph can never drift apart.
@@ -223,5 +224,13 @@ export function organizationSchema() {
         },
       })),
     },
+    // Editorial policy package: merged into this node, never a second Organization. Only once
+    // the policy is signed off and public (see `lib/editorial.ts`).
+    ...(editorialPolicyReady
+      ? {
+          publishingPrinciples: EDITORIAL_POLICY_URL,
+          correctionsPolicy: `${EDITORIAL_POLICY_URL}#${CORRECTIONS_ANCHOR}`,
+        }
+      : {}),
   };
 }

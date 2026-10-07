@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { site } from '@/lib/site';
 import { getAllPosts } from '@/lib/posts';
+import { editorialPolicyReady, EDITORIAL_POLICY_PATH } from '@/lib/editorial';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   // V0102: the build is slash-canonical, so the homepage entry must be '/' — a bare
@@ -22,6 +23,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/faq/',
     '/contact/',
     '/privacy-policy/',
+    // Listed only once the policy may be indexed (see `lib/editorial.ts`).
+    ...(editorialPolicyReady ? [EDITORIAL_POLICY_PATH] : []),
   ];
   // Static routes have no per-page content date, so they carry the build timestamp —
   // an honest "last time this page could have changed" rather than no signal at all.

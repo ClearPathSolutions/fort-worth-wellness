@@ -8,6 +8,18 @@ export type Post = {
   image: string;
   readingMin: number;
   html: string;
+  /**
+   * Editorial-policy per-post fields (legacy posts in posts.json). All optional and all unset
+   * today. `written_by` / `reviewed_by` are keys in `bylinePeople` (`lib/byline.ts`), so every
+   * credited name links to a real bio page; an unknown key fails the build. A missing value
+   * means no line — there is never a site-wide default author or reviewer.
+   */
+  written_by?: string;
+  reviewed_by?: string;
+  /** YYYY-MM-DD. The reviewer line shows only when both this and `reviewed_by` are set. */
+  last_reviewed?: string;
+  /** Clarion posts only: the feed's `author_name`, verbatim. Clarion has no bio or reviewer field. */
+  author_name?: string;
 };
 
 const posts = postsData as Post[];

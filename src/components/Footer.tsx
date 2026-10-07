@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { services, site, social } from '@/lib/site';
+import { editorialPolicyServed, EDITORIAL_POLICY_PATH } from '@/lib/editorial';
 import { Facebook, Instagram, Linkedin, Mail, Phone, Pin, Star } from '@/components/icons';
 
 // Keyed by `social[].icon` in site.ts, so a profile added there renders here with no
@@ -186,10 +187,16 @@ export default function Footer() {
           <p>
             © {year} {site.name}. All rights reserved.
           </p>
-          <div className="flex items-center gap-6">
+          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
             <Link href="/privacy-policy" className="hover:text-white/80">
               Privacy Policy
             </Link>
+            {/* Withheld in production until the policy is signed off (see `lib/editorial.ts`). */}
+            {editorialPolicyServed && (
+              <Link href={EDITORIAL_POLICY_PATH} className="hover:text-white/80">
+                Editorial Policy
+              </Link>
+            )}
             <span className="text-white/25">
               If you are in crisis, call or text <span className="font-semibold text-white/70">988</span>
             </span>

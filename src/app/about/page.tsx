@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import PostImage from '@/components/PostImage';
 import { team, teamScopeNote } from '@/lib/site';
+import { editorialPolicyServed, EDITORIAL_POLICY_PATH } from '@/lib/editorial';
 import { roster, initials } from '@/lib/staff-feed';
 import PageHero from '@/components/PageHero';
 import SectionHeading from '@/components/SectionHeading';
@@ -219,6 +220,22 @@ export default async function AboutPage() {
           <Reveal className="mt-10 text-center" delay={120}>
             <p className="mx-auto max-w-xl text-sm text-white/55">{teamScopeNote}</p>
           </Reveal>
+
+          {/* Withheld in production until the policy is signed off (see `lib/editorial.ts`). */}
+          {editorialPolicyServed && (
+            <Reveal className="mt-6 text-center" delay={140}>
+              <p className="mx-auto max-w-xl text-sm text-white/55">
+                Learn how we research, write and review the health information on this site in our{' '}
+                <Link
+                  href={EDITORIAL_POLICY_PATH}
+                  className="font-semibold text-sand-light underline underline-offset-2 hover:text-white"
+                >
+                  Editorial Policy
+                </Link>
+                .
+              </p>
+            </Reveal>
+          )}
         </div>
       </section>
 

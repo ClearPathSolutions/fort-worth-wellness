@@ -171,3 +171,72 @@
     bottom: calc(78px + env(safe-area-inset-bottom)) !important;
   }
 }
+
+/* ===========================================================================
+   Editorial policy package — templates/article-byline.css, on this site's tokens.
+   ===========================================================================
+   Outside `@layer` on purpose, like the Clarion rule above: the policy body is
+   HTML read from src/data/editorial-policy.html at build time, which Tailwind's
+   content scan (*.ts/tsx/mdx) never sees, so layered rules for its classes
+   (.editorial-policy, .table-scroll) would be purged.
+   ========================================================================= */
+
+/* Article byline. Colours follow the surrounding text, so it reads on the dark
+   post hero it sits in. */
+.article-byline {
+  margin: 1.25rem 0 0;
+  padding: 0.75rem 0;
+  border-top: 1px solid color-mix(in srgb, currentColor 15%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, currentColor 15%, transparent);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+.article-byline p { margin: 0.15rem 0; }
+.article-byline .byline-meta {
+  color: color-mix(in srgb, currentColor 65%, transparent);
+  font-size: 0.875rem;
+}
+.article-byline a { font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
+.article-byline a:hover { color: theme('colors.sand.light'); }
+
+/* Policy page. The template's own <article> wrapper sits between .article-body
+   and its blocks, so the body's sibling spacing is re-applied one level down. */
+.editorial-policy > * + * { margin-top: 1.25rem; }
+.editorial-policy > :first-child { margin-top: 0; }
+.editorial-policy h2 { scroll-margin-top: calc(var(--header-h) + 1rem); }
+/* The terminology table scrolls sideways on a phone instead of widening the page. */
+.editorial-policy .table-scroll {
+  overflow-x: auto;
+  max-width: 100%;
+  -webkit-overflow-scrolling: touch;
+  border-radius: theme('borderRadius.xl2');
+  background: #fff;
+  box-shadow: 0 0 0 1px rgb(32 48 60 / 0.06);
+}
+.editorial-policy table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 28rem;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+.editorial-policy th,
+.editorial-policy td {
+  text-align: left;
+  vertical-align: top;
+  padding: 0.625rem 0.875rem;
+  border-bottom: 1px solid rgb(32 48 60 / 0.1);
+}
+.editorial-policy tbody tr:last-child td { border-bottom: 0; }
+.editorial-policy th {
+  font-weight: 600;
+  color: theme('colors.ink.DEFAULT');
+  background: theme('colors.steel.50');
+}
+/* Preview-only marker for a merge field that is still blank (never rendered in production). */
+.editorial-policy .merge-missing {
+  background: theme('colors.sand.pale');
+  color: theme('colors.ink.DEFAULT');
+  padding: 0 0.25rem;
+  border-radius: 0.25rem;
+}

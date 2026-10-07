@@ -10,6 +10,8 @@ import CTABand from '@/components/CTABand';
 import JsonLd from '@/components/JsonLd';
 import Reveal from '@/components/ui/Reveal';
 import { ArrowRight, Clock, Phone } from '@/components/icons';
+import ArticleByline from '@/components/ArticleByline';
+import { articleSchema, getByline } from '@/lib/byline';
 
 // New Clarion posts appear without a redeploy; unknown slugs render on demand.
 export const revalidate = 300;
@@ -48,16 +50,10 @@ export default async function PostPage({ params }: { params: { slug: string } })
   // Related: three other newest posts from the unified list.
   const related = (await getUnifiedPosts()).filter((p) => p.slug !== post.slug).slice(0, 3);
 
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'BlogPosting',
-    headline: post.title,
-    datePublished: post.date,
-    image: post.image.startsWith('/') ? `${site.url}${post.image}` : post.image,
-    author: { '@type': 'Organization', name: site.name },
-    publisher: { '@type': 'Organization', name: site.name },
-    description: post.excerpt,
-  };
+  const byline = getByline(post);
+  // schema/clinical-article.jsonld (MedicalWebPage + BlogPosting), replacing the plain
+  // BlogPosting this page used to emit.
+  const jsonLd = articleSchema(post, byline);
 
   return (
     <>
@@ -75,9 +71,19 @@ export default async function PostPage({ params }: { params: { slug: string } })
             {/* Capped to the article measure below it — the page frame is 1360 wide, and an
                 uncapped post title runs the full width and no longer lines up with the body. */}
             <h1 className="max-w-3xl text-3xl leading-[1.15] !text-white sm:text-4xl lg:text-[2.9rem]">{post.title}</h1>
+            {/* Editorial-policy byline, directly under the H1. Colours follow the dark hero. */}
+            <div className="max-w-3xl text-white/80">
+              <ArticleByline byline={byline} />
+            </div>
             <div className="mt-6 flex flex-wrap items-center gap-4 text-sm text-white/70">
-              <span>By the {site.name} Clinical Team</span>
-              <span className="h-1 w-1 rounded-full bg-white/30" />
+              {/* The pre-existing team credit, kept only where the post names no real author,
+                  so the header never carries two different authors. */}
+              {!byline.author && (
+                <>
+                  <span>By the {site.name} Clinical Team</span>
+                  <span className="h-1 w-1 rounded-full bg-white/30" />
+                </>
+              )}
               <span>{formatDate(post.date)}</span>
               {post.readingMin > 0 && (
                 <>

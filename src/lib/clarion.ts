@@ -116,5 +116,7 @@ export async function getClarionPost(slug: string): Promise<Post | null> {
     image: p.cover_image_url || FALLBACK_COVER,
     readingMin: estimateReadingMin(html),
     html,
+    // Shown as "Written by" when Clarion supplies it; never defaulted.
+    ...(p.author_name?.trim() ? { author_name: p.author_name.trim() } : {}),
   };
 }
