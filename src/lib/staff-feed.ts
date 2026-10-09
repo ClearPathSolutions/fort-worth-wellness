@@ -86,6 +86,18 @@ const NAME_ALIASES: Record<string, string> = {
   'corney best': 'cortney best',
 };
 
+/**
+ * People the portal still lists for this facility who must not appear on the site.
+ *
+ * `roster()` appends every unmatched portal entry, so removing someone from `team` alone would
+ * bring them straight back as a photo-less card. Keyed by `nameKey`. Remove an entry once the
+ * person is taken off the portal at support.quadranthealthgroup.com/dev/staff — it then becomes
+ * a no-op.
+ *
+ * - `haley wadlington` — removed from the site 2026-10-09 at the client's request.
+ */
+const EXCLUDED = new Set<string>(['haley wadlington']);
+
 /** Two-letter monogram for anyone without a headshot. */
 export function initials(name: string): string {
   return name
@@ -136,7 +148,7 @@ export async function roster(
   facility: string,
   local: readonly TeamMember[],
 ): Promise<(TeamMember | ExtraMember)[]> {
-  const feed = await fetchFeed(facility);
+  const feed = (await fetchFeed(facility)).filter((p) => !EXCLUDED.has(nameKey(p.name)));
   const byKey = new Map(feed.map((p) => [nameKey(p.name), p]));
 
   const curated: TeamMember[] = local.map((m) => {

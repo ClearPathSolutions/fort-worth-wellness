@@ -298,11 +298,11 @@ export type TeamMember = {
  * Every remaining entry is a **shared Texas role**, not Fort Worth-exclusive — the bios say so
  * outright. That is normal for a group operator but the page used to imply otherwise, so
  * `/about` now states it. Credentials are only listed where the bios document supplies one;
- * Joshua and Haley have none on record, so none are shown.
+ * Joshua has none on record, so none is shown.
  */
 export const team: TeamMember[] = [
   // Order, titles and credentials are the owner's written staff list verbatim — reordered
-  // 2026-09-21 to the sequence he sent: Olivia, Cortney, Deborah, Joshua, Haley, Jacci,
+  // 2026-09-21 to the sequence he sent: Olivia, Cortney, Deborah, Joshua, Jacci,
   // Krystal, Landon, then Jacob. It is also why Olivia carries no credential: that list gives
   // one for Deborah and Cortney and none for her.
   //
@@ -334,14 +334,6 @@ export const team: TeamMember[] = [
     image: '/images/team/deborah-wade.jpg',
   },
   { name: 'Joshua Leder', role: 'Director of Operations', image: '/images/team/joshua-leder.png' },
-  {
-    // The supplied headshot is filed under "Haley Hayes"; it is the same frame as the one
-    // already committed here, so it is the same person under a different surname. Her name is
-    // spelled Wadlington on the owner's staff list, which is what the site follows.
-    name: 'Haley Wadlington',
-    role: 'Director of Client Care',
-    image: '/images/team/haley-wadlington.png',
-  },
   { name: 'Jacci Westbrook', role: 'Case Manager', image: '/images/team/jacci-westbrook.jpg' },
   { name: 'Krystal Moore', role: 'Case Manager', image: '/images/team/krystal-moore.jpg' },
   {
