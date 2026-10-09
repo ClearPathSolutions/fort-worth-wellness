@@ -303,7 +303,7 @@ export type TeamMember = {
 export const team: TeamMember[] = [
   // Order, titles and credentials are the owner's written staff list verbatim — reordered
   // 2026-09-21 to the sequence he sent: Olivia, Cortney, Deborah, Joshua, Jacci,
-  // Krystal, Landon, then Jacob. It is also why Olivia carries no credential: that list gives
+  // Krystal, Ashlee, Landon, then Jacob. It is also why Olivia carries no credential: that list gives
   // one for Deborah and Cortney and none for her.
   //
   // Everyone is listed locally, where they used to be four. The rest arrived via the portal
@@ -336,6 +336,13 @@ export const team: TeamMember[] = [
   { name: 'Joshua Leder', role: 'Director of Operations', image: '/images/team/joshua-leder.png' },
   { name: 'Jacci Westbrook', role: 'Case Manager', image: '/images/team/jacci-westbrook.jpg' },
   { name: 'Krystal Moore', role: 'Case Manager', image: '/images/team/krystal-moore.jpg' },
+  {
+    // Headshot and bio both supplied 2026-10-09; the bio is reproduced verbatim.
+    name: 'Ashlee Smith',
+    role: 'Discharge Coordinator',
+    image: '/images/team/ashlee-smith.jpg',
+    bio: 'Ashlee Smith serves as the Discharge Coordinator at Fort Worth Wellness, where she is dedicated to helping individuals transition from treatment into a strong and sustainable life in recovery. She believes lasting recovery is built through accountability, structure, consistency, and connection.\n\nDrawing from years of real-life experience, Ashlee brings compassion, authenticity, and a deep understanding of the recovery journey to her work. She is passionate about helping individuals recognize their potential, develop the tools and support systems necessary for continued success, and approach recovery with confidence and purpose.\n\nThrough thoughtful discharge planning and genuine connection, Ashlee strives to ensure each individual leaves treatment with a clear direction, meaningful support, and a solid foundation for long-term recovery.',
+  },
   {
     // Bio supplied 2026-09-21 and reproduced verbatim. It also settles the title: the bios
     // document had him under "OTHER FACILITY BIOS NEEDED" as "Landon Hawpe - Case Manager DDC",
