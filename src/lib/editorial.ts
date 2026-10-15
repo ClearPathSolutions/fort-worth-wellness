@@ -31,7 +31,7 @@ export const editorial = {
   /** YYYY-MM-DD — the date the content team last reviewed the policy. Blank until supplied. */
   lastReviewed: '2026-10-07',
   /** Copy of the CSV's CONTENT_SIGNOFF cell. Blank until the content team signs off. */
-  contentSignoff: '',
+  contentSignoff: '2026-10-15',
 };
 
 /** Slash-canonical, matching `trailingSlash: true` in next.config.mjs. */
