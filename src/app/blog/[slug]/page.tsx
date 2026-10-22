@@ -12,6 +12,7 @@ import Reveal from '@/components/ui/Reveal';
 import { ArrowRight, Clock, Phone } from '@/components/icons';
 import ArticleByline from '@/components/ArticleByline';
 import { articleSchema, getByline } from '@/lib/byline';
+import { cleanCmsHtml } from '@/lib/cmsHtml';
 
 // New Clarion posts appear without a redeploy; unknown slugs render on demand.
 export const revalidate = 300;
@@ -34,7 +35,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   const post = await resolvePost(params.slug);
   if (!post) return { title: 'Article Not Found' };
   return pageMeta({
-    title: post.title,
+    title: post.seoTitle ?? post.title,
     description: post.excerpt,
     path: `/blog/${post.slug}/`,
     image: post.image || undefined,
@@ -47,8 +48,14 @@ export default async function PostPage({ params }: { params: { slug: string } })
   const post = await resolvePost(params.slug);
   if (!post) notFound();
 
-  // Related: three other newest posts from the unified list.
-  const related = (await getUnifiedPosts()).filter((p) => p.slug !== post.slug).slice(0, 3);
+  // Related: the three posts after this one in the newest-first list, wrapping round. Taking
+  // the newest three every time left most posts linked only from the blog index (one internal
+  // link each, per the site audit); neighbours spread the links across the whole library.
+  const all = await getUnifiedPosts();
+  const others = all.filter((p) => p.slug !== post.slug);
+  const at = Math.max(0, all.findIndex((p) => p.slug === post.slug));
+  const related =
+    others.length <= 3 ? others : [0, 1, 2].map((i) => others[(at + i) % others.length]);
 
   const byline = getByline(post);
   // schema/clinical-article.jsonld (MedicalWebPage + BlogPosting), replacing the plain
@@ -123,7 +130,13 @@ export default async function PostPage({ params }: { params: { slug: string } })
                 <PostImage src={post.image} alt="" sizes="(max-width: 1024px) 100vw, 680px" />
               </figure>
             )}
-            <div className="article-body" dangerouslySetInnerHTML={{ __html: post.html }} />
+            <div className="article-body" dangerouslySetInnerHTML={{
+                __html: cleanCmsHtml(post.html, {
+                  siteUrl: site.url,
+                  trailingSlash: true,
+                  fallbackAlt: post.title,
+                }),
+              }} />
 
             {/* Medical disclaimer */}
             <p className="mt-12 rounded-xl2 bg-cream-deep/70 p-5 text-sm leading-relaxed text-ink/55">

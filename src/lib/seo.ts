@@ -17,6 +17,8 @@ import { CORRECTIONS_ANCHOR, EDITORIAL_POLICY_URL, editorialPolicyReady } from '
  * `path` is root-relative ('/', '/treatment/detox'); `metadataBase` in `layout.tsx` resolves
  * it to the production domain, so preview builds still canonicalise to production.
  */
+const TITLE_SUFFIX = ` | ${site.name}`;
+
 export function pageMeta(opts: {
   title: string;
   description: string;
@@ -41,8 +43,12 @@ export function pageMeta(opts: {
     ? { url: image, alt: title }
     : { url: '/opengraph-image/', width: 1200, height: 630, alt: title };
 
+  // The layout template appends ' | Fort Worth Wellness Center' (29 chars). Where that would
+  // push the tag past 70 characters (long blog headlines, mostly), the brand is dropped rather
+  // than having the title truncated mid-word in results.
+  const useAbsolute = absoluteTitle || `${title}${TITLE_SUFFIX}`.length > 70;
   return {
-    title: absoluteTitle ? { absolute: title } : title,
+    title: useAbsolute ? { absolute: title } : title,
     description,
     alternates: { canonical: path },
     openGraph: {
@@ -168,7 +174,9 @@ export function personSchema() {
 export function organizationSchema() {
   return {
     '@context': 'https://schema.org',
-    '@type': 'MedicalBusiness',
+    // MedicalClinic (a MedicalBusiness subtype that is also a MedicalOrganization) is what
+    // makes `medicalSpecialty` a valid property here; on a plain MedicalBusiness it is not.
+    '@type': ['MedicalBusiness', 'MedicalClinic'],
     '@id': `${site.url}/#organization`,
     name: site.name,
     url: site.url,

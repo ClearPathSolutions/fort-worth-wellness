@@ -92,7 +92,10 @@ export default function Footer() {
                     aria-label={`${site.name} on ${s.label}`}
                     className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/60 transition-colors hover:border-white/25 hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-sand-light"
                   >
-                    <Icon width={18} height={18} />
+                    <Icon width={18} height={18} aria-hidden="true" />
+                    {/* Real anchor text for crawlers, which do not read aria-label (audit:
+                        "links with no anchor text"). Visually hidden, so the chip is unchanged. */}
+                    <span className="sr-only">{`${site.name} on ${s.label}`}</span>
                   </a>
                 </li>
               );

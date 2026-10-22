@@ -8,7 +8,9 @@ export const site = {
   tagline: 'A Private Sanctuary for Mental Wellness in Texas',
   description:
     'Fort Worth Wellness Center provides residential mental health, dual diagnosis, and medical detox care with 24/7 clinical support in a private, restorative Texas setting.',
-  url: 'https://fortworthwellness.org',
+  // www is the host Vercel serves; the apex 308s to it. Canonicals, sitemap, robots and
+  // JSON-LD all derive from this, so it must be the served host or every one is a redirect.
+  url: 'https://www.fortworthwellness.org',
 
   // Primary 24/7 admissions line (used site-wide for consistency)
   phone: {

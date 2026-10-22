@@ -182,7 +182,8 @@ export default function Header() {
               className="btn-gold h-11 w-11 !px-0 sm:hidden"
               aria-label={`Call ${site.phone.display}`} suppressHydrationWarning
             >
-              <Phone width={18} height={18} />
+              <Phone width={18} height={18} aria-hidden="true" />
+              <span className="sr-only">Call {site.phone.display}</span>
             </a>
 
             {/* Hamburger */}

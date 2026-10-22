@@ -3,6 +3,12 @@ import postsData from './posts.json';
 export type Post = {
   slug: string;
   title: string;
+  /**
+   * Optional `<title>` text when the headline is too long for the 70-character title budget
+   * (headline + ' | Fort Worth Wellness Center'). Written to differ from the H1 so the tag
+   * and the heading are not duplicates. The headline stays the H1.
+   */
+  seoTitle?: string;
   date: string; // ISO
   excerpt: string;
   image: string;

@@ -5,7 +5,7 @@ import { editorialPolicyReady, EDITORIAL_POLICY_PATH } from '@/lib/editorial';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   // V0102: the build is slash-canonical, so the homepage entry must be '/' — a bare
-  // `https://fortworthwellness.org` here would disagree with its own canonical tag.
+  // `https://www.fortworthwellness.org` here would disagree with its own canonical tag.
   const routes = [
     '/',
     '/about/',
