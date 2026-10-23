@@ -66,6 +66,17 @@ export const site = {
 } as const;
 
 /**
+ * `site.url`, asserted to be the https://www. production host. Sitemap and robots build
+ * every URL from this, so a bare-apex or http value fails the build instead of shipping.
+ */
+export function canonicalOrigin(): string {
+  if (!site.url.startsWith('https://www.')) {
+    throw new Error(`site.url must be the https://www. production host, got ${site.url}`);
+  }
+  return site.url;
+}
+
+/**
  * Official social profiles, in the order they render in the footer.
  *
  * This list is also the source of schema.org `sameAs` on the site-wide MedicalBusiness

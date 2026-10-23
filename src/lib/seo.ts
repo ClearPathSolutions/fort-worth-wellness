@@ -195,7 +195,8 @@ export function organizationSchema() {
     },
     hasMap: site.address.mapUrl,
     sameAs: social.map((s) => s.href),
-    medicalSpecialty: ['Psychiatric', 'Addiction Medicine'],
+    // Must be a schema.org MedicalSpecialty enumeration member; 'Addiction Medicine' is not one.
+    medicalSpecialty: 'https://schema.org/Psychiatric',
     areaServed: [
       { '@type': 'City', name: 'Fort Worth' },
       { '@type': 'City', name: 'Weatherford' },

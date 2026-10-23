@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next';
-import { site } from '@/lib/site';
+import { canonicalOrigin } from '@/lib/site';
 import { getAllPosts } from '@/lib/posts';
 import { editorialPolicyReady, EDITORIAL_POLICY_PATH } from '@/lib/editorial';
 
@@ -29,16 +29,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // Static routes have no per-page content date, so they carry the build timestamp —
   // an honest "last time this page could have changed" rather than no signal at all.
   const builtAt = new Date();
+  const origin = canonicalOrigin();
 
   const staticEntries: MetadataRoute.Sitemap = routes.map((path) => ({
-    url: `${site.url}${path}`,
+    url: `${origin}${path}`,
     lastModified: builtAt,
     changeFrequency: path === '' ? 'weekly' : 'monthly',
     priority: path === '' ? 1 : path.startsWith('/treatment') ? 0.8 : 0.6,
   }));
 
   const postEntries: MetadataRoute.Sitemap = getAllPosts().map((p) => ({
-    url: `${site.url}/blog/${p.slug}/`,
+    url: `${origin}/blog/${p.slug}/`,
     lastModified: p.date ? new Date(p.date) : undefined,
     changeFrequency: 'yearly',
     priority: 0.5,
