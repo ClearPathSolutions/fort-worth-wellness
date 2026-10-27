@@ -206,6 +206,9 @@ export default function Footer() {
                 Editorial Policy
               </Link>
             )}
+            <Link href="/terms-of-service/" className="hover:text-white/80">
+              Terms of Service
+            </Link>
             <span className="text-white/25">
               If you are in crisis, call or text <span className="font-semibold text-white/70">988</span>
             </span>

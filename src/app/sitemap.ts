@@ -25,6 +25,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/privacy-policy/',
     '/notice-of-privacy-practices/',
     '/sms-terms/',
+    '/terms-of-service/',
     // Listed only once the policy may be indexed (see `lib/editorial.ts`).
     ...(editorialPolicyReady ? [EDITORIAL_POLICY_PATH] : []),
   ];
