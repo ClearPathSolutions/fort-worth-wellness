@@ -37,6 +37,7 @@ const sections = [
     h: 'Protected Health Information & HIPAA',
     p: [
       'Any health information you share with us in the course of seeking or receiving treatment is protected under the Health Insurance Portability and Accountability Act (HIPAA) and applicable federal confidentiality laws. We do not disclose protected health information without your written authorization, except as permitted or required by law.',
+      'How we may use and disclose protected health information, and your rights to access, amend, and restrict your medical records, are described in full in our Notice of Privacy Practices, available at fortworthwellness.org/notice-of-privacy-practices/ and provided at admission.',
     ],
   },
   {
