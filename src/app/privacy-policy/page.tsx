@@ -4,75 +4,18 @@ import { breadcrumbSchema, pageMeta } from '@/lib/seo';
 import Link from 'next/link';
 import { site } from '@/lib/site';
 
+// Standard network privacy policy (legal-pages package, 2026-10-27). The approved wording
+// is shared across every site; only facility facts differ.
 export const metadata: Metadata = pageMeta({
   title: 'Privacy Policy',
-  description: `How ${site.name} collects, uses, and protects your information.`,
+  description: `${site.name} privacy policy: how we collect, use, disclose, and protect your information.`,
   path: '/privacy-policy/',
 });
-
-// Bump this whenever the policy text below changes.
-const effectiveDate = 'August 3, 2026';
-
-const sections = [
-  {
-    h: 'Our Commitment to Your Privacy',
-    p: [
-      `${site.name} ("we," "us," or "our") is committed to protecting the privacy and confidentiality of everyone who visits our website or reaches out for care. This policy explains what information we collect, how we use it, and the choices you have. Because we are a healthcare provider, we treat your information with the sensitivity it deserves.`,
-    ],
-  },
-  {
-    h: 'Information We Collect',
-    p: [
-      'When you contact us, request a callback, or submit an insurance verification, we may collect information you choose to provide — such as your name, phone number, email address, and any details you share about your situation.',
-      'We may also automatically collect limited technical information, such as your browser type, device, and pages visited, to help us improve our website. This site does not require you to create an account.',
-    ],
-  },
-  {
-    h: 'How We Use Your Information',
-    p: [
-      'We use the information you provide solely to respond to your inquiry, verify insurance benefits, coordinate care, and support your admissions process. We do not sell your personal information, and we do not share it for advertising purposes.',
-    ],
-  },
-  {
-    h: 'Protected Health Information & HIPAA',
-    p: [
-      'Any health information you share with us in the course of seeking or receiving treatment is protected under the Health Insurance Portability and Accountability Act (HIPAA) and applicable federal confidentiality laws. We do not disclose protected health information without your written authorization, except as permitted or required by law.',
-      'How we may use and disclose protected health information, and your rights to access, amend, and restrict your medical records, are described in full in our Notice of Privacy Practices, available at fortworthwellness.org/notice-of-privacy-practices/ and provided at admission.',
-    ],
-  },
-  {
-    h: 'How We Protect Your Information',
-    p: [
-      'We use reasonable administrative, technical, and physical safeguards to protect the information you share with us. However, no method of transmission over the internet is completely secure. If your matter is urgent or sensitive, we encourage you to call us directly.',
-    ],
-  },
-  {
-    h: 'Third-Party Services',
-    p: [
-      'Our website may use trusted third-party services (for example, mapping and basic analytics) that operate under their own privacy policies. Insurance carrier names and logos are shown for informational purposes only and do not imply endorsement.',
-      // FW-45 added analytics to the site, so this describes what it actually does. Kept to
-      // verifiable statements of fact — Vercel Analytics is cookieless by design and the only
-      // custom event sent is which form was submitted, never a field value.
-      'The analytics we use is privacy-preserving: it does not set tracking cookies, does not build a profile of you, and does not identify individual visitors. We measure which pages are visited and whether a contact form was completed — never the information you typed into it.',
-    ],
-  },
-  {
-    h: 'Your Choices',
-    p: [
-      'You may request that we update or delete the personal information you have provided, or ask us to stop contacting you, at any time. To make a request, contact us using the details below.',
-    ],
-  },
-  {
-    h: 'Changes to This Policy',
-    p: [
-      `We may update this Privacy Policy from time to time. Any changes will be posted on this page with an updated effective date. This version is effective ${effectiveDate}.`,
-    ],
-  },
-];
 
 export default function PrivacyPolicyPage() {
   return (
     <>
+      {/* Same page frame as the site's other policy pages. */}
       <section className="bg-ink-900 pt-16">
         <div className="container-fw pb-14 pt-6">
           <JsonLd data={breadcrumbSchema([{ label: 'Privacy Policy' }])} />
@@ -84,51 +27,155 @@ export default function PrivacyPolicyPage() {
             <span className="text-white/85">Privacy Policy</span>
           </nav>
           <h1 className="text-4xl !text-white sm:text-5xl">Privacy Policy</h1>
-          <p className="mt-4 max-w-2xl text-white/70">
-            Your trust matters to us. Here's how we handle the information you share with{' '}
-            {site.name}.
-          </p>
-          <p className="mt-4 text-sm text-white/55">Effective {effectiveDate}</p>
         </div>
       </section>
 
       <section className="section bg-cream">
         <div className="container-fw">
-          <div className="mx-auto max-w-prose space-y-10">
-            {sections.map((s) => (
-              <div key={s.h}>
-                <h2 className="text-2xl">{s.h}</h2>
-                {s.p.map((para, i) => (
-                  <p key={i} className="mt-4 leading-relaxed text-ink/75">
-                    {para}
-                  </p>
-                ))}
-              </div>
-            ))}
-
-            <div className="rounded-xl2 bg-white p-8 shadow-card ring-1 ring-ink/[0.06]">
-              <h2 className="text-2xl">Contact Us</h2>
-              <p className="mt-4 leading-relaxed text-ink/75">
-                If you have questions about this Privacy Policy or how your information is handled,
-                please reach out:
-              </p>
-              <ul className="mt-4 space-y-1.5 text-ink/80">
-                <li>
-                  <strong className="font-semibold text-ink">{site.name}</strong>
-                </li>
-                <li>{site.address.full}</li>
-                <li>
-                  <a href={site.phone.href} className="text-steel hover:underline" suppressHydrationWarning>
-                    {site.phone.display}
-                  </a>
-                </li>
-                <li>
-                  <a href={`mailto:${site.email}`} className="text-steel hover:underline">
-                    {site.email}
-                  </a>
-                </li>
-              </ul>
-            </div>
+          {/* suppressHydrationWarning: CallTrackingMetrics rewrites the phone links inside. */}
+          <div className="article-body mx-auto max-w-prose" suppressHydrationWarning>
+            <p>Last updated: October 27, 2026</p>
+            <p>Fort Worth Wellness Center (“we,” “us,” or “our”) respects your privacy and is committed to protecting the personal, health, and other sensitive information you provide to us.</p>
+            <p>This Privacy Policy explains how we collect, use, disclose, and protect information when you visit fortworthwellness.org, submit information through our website, contact our admissions team, request information about our services, verify insurance benefits, or otherwise interact with us.</p>
+            <p>By using our website or voluntarily providing information to us, you acknowledge the practices described in this Privacy Policy.</p>
+            <h2>Information We Collect</h2>
+            <p>We may collect information that you voluntarily provide to us through our website, telephone communications, forms, email, or other interactions.</p>
+            <p>This information may include:</p>
+            <ul>
+              <li>First and last name</li>
+              <li>Email address</li>
+              <li>Telephone number</li>
+              <li>Contact preferences</li>
+              <li>Insurance provider and insurance-related information</li>
+              <li>Information submitted through contact, admissions, insurance verification, or other website forms</li>
+              <li>Information regarding treatment needs or services being requested</li>
+              <li>Information provided when communicating with our admissions, clinical, or administrative teams</li>
+              <li>Any other information you voluntarily choose to provide</li>
+            </ul>
+            <p>Because Fort Worth Wellness Center provides behavioral health and substance use disorder treatment services, information you provide when seeking treatment may include health-related or otherwise sensitive information.</p>
+            <h2>Information Collected Automatically</h2>
+            <p>When you visit our website, certain information may be collected automatically through cookies, analytics technologies, pixels, server logs, and similar technologies.</p>
+            <p>This information may include:</p>
+            <ul>
+              <li>Internet Protocol (IP) address</li>
+              <li>Browser type</li>
+              <li>Device type</li>
+              <li>Operating system</li>
+              <li>Pages visited</li>
+              <li>Referring website or source</li>
+              <li>Date and time of your visit</li>
+              <li>General geographic information</li>
+              <li>Website interactions and usage information</li>
+            </ul>
+            <p>We may use this information to operate our website, understand how visitors use our website, improve performance and functionality, evaluate marketing efforts, and maintain website security.</p>
+            <h2>How We Use Your Information</h2>
+            <p>We may use information collected through our website or provided directly to us to:</p>
+            <ul>
+              <li>Respond to questions and requests for information</li>
+              <li>Assist individuals seeking treatment</li>
+              <li>Provide information regarding our programs and services</li>
+              <li>Process admissions inquiries</li>
+              <li>Verify insurance benefits or coverage</li>
+              <li>Coordinate assessments, admissions, appointments, and treatment-related services</li>
+              <li>Communicate with prospective or current patients as permitted by law</li>
+              <li>Provide requested follow-up communications</li>
+              <li>Improve our website and user experience</li>
+              <li>Analyze website traffic and performance</li>
+              <li>Maintain the security and functionality of our website</li>
+              <li>Comply with applicable federal, state, and local laws and regulations</li>
+              <li>Fulfill other purposes for which you provide your information or consent</li>
+            </ul>
+            <p>We do not sell patient or prospective patient information for monetary consideration.</p>
+            <h2>Protected Health Information and HIPAA</h2>
+            <p>Certain information collected or maintained by Fort Worth Wellness Center in connection with treatment, payment, or healthcare operations may constitute Protected Health Information (“PHI”) under the Health Insurance Portability and Accountability Act of 1996 (“HIPAA”) and related regulations.</p>
+            <p>Where HIPAA applies, Fort Worth Wellness Center uses and discloses PHI only as permitted or required by applicable law.</p>
+            <p>Additional protections may apply to certain substance use disorder treatment records under federal or state law.</p>
+            <p>Information that constitutes PHI is handled in accordance with applicable healthcare privacy and security requirements and our <Link href="/notice-of-privacy-practices/">Notice of Privacy Practices</Link>, as applicable.</p>
+            <p>Information submitted through a general website interaction is not necessarily considered PHI solely because it relates to healthcare. Whether information constitutes PHI and which protections apply depends on the circumstances in which the information is collected, received, maintained, or transmitted.</p>
+            <h2>Disclosure of Information to Third Parties</h2>
+            <p>Fort Worth Wellness Center will only disclose personal information, health information, or Protected Health Information to third parties as permitted or required by applicable law.</p>
+            <p>We may share information with third parties when reasonably necessary to:</p>
+            <ul>
+              <li>Provide treatment or services requested by an individual</li>
+              <li>Verify insurance benefits or coordinate payment</li>
+              <li>Perform healthcare operations as permitted by law</li>
+              <li>Work with service providers performing services on our behalf</li>
+              <li>Operate, maintain, secure, or improve our website and business systems</li>
+              <li>Comply with applicable laws, regulations, court orders, subpoenas, or other lawful governmental requests</li>
+              <li>Protect the rights, safety, or security of Fort Worth Wellness Center, our patients, website visitors, employees, or others</li>
+            </ul>
+            <p>Where required, appropriate agreements and safeguards are maintained with service providers that handle protected or sensitive information on our behalf.</p>
+            <p>We do not disclose Protected Health Information except as permitted or required by applicable federal and state law.</p>
+            <p>We do not disclose patient or prospective patient information to third parties for purposes prohibited by applicable law.</p>
+            <h2>Website Security and SSL/TLS Encryption</h2>
+            <p>Fort Worth Wellness Center takes reasonable measures to protect information submitted through our website.</p>
+            <p>Our website uses Secure Socket Layer/Transport Layer Security (SSL/TLS) encryption technology to help protect information transmitted between your browser and our website.</p>
+            <p>We also maintain reasonable administrative, technical, and physical safeguards designed to protect personal information and Protected Health Information from unauthorized access, use, alteration, loss, or disclosure.</p>
+            <p>However, no website, electronic communication, transmission method, or data storage system can be guaranteed to be completely secure.</p>
+            <p>If you believe sensitive information has been compromised or submitted to us in error, please contact us.</p>
+            <h2>Website Forms</h2>
+            <p>Our website may contain forms that allow visitors to request information, contact our admissions team, verify insurance benefits, or inquire about treatment.</p>
+            <p>Information submitted through these forms is used to respond to your request and facilitate services you have requested.</p>
+            <p>Please do not submit information through a website form unless you are comfortable providing the requested information electronically.</p>
+            <p>Information submitted through our website is transmitted using SSL/TLS encryption where applicable.</p>
+            <h2>Insurance Verification</h2>
+            <p>If you submit insurance information for verification of benefits, we may use the information you provide to determine potential insurance coverage for treatment services.</p>
+            <p>Information may be shared with your insurance provider, authorized verification services, or other parties as reasonably necessary to perform the requested verification and as permitted by applicable law.</p>
+            <p>Verification of insurance benefits does not guarantee coverage, authorization, admission, or payment for treatment.</p>
+            <h2>Cookies and Tracking Technologies</h2>
+            <p>Our website may use cookies and similar technologies to support website functionality, understand website usage, measure performance, and improve our services.</p>
+            <p>These technologies may collect information regarding your browser, device, website interactions, traffic source, and pages visited.</p>
+            <p>We may use third-party analytics or advertising technologies where permitted by applicable law.</p>
+            <p>We do not knowingly use tracking technologies to disclose Protected Health Information to third parties for purposes prohibited by HIPAA or other applicable privacy laws.</p>
+            <p>You may be able to limit or disable cookies through your browser settings. Disabling certain cookies may affect the functionality of portions of our website.</p>
+            <h2>Third-Party Websites and Services</h2>
+            <p>Our website may contain links to websites or services operated by third parties.</p>
+            <p>Fort Worth Wellness Center is not responsible for the privacy practices, security, content, or policies of independently operated third-party websites.</p>
+            <p>Visiting a third-party website is subject to that third party’s privacy practices and terms. We encourage you to review the privacy policy of any third-party website before providing personal information.</p>
+            <h2>SMS and Text Message Communications</h2>
+            <p>If you voluntarily provide your mobile telephone number and consent to receive text messages from Fort Worth Wellness Center, we may send SMS communications related to your inquiry, admissions process, appointments, services, care coordination, follow-up communications, or other communications you have requested or authorized.</p>
+            <p>Message frequency may vary. Message and data rates may apply.</p>
+            <p>You may opt out of receiving SMS communications at any time by replying STOP. You may reply HELP for assistance.</p>
+            <p>Consent to receive SMS communications is not a condition of purchasing or receiving treatment or services.</p>
+            <p>Mobile information, including telephone numbers and SMS consent or opt-in data, will not be sold, rented, or shared with third parties or affiliates for their own marketing or promotional purposes. SMS consent and opt-in information will not be shared with third parties for marketing purposes.</p>
+            <p>Information may be shared with service providers that facilitate communications on our behalf when necessary to provide the requested messaging service and subject to appropriate privacy and security requirements.</p>
+            <p>The full terms of our text messaging program are in our <Link href="/sms-terms/">SMS Terms &amp; Conditions</Link>.</p>
+            <h2>Email Communications</h2>
+            <p>If you provide your email address, we may use it to respond to your inquiry or provide communications related to services you have requested.</p>
+            <p>Where applicable, marketing email communications will provide a method to unsubscribe from future marketing messages.</p>
+            <p>Treatment-related, administrative, legal, or other non-marketing communications may still be sent when permitted or required by law.</p>
+            <h2>Data Retention</h2>
+            <p>We may retain information for as long as reasonably necessary to fulfill the purposes for which it was collected and to comply with applicable healthcare, legal, regulatory, contractual, operational, and recordkeeping requirements.</p>
+            <p>Retention periods may vary depending on the nature of the information and applicable legal requirements.</p>
+            <h2>Your Privacy Choices</h2>
+            <p>Depending on the type of information involved and applicable law, you may have certain rights regarding your personal information.</p>
+            <p>These rights may include the ability to request access to or correction of certain information and, where legally available, request deletion or restriction of certain information.</p>
+            <p>Certain healthcare and business records may be retained when required by federal or state law.</p>
+            <p>You may also:</p>
+            <ul>
+              <li>Opt out of SMS messages by replying STOP or by following the opt-out instructions provided</li>
+              <li>Unsubscribe from applicable marketing emails using the unsubscribe instructions provided</li>
+              <li>Adjust browser settings to limit or disable certain cookies</li>
+            </ul>
+            <p>Rights relating specifically to Protected Health Information are described in our <Link href="/notice-of-privacy-practices/">Notice of Privacy Practices</Link>, as applicable.</p>
+            <h2>Children’s Privacy</h2>
+            <p>Our website is not directed toward children under the age of 13, and we do not knowingly collect personal information directly from children under 13 through our website without appropriate authorization.</p>
+            <p>If we become aware that personal information from a child has been collected in a manner inconsistent with applicable law, we will take reasonable steps to appropriately address or remove that information.</p>
+            <h2>Legal Requirements</h2>
+            <p>Fort Worth Wellness Center complies with applicable federal, state, and local privacy and security requirements governing information collected in connection with our services.</p>
+            <p>We may use or disclose information when required to do so by law or when reasonably necessary to comply with a lawful legal process, regulatory requirement, or governmental request.</p>
+            <p>Nothing in this Privacy Policy is intended to limit rights or protections provided under applicable healthcare privacy laws.</p>
+            <h2>Changes to This Privacy Policy</h2>
+            <p>We may update this Privacy Policy periodically to reflect changes in our practices, technology, services, legal requirements, or regulatory obligations.</p>
+            <p>When changes are made, the updated Privacy Policy will be posted on this page and the “Last Updated” date will be revised.</p>
+            <p>We encourage visitors to periodically review this Privacy Policy.</p>
+            <h2>Contact Us</h2>
+            <p>If you have questions about this Privacy Policy, our privacy practices, or how information submitted through our website is handled, please contact:</p>
+            <p>Fort Worth Wellness Center<br />
+            101 Mariah Drive, Weatherford, Texas 76087</p>
+            <p suppressHydrationWarning>Phone: <a href="tel:+18176126807">817-612-6807</a><br />
+            Email: <a href="mailto:info@fortworthwellness.org">info@fortworthwellness.org</a></p>
+            <p>For questions regarding your medical records, Protected Health Information, or rights under applicable healthcare privacy laws, please see our <Link href="/notice-of-privacy-practices/">Notice of Privacy Practices</Link> or contact our Privacy Officer at the details above.</p>
           </div>
         </div>
       </section>

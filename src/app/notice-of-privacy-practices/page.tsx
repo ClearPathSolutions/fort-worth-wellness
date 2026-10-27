@@ -64,7 +64,7 @@ export default function NoticeOfPrivacyPracticesPage() {
                 practices, and to follow the terms of the notice currently in effect. This notice
                 applies to all records of your care that we create or maintain. For how we handle
                 information collected through this website, see our{' '}
-                <Link href="/privacy-policy" className="text-steel hover:underline">
+                <Link href="/privacy-policy/" className="text-steel hover:underline">
                   Privacy Policy
                 </Link>
                 .

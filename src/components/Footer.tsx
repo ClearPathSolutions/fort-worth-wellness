@@ -191,11 +191,14 @@ export default function Footer() {
             © {year} {site.name}. All rights reserved.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
-            <Link href="/privacy-policy" className="hover:text-white/80">
+            <Link href="/privacy-policy/" className="hover:text-white/80">
               Privacy Policy
             </Link>
-            <Link href="/notice-of-privacy-practices" className="hover:text-white/80">
+            <Link href="/notice-of-privacy-practices/" className="hover:text-white/80">
               Notice of Privacy Practices
+            </Link>
+            <Link href="/sms-terms/" className="hover:text-white/80">
+              SMS Terms
             </Link>
             {/* Withheld in production until the policy is signed off (see `lib/editorial.ts`). */}
             {editorialPolicyServed && (
