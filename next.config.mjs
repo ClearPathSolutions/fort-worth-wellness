@@ -172,6 +172,9 @@ const nextConfig = {
       // now itself a redirect. Sending it straight to the final URL keeps it one hop.
       { source: '/treatment-services/aftercare-planning', destination: '/treatment/aftercare/', permanent: true },
       { source: '/treatment-services', destination: '/treatment/', permanent: true },
+      // The HIPAA notice briefly lived at its own URL (2026-10-27) before being folded into the
+      // privacy policy page.
+      { source: '/notice-of-privacy-practices', destination: '/privacy-policy/#notice-of-privacy-practices', permanent: true },
 
       // ----------------------------------------------------------------------
       // 2. Slug standardisation — V0095 / V0097 / V0098.

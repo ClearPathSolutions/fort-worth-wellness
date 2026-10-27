@@ -23,7 +23,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/faq/',
     '/contact/',
     '/privacy-policy/',
-    '/notice-of-privacy-practices/',
     // Listed only once the policy may be indexed (see `lib/editorial.ts`).
     ...(editorialPolicyReady ? [EDITORIAL_POLICY_PATH] : []),
   ];

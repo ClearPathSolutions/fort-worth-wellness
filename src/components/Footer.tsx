@@ -194,9 +194,6 @@ export default function Footer() {
             <Link href="/privacy-policy" className="hover:text-white/80">
               Privacy Policy
             </Link>
-            <Link href="/notice-of-privacy-practices" className="hover:text-white/80">
-              Notice of Privacy Practices
-            </Link>
             {/* Withheld in production until the policy is signed off (see `lib/editorial.ts`). */}
             {editorialPolicyServed && (
               <Link href={EDITORIAL_POLICY_PATH} className="hover:text-white/80">
