@@ -59,7 +59,7 @@ export default async function BlogPage() {
                 href={`/blog/${featured.slug}`}
                 className="group grid overflow-hidden rounded-xl2 bg-white shadow-card ring-1 ring-ink/[0.06] transition-all duration-300 hover:shadow-lift lg:grid-cols-2"
               >
-                <div className="relative aspect-[16/10] lg:aspect-auto">
+                <div className="relative aspect-[1200/630] lg:self-center">
                   <PostImage
                     src={featured.image}
                     alt={featured.title}
@@ -103,7 +103,7 @@ export default async function BlogPage() {
                   href={`/blog/${p.slug}`}
                   className="group flex h-full flex-col overflow-hidden rounded-xl2 bg-white shadow-card ring-1 ring-ink/[0.06] transition-all duration-300 hover:-translate-y-1 hover:shadow-lift"
                 >
-                  <div className="relative aspect-[16/10] overflow-hidden">
+                  <div className="relative aspect-[1200/630] overflow-hidden">
                     <PostImage
                       src={p.image}
                       alt={p.title}

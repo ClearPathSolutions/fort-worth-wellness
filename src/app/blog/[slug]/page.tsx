@@ -123,10 +123,11 @@ export default async function PostPage({ params }: { params: { slug: string } })
               posts survive at all.
             */}
             {post.image && (
-              <figure className="relative mb-10 aspect-[16/10] overflow-hidden rounded-xl2 shadow-card">
+              <figure className="relative mb-10 aspect-[1200/630] overflow-hidden rounded-xl2 shadow-card">
                 {/* PostImage, not next/image: a Clarion post's cover is an arbitrary remote
                     URL and next/image rejects unconfigured hosts at render time. It renders
-                    `fill`, hence the positioned, aspect-ratio parent. */}
+                    `fill`, hence the positioned parent, shaped like Clarion's 1200x630 covers
+                    so their edge text is not cropped. */}
                 <PostImage src={post.image} alt="" sizes="(max-width: 1024px) 100vw, 680px" />
               </figure>
             )}
@@ -187,7 +188,7 @@ export default async function PostPage({ params }: { params: { slug: string } })
                     href={`/blog/${p.slug}`}
                     className="group flex h-full flex-col overflow-hidden rounded-xl2 bg-white shadow-card ring-1 ring-ink/[0.06] transition-all duration-300 hover:-translate-y-1 hover:shadow-lift"
                   >
-                    <div className="relative aspect-[16/10] overflow-hidden">
+                    <div className="relative aspect-[1200/630] overflow-hidden">
                       <PostImage src={p.image} alt={p.title} sizes="(max-width: 640px) 100vw, 33vw" />
                     </div>
                     <div className="flex flex-1 flex-col p-6">
