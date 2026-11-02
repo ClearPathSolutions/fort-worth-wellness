@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { pageMeta } from '@/lib/seo';
-import { medicalOversight, team, teamScopeNote } from '@/lib/site';
+import { familyServices, medicalOversight, team, teamScopeNote } from '@/lib/site';
 import { roster, bioParagraphs, initials } from '@/lib/staff-feed';
 import PageHero from '@/components/PageHero';
 import PostImage from '@/components/PostImage';
@@ -148,6 +148,41 @@ export default async function TeamPage() {
                     className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-steel hover:gap-2"
                   >
                     Read Dr. Tambini&rsquo;s full biography <ArrowRight width={15} height={15} />
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </Reveal>
+
+          {/* Casey Hyatt: network-wide, so he gets the same scoped block rather than a roster row. */}
+          <Reveal className="mx-auto mt-12 max-w-4xl" delay={110}>
+            <div className="rounded-xl2 bg-white p-8 shadow-card ring-1 ring-ink/[0.06]">
+              <p className="eyebrow">
+                <span className="h-px w-6 bg-steel" /> Family Services
+              </p>
+              <div className="mt-6 grid gap-6 sm:grid-cols-[120px_minmax(0,1fr)] sm:gap-8">
+                <div className="relative aspect-[4/5] w-28 overflow-hidden rounded-xl2 ring-1 ring-ink/[0.06] sm:w-full">
+                  <Image
+                    src={familyServices.image}
+                    alt={familyServices.name}
+                    fill
+                    sizes="120px"
+                    className="object-cover object-top"
+                  />
+                </div>
+                <div>
+                  <h2 className="text-xl leading-tight">{familyServices.name}</h2>
+                  <p className="mt-1 text-sm font-semibold uppercase tracking-wider text-sand">
+                    {familyServices.role} &middot; Quadrant Health Group
+                  </p>
+                  <p className="mt-4 text-sm leading-relaxed text-ink/70">
+                    {familyServices.scopeNote}
+                  </p>
+                  <Link
+                    href={`/team/${familyServices.slug}`}
+                    className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-steel hover:gap-2"
+                  >
+                    Read Casey&rsquo;s full biography <ArrowRight width={15} height={15} />
                   </Link>
                 </div>
               </div>

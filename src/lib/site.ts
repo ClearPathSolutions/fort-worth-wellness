@@ -421,6 +421,32 @@ export const medicalOversight = {
   boardCertifications: ['Internal Medicine', 'Addiction Medicine'],
 };
 
+/**
+ * Family services leadership — a Quadrant Health Group role, not a member of the `team` array.
+ *
+ * Casey Hyatt is Director of Family Services for the whole of Quadrant Health Group, working with
+ * clinical teams across its facilities. Like Dr. Tambini above, he is shown in his own scoped
+ * block with the relationship stated in words, so a roster of Weatherford staff is not read as
+ * including him.
+ *
+ * The bio is reproduced verbatim from quadranthealthgroup.com/team/casey-hyatt/. If the Quadrant
+ * page changes, re-copy it — do not edit around it.
+ */
+export const familyServices = {
+  name: 'Casey Hyatt',
+  role: 'Director of Family Services',
+  image: '/images/team/casey-hyatt.jpg',
+  slug: 'casey-hyatt',
+  sourceUrl: 'https://www.quadranthealthgroup.com/team/casey-hyatt/',
+  /** Governs how he is introduced everywhere he appears on this site. */
+  scopeNote:
+    'Casey works with clinical teams across Quadrant Health Group\u2019s facilities, including Fort Worth Wellness Center, to strengthen support for families.',
+  bio: [
+    'Casey Hyatt brings 15 years of experience in the behavioral health field, clinical expertise, and a personal connection to recovery to his role as Director of Family Services at Quadrant Health Group. A Nashville, Tennessee native, Casey previously served as Director of Alumni Services for ten years, leading a team of eight peer professionals and coordinating 62 annual alumni and community recovery events to strengthen engagement, connection, and support beyond treatment. He holds a Master of Arts in Counseling from the Hazelden Betty Ford Graduate School and has extensive experience facilitating groups and utilizing multiple clinical approaches, with an emphasis on substance use disorders, mental health, experiential modalities, and Internal Family Systems (IFS).',
+    'With 18 years in recovery, Casey understands the importance of connection, accountability, and continued growth throughout the recovery journey. In his current role, he works collaboratively with clinical teams across Quadrant Health Group to strengthen team dynamics, streamline services, and expand support for families navigating the challenges of addiction and mental health. Casey is passionate about helping families build healthier relationships, improve communication, and develop the tools needed to support long-term recovery while prioritizing their own well-being. His professional experience and personal perspective reflect his commitment to creating stronger support systems for individuals, families, and the broader recovery community.',
+  ],
+};
+
 /** Shown with the team, because all of the above are shared across the Texas facilities. */
 /**
  * Written when the roster was four shared directors. It now also covers two case managers and a

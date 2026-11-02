@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { medicalOversight, services, site, social } from './site';
+import { familyServices, medicalOversight, services, site, social } from './site';
 import { CORRECTIONS_ANCHOR, EDITORIAL_POLICY_URL, editorialPolicyReady } from './editorial';
 
 /**
@@ -168,6 +168,25 @@ export function personSchema() {
       credentialCategory: 'Board Certification',
       about: { '@type': 'MedicalSpecialty', name: c },
     })),
+  };
+}
+
+export function familyServicesSchema() {
+  const m = familyServices;
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    '@id': `${site.url}/team/${m.slug}/#person`,
+    name: m.name,
+    jobTitle: m.role,
+    image: `${site.url}${m.image}`,
+    url: `${site.url}/team/${m.slug}/`,
+    sameAs: [m.sourceUrl],
+    description: m.bio[0],
+    worksFor: {
+      '@type': 'Organization',
+      name: 'Quadrant Health Group',
+    },
   };
 }
 
