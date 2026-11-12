@@ -26,9 +26,10 @@ function Name({ person, rel }: { person: BylinePerson; rel?: string }) {
 
 /**
  * Article byline, from the package's templates/article-byline.html. Sits directly under the
- * post's H1. Each line renders only when its data exists: "Written by" only for a real author,
- * the reviewer line only when `getByline()` found both a reviewer and a review date. Posts carry
- * no modified date, so the template's "Updated" item is omitted.
+ * post's H1. "Written by" renders only for a real author. The "Medically reviewed by" line renders
+ * on every post: `getByline()` always resolves a reviewer (the post's own, any missing field
+ * filled from the site default), at the client's request. "Last reviewed" shows only with a real
+ * date. Posts carry no modified date, so the template's "Updated" item is omitted.
  */
 export default function ArticleByline({ byline }: { byline: Byline }) {
   const { author, reviewer, lastReviewed } = byline;
@@ -46,8 +47,6 @@ export default function ArticleByline({ byline }: { byline: Byline }) {
     ),
   ].filter(Boolean);
 
-  if (!author && !reviewer && meta.length === 0) return null;
-
   return (
     <div className="article-byline">
       {author && (
@@ -55,11 +54,20 @@ export default function ArticleByline({ byline }: { byline: Byline }) {
           Written by <Name person={author} rel="author" />
         </p>
       )}
-      {reviewer && (
-        <p className="byline-line">
-          Clinically reviewed by <Name person={reviewer} />
-        </p>
-      )}
+      <p className="byline-line">
+        Medically reviewed by{' '}
+        {reviewer.internal && reviewer.href ? (
+          // A profile on this site: an ordinary same-tab internal link.
+          <Link href={reviewer.href}>{reviewer.name}</Link>
+        ) : reviewer.href ? (
+          <a href={reviewer.href} target="_blank" rel="noopener noreferrer">
+            {reviewer.name}
+          </a>
+        ) : (
+          <span className="font-semibold">{reviewer.name}</span>
+        )}
+        {reviewer.credentials ? `, ${reviewer.credentials}` : ''}
+      </p>
       {meta.length > 0 && (
         <p className="byline-meta">{meta.flatMap((m, i) => (i === 0 ? [m] : [' · ', m]))}</p>
       )}

@@ -43,6 +43,9 @@ type ClarionFeedPost = {
   author_name?: string;
   published_at?: string;
   seo_meta?: { title?: string; description?: string };
+  medically_reviewed_by?: string | null;
+  medically_reviewed_by_credentials?: string | null;
+  medically_reviewed_by_url?: string | null;
 };
 
 type ClarionFullPost = ClarionFeedPost & { body_html?: string };
@@ -96,6 +99,24 @@ export async function getClarionPosts(): Promise<Post[]> {
     }));
 }
 
+/**
+ * Clarion's reviewer fields, each kept only where populated. getByline() fills the rest from the
+ * site default, so every post shows a reviewer without any per-post action in Clarion.
+ */
+export function clarionReviewer(
+  p: ClarionFeedPost,
+): Pick<Post, 'reviewer_name' | 'reviewer_credentials' | 'reviewer_url'> {
+  const v = (x?: string | null) => (typeof x === 'string' && x.trim() ? x.trim() : undefined);
+  const out: Pick<Post, 'reviewer_name' | 'reviewer_credentials' | 'reviewer_url'> = {};
+  const name = v(p.medically_reviewed_by);
+  const credentials = v(p.medically_reviewed_by_credentials);
+  const url = v(p.medically_reviewed_by_url);
+  if (name) out.reviewer_name = name;
+  if (credentials) out.reviewer_credentials = credentials;
+  if (url) out.reviewer_url = url;
+  return out;
+}
+
 /** A single Clarion post with its body, normalized to the shared Post shape. */
 export async function getClarionPost(slug: string): Promise<Post | null> {
   const res = await clarionFetch(`blog/public/post?slug=${encodeURIComponent(slug)}`);
@@ -118,5 +139,6 @@ export async function getClarionPost(slug: string): Promise<Post | null> {
     html,
     // Shown as "Written by" when Clarion supplies it; never defaulted.
     ...(p.author_name?.trim() ? { author_name: p.author_name.trim() } : {}),
+    ...clarionReviewer(p),
   };
 }
