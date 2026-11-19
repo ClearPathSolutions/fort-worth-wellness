@@ -160,6 +160,17 @@ const nextConfig = {
       },
     ];
   },
+  // Blog images: Clarion stores them, this site serves them, so their address (and any
+  // image-search credit) is this domain's. lib/clarion.ts points every Clarion image at
+  // /blog-images/; this proxies it to Clarion's bytes route, which answers with the image itself.
+  async rewrites() {
+    return [
+      {
+        source: '/blog-images/:path*',
+        destination: 'https://api.clarionlabs.ai/blog/public/image-inline/:path*',
+      },
+    ];
+  },
   async redirects() {
     return [
       // ----------------------------------------------------------------------

@@ -1,4 +1,4 @@
-import { clarion } from './site';
+import { clarion, site } from './site';
 import type { Post } from './posts';
 
 // ============================================================================
@@ -40,6 +40,7 @@ type ClarionFeedPost = {
   title: string;
   excerpt?: string;
   cover_image_url?: string;
+  cover_image_alt?: string | null;
   author_name?: string;
   published_at?: string;
   seo_meta?: { title?: string; description?: string };
@@ -49,6 +50,28 @@ type ClarionFeedPost = {
 };
 
 type ClarionFullPost = ClarionFeedPost & { body_html?: string };
+
+/**
+ * Blog images on this site's own domain. Clarion hands out
+ * `https://api.clarionlabs.ai/blog/public/image/<key>` (or, once it is told this site proxies
+ * images, `<this site>/blog-images/<key>`). Both become `/blog-images/<key>`, which
+ * next.config.mjs rewrites to Clarion's bytes route, so the address a visitor, Google Images or a
+ * social card sees is this site's. Relative, so next/image treats it as a local image.
+ */
+const CLARION_IMAGE = `${clarion.api.replace(/\/$/, '')}/blog/public/image/`;
+const OWN_HOST = new URL(site.url).hostname.replace(/^www\./, '').replace(/\./g, '\\.');
+const OWN_IMAGE = new RegExp(`^https://(?:www\\.)?${OWN_HOST}(?=/blog-images/)`);
+
+export function onSiteImage(src: string): string {
+  if (src.startsWith(CLARION_IMAGE)) return `/blog-images/${src.slice(CLARION_IMAGE.length)}`;
+  return src.replace(OWN_IMAGE, '');
+}
+
+function onSiteImages(html: string): string {
+  return html.split(CLARION_IMAGE).join('/blog-images/');
+}
+
+const altOf = (alt: string | null | undefined) => (typeof alt === 'string' && alt.trim() ? alt.trim() : undefined);
 
 // A placeholder cover for Clarion posts that ship without one, so cards/heroes
 // don't render a broken image. Uses an existing local facility photo.
@@ -93,7 +116,8 @@ export async function getClarionPosts(): Promise<Post[]> {
       title: p.title,
       date: p.published_at || '',
       excerpt: p.excerpt || '',
-      image: p.cover_image_url || FALLBACK_COVER,
+      image: p.cover_image_url ? onSiteImage(p.cover_image_url) : FALLBACK_COVER,
+      ...(altOf(p.cover_image_alt) ? { imageAlt: altOf(p.cover_image_alt) } : {}),
       readingMin: 0, // unknown from the feed; the full post computes a real value
       html: '', // body is only on the single-post endpoint
     }));
@@ -128,13 +152,14 @@ export async function getClarionPost(slug: string): Promise<Post | null> {
     return null;
   }
   if (!p || !p.slug || !p.title) return null;
-  const html = p.body_html || '';
+  const html = onSiteImages(p.body_html || '');
   return {
     slug: p.slug,
     title: p.title,
     date: p.published_at || '',
     excerpt: p.excerpt || p.seo_meta?.description || '',
-    image: p.cover_image_url || FALLBACK_COVER,
+    image: p.cover_image_url ? onSiteImage(p.cover_image_url) : FALLBACK_COVER,
+    ...(altOf(p.cover_image_alt) ? { imageAlt: altOf(p.cover_image_alt) } : {}),
     readingMin: estimateReadingMin(html),
     html,
     // Shown as "Written by" when Clarion supplies it; never defaulted.
