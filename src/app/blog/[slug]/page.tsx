@@ -66,7 +66,7 @@ export default async function PostPage({ params }: { params: { slug: string } })
     <>
       {/* Hero */}
       <section className="relative isolate overflow-hidden bg-ink-900">
-        <PostImage src={post.image} alt="" priority sizes="100vw" />
+        <PostImage src={post.image} alt={post.imageAlt?.trim() || post.title} priority sizes="100vw" />
         <div className="absolute inset-0 bg-gradient-to-t from-ink-900 via-ink-900/85 to-ink-900/70" />
         <div className="container-fw relative">
           <div className="mx-auto max-w-3xl pb-14 pt-16 sm:pt-20">
@@ -115,8 +115,7 @@ export default async function PostPage({ params }: { params: { slug: string } })
               photo existed and was never actually seen. Promoting it to a real lead figure gives
               every post one genuine image using assets already in the repo.
 
-              `alt=""` on purpose: the `h1` sits directly above and the image is illustrative, so
-              a description here would just repeat the headline to a screen reader.
+              Alt is the author's cover alt text from Clarion, else the post title (never empty).
 
               Mid-article topical imagery is NOT solved by this and needs new assets — see the note
               on FW-30 in issues.md for why that is worth holding until V0108 settles whether these
@@ -128,7 +127,7 @@ export default async function PostPage({ params }: { params: { slug: string } })
                     URL and next/image rejects unconfigured hosts at render time. It renders
                     `fill`, hence the positioned parent, shaped like Clarion's 1200x630 covers
                     so their edge text is not cropped. */}
-                <PostImage src={post.image} alt="" sizes="(max-width: 1024px) 100vw, 680px" />
+                <PostImage src={post.image} alt={post.imageAlt?.trim() || post.title} sizes="(max-width: 1024px) 100vw, 680px" />
               </figure>
             )}
             <div className="article-body" dangerouslySetInnerHTML={{

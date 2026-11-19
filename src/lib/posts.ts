@@ -12,6 +12,8 @@ export type Post = {
   date: string; // ISO
   excerpt: string;
   image: string;
+  /** Cover alt text. Clarion posts: the author's `cover_image_alt`. Unset means use the title. */
+  imageAlt?: string;
   readingMin: number;
   html: string;
   /**
