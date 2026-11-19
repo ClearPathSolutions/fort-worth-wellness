@@ -28,6 +28,7 @@
  *
  * The CTM id is the one thing here that is NOT cached by us — see `ctmSessionId()`.
  */
+import { latestReferrer, rememberReferrer } from './latest-referrer';
 
 /** Click identifiers worth keeping. `wbraid`/`gbraid` matter — see `getAttribution()`. */
 const CAMPAIGN_KEYS = [
@@ -139,6 +140,7 @@ function paramsInUrl(): Record<string, string> {
  * already be lost. `AttributionTracker` in the root layout is what guarantees this.
  */
 export function recordPageview(): void {
+  rememberReferrer();
   const now = Date.now();
   const found = paramsInUrl();
 
@@ -237,7 +239,7 @@ export function getAttribution(): Attribution {
   // Prefer the campaign's own landing page: it is the page the money bought. Fall back to this
   // visit's entry page for organic traffic, and only then to wherever we are standing.
   const landing = campaign?.landing || visit?.landing || location.href;
-  const referrer = campaign?.referrer || visit?.referrer || externalReferrer();
+  const referrer = latestReferrer() ?? (campaign?.referrer || visit?.referrer || externalReferrer());
 
   return {
     page_url: location.href,
